@@ -5,8 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import com.p1_7.abstractengine.collision.CollisionManager;
 import com.p1_7.abstractengine.demo.DemoActions;
+import com.p1_7.abstractengine.demo.DemoCollisionManager;
 import com.p1_7.abstractengine.demo.GameOverScene;
 import com.p1_7.abstractengine.demo.GameScene;
 import com.p1_7.abstractengine.demo.MenuScene;
@@ -28,7 +28,7 @@ public class Main extends ApplicationAdapter {
     private Engine engine;
     private EntityManager entityManager;
     private MovementManager movementManager;
-    private CollisionManager collisionManager;
+    private DemoCollisionManager collisionManager;
     private InputOutputManager inputOutputManager;
     private RenderManager renderManager;
     private SceneManager sceneManager;
@@ -41,7 +41,7 @@ public class Main extends ApplicationAdapter {
         // 2. create all managers
         entityManager = new EntityManager();
         movementManager = new MovementManager();
-        collisionManager = new CollisionManager();
+        collisionManager = new DemoCollisionManager();
         inputOutputManager = new InputOutputManager();
         renderManager = new RenderManager();
         sceneManager = new SceneManager(entityManager, renderManager.getRenderQueue(), inputOutputManager);
