@@ -104,6 +104,9 @@ public class GameScene extends Scene {
         movementManager.registerMovable(bucket);
         collisionManager.registerCollidable(bucket);
 
+        // wire catch handler
+        bucket.setCatchHandler(this::handleDropletCatch);
+
         // 6. spawn initial droplet
         spawnDroplet();
     }
@@ -165,12 +168,6 @@ public class GameScene extends Scene {
 
             // check if caught
             if (droplet.isCaught()) {
-                // increment score
-                score++;
-
-                // play catch sound
-                dropSound.play();
-
                 // remove entity
                 entityMutator.removeEntity(droplet.getId());
 
@@ -252,5 +249,21 @@ public class GameScene extends Scene {
      */
     private float randomX() {
         return MathUtils.random(Settings.WINDOW_WIDTH - Droplet.DROPLET_WIDTH);
+    }
+
+    /**
+     * Handles a droplet being caught by the bucket.
+     *
+     * <p>Increments score and plays catch sound. Called by the bucket's
+     * collision handler.</p>
+     *
+     * @param droplet the droplet that was caught
+     */
+    private void handleDropletCatch(Droplet droplet) {
+        // increment score
+        score++;
+
+        // play catch sound
+        dropSound.play();
     }
 }

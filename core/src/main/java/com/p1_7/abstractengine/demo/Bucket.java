@@ -20,6 +20,9 @@ public class Bucket extends SpriteEntity {
     /** horizontal movement speed in pixels per second */
     public static final float BUCKET_SPEED = 250f;
 
+    /** callback handler for droplet catch events */
+    private DropletCatchHandler catchHandler;
+
     /**
      * Constructs a bucket at the specified position.
      *
@@ -28,6 +31,15 @@ public class Bucket extends SpriteEntity {
      */
     public Bucket(float x, float y) {
         super("bucket.png", x, y, BUCKET_WIDTH, BUCKET_HEIGHT);
+    }
+
+    /**
+     * Sets the handler to be invoked when catching a droplet.
+     *
+     * @param handler the catch handler
+     */
+    public void setCatchHandler(DropletCatchHandler handler) {
+        this.catchHandler = handler;
     }
 
     /**
@@ -54,7 +66,9 @@ public class Bucket extends SpriteEntity {
 
     @Override
     public void onCollision(ICollidable other) {
-        // bucket doesn't respond to collisions
-        // (droplets detect collision with bucket)
+        // detect collision with droplet and invoke handler
+        if (other instanceof Droplet && catchHandler != null) {
+            catchHandler.handleCatch((Droplet) other);
+        }
     }
 }
