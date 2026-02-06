@@ -1,0 +1,423 @@
+@startuml scene-system
+
+' ============================================================================
+' scene system package - scene management and transitions
+' ============================================================================
+' this diagram focuses on the scene subsystem, showing how game scenes
+' (menus, levels, etc.) are managed with safe transitions and dependency
+' injection via scene context
+' ============================================================================
+
+' styling
+skinparam classBackgroundColor<<interface>> #E3F2FD
+skinparam classBackgroundColor<<abstract>> #FFF9C4
+skinparam classBackgroundColor<<manager>> #FFE0B2
+skinparam classBackgroundColor<<concrete>> #E8F5E9
+skinparam classBackgroundColor<<external>> #EEEEEE
+skinparam classBorderColor #424242
+skinparam arrowColor #424242
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 50
+skinparam ranksep 70
+
+' ============================================================================
+' scene context interface
+' ============================================================================
+
+interface SceneContext <<interface>> {
+  + entities(): IEntityRepository
+  + renderQueue(): IRenderQueue
+  + input(): IInputQuery
+  + sceneManager(): SceneManager
+}
+
+note right of SceneContext
+  **dependency injection interface**
+
+  purpose:
+  - provides scenes access to engine systems
+  - dependency injection pattern
+  - read-only system access
+
+  provided systems:
+  - entities(): query entities
+  - renderQueue(): submit renderables
+  - input(): query input state
+  - sceneManager(): request scene transitions
+
+  design benefits:
+  - testable (mock context for tests)
+  - controlled access (read-only interfaces)
+  - decoupled scenes from engine internals
+
+  usage in scene:
+  {
+    void update(float dt, SceneContext ctx) {
+      // query entities
+      IEntityRepository entities = ctx.entities();
+
+      // submit to render queue
+      IRenderQueue queue = ctx.renderQueue();
+      queue.queue(sprite);
+
+      // check input
+      if (ctx.input().isActionActive(PAUSE)) {
+        ctx.sceneManager().requestChange("pause");
+      }
+    }
+  }
+end note
+
+' ============================================================================
+' scene base class
+' ============================================================================
+
+abstract Scene <<abstract>> {
+  # name: String
+  # paused: boolean
+  + {abstract} onEnter(context: SceneContext): void
+  + {abstract} onExit(context: SceneContext): void
+  + {abstract} update(deltaTime: float, context: SceneContext): void
+  + {abstract} submitRenderable(context: SceneContext): void
+  + getName(): String
+  + isPaused(): boolean
+  + setPaused(paused: boolean): void
+}
+
+note left of Scene
+  **scene base class**
+
+  lifecycle hooks:
+  - onEnter(): called when scene becomes active
+  - onExit(): called when leaving scene
+  - update(): called each frame
+  - submitRenderable(): queue rendering
+
+  responsibilities:
+  - manage scene-specific entities
+  - handle scene logic and input
+  - submit renderables to queue
+  - request scene transitions
+
+  typical implementation:
+  {
+    class MenuScene extends Scene {
+      public void onEnter(SceneContext ctx) {
+        // create menu entities
+        // set up ui
+      }
+
+      public void onExit(SceneContext ctx) {
+        // cleanup menu entities
+        // remove from managers
+      }
+
+      public void update(float dt, SceneContext ctx) {
+        if (ctx.input().isActionActive(SELECT)) {
+          ctx.sceneManager().requestChange("game");
+        }
+      }
+
+      public void submitRenderable(SceneContext ctx) {
+        // queue menu sprites
+        ctx.renderQueue().queue(background);
+        ctx.renderQueue().queue(buttons);
+      }
+    }
+  }
+
+  design notes:
+  - abstract base class
+  - template for concrete scenes
+  - receives context for all operations
+end note
+
+' ============================================================================
+' scene manager
+' ============================================================================
+
+class SceneManager <<manager>> {
+  - scenes: ObjectMap<String, Scene>
+  - currentKey: String
+  - pendingKey: String
+  - context: SceneContext
+  - entityRepository: IEntityRepository
+  - renderQueue: IRenderQueue
+  - inputQuery: IInputQuery
+  + SceneManager(entityRepository: IEntityRepository, renderQueue: IRenderQueue, inputQuery: IInputQuery)
+  # onInit(): void
+  # onShutdown(): void
+  + registerScene(scene: Scene): void
+  + setInitialScene(key: String): void
+  + requestChange(key: String): void
+  + getCurrentScene(): Scene
+  + getScene(key: String): Scene
+  + getSceneKeys(): Iterable<String>
+  # onUpdate(deltaTime: float): void
+}
+
+note bottom of SceneManager
+  **scene orchestrator**
+
+  responsibilities:
+  - manages collection of registered scenes
+  - handles scene transitions safely
+  - provides SceneContext to scenes
+  - calls scene lifecycle hooks
+
+  constructor injection:
+  - receives IEntityRepository
+  - receives IRenderQueue
+  - receives IInputQuery
+  - creates SceneContext from these
+
+  scene registration:
+  - registerScene(): add scene to registry
+  - setInitialScene(): set starting scene
+  - scenes identified by string key
+
+  safe transitions:
+  - requestChange(): sets pendingKey
+  - actual transition in onUpdate()
+  - prevents mid-update scene changes
+
+  update cycle:
+  1. check for pending scene change
+  2. if pending:
+     a. call currentScene.onExit(context)
+     b. switch to pending scene
+     c. call newScene.onEnter(context)
+     d. clear pending
+  3. call currentScene.update(deltaTime, context)
+  4. call currentScene.submitRenderable(context)
+
+  design notes:
+  - extends UpdatableManager (lifecycle + update)
+  - owns SceneContext instance
+  - deferred state changes pattern
+end note
+
+' ============================================================================
+' manager base classes (from engine core)
+' ============================================================================
+
+abstract Manager <<abstract>> {
+  - initialised: boolean
+  + init(): void {final}
+  + shutdown(): void {final}
+  # onInit(): void
+  # onShutdown(): void
+  + isInitialised(): boolean
+}
+
+abstract UpdatableManager <<abstract>> {
+  + update(deltaTime: float): void {final}
+  # onUpdate(deltaTime: float): void {abstract}
+}
+
+' ============================================================================
+' external interfaces (from other packages)
+' ============================================================================
+
+interface IEntityRepository <<interface>> {
+  + getEntity(id: UUID): Entity
+  + getAllEntityIds(): Iterable<UUID>
+}
+
+interface IRenderQueue <<interface>> {
+  + queue(item: IRenderItem): void
+  + clear(): void
+  + items(): Iterable<IRenderItem>
+}
+
+interface IInputQuery <<interface>> {
+  + isActionActive(actionId: ActionId): boolean
+  + getActionState(actionId: ActionId): InputState
+}
+
+' ============================================================================
+' relationships
+' ============================================================================
+
+SceneManager --|> UpdatableManager : extends
+SceneManager o-- "many" Scene : manages
+SceneManager *-- SceneContext : owns
+SceneManager ..> IEntityRepository : uses
+SceneManager ..> IRenderQueue : uses
+SceneManager ..> IInputQuery : uses
+
+Scene ..> SceneContext : receives
+
+SceneContext ..> IEntityRepository : provides
+SceneContext ..> IRenderQueue : provides
+SceneContext ..> IInputQuery : provides
+SceneContext ..> SceneManager : provides
+
+UpdatableManager --|> Manager : extends
+
+' ============================================================================
+' usage example
+' ============================================================================
+
+note as UsageExample
+  **usage example**
+
+  {
+    // create scene manager with dependencies
+    EntityManager entityManager = new EntityManager();
+    RenderManager renderManager = new RenderManager();
+    InputOutputManager inputManager = new InputOutputManager();
+
+    SceneManager sceneManager = new SceneManager(
+      entityManager,  // entity repository
+      renderManager.getRenderQueue(),  // render queue
+      inputManager    // input query
+    );
+
+    sceneManager.init();
+
+    // define scenes
+    class MenuScene extends Scene {
+      public void onEnter(SceneContext ctx) {
+        System.out.println("entering menu");
+      }
+
+      public void onExit(SceneContext ctx) {
+        System.out.println("exiting menu");
+      }
+
+      public void update(float dt, SceneContext ctx) {
+        if (ctx.input().isActionActive(START)) {
+          ctx.sceneManager().requestChange("game");
+        }
+      }
+
+      public void submitRenderable(SceneContext ctx) {
+        // queue menu graphics
+      }
+    }
+
+    class GameScene extends Scene {
+      public void onEnter(SceneContext ctx) {
+        // spawn player, enemies, etc.
+        Entity player = ctx.entities().createEntity(
+            () -> new PlayerEntity());
+      }
+
+      public void onExit(SceneContext ctx) {
+        // cleanup game entities
+      }
+
+      public void update(float dt, SceneContext ctx) {
+        if (ctx.input().isActionActive(PAUSE)) {
+          ctx.sceneManager().requestChange("pause");
+        }
+      }
+
+      public void submitRenderable(SceneContext ctx) {
+        // entities queue themselves
+      }
+    }
+
+    // register scenes
+    sceneManager.registerScene(new MenuScene());
+    sceneManager.registerScene(new GameScene());
+    sceneManager.setInitialScene("menu");
+
+    // game loop
+    while (running) {
+      float deltaTime = getDeltaTime();
+      sceneManager.update(deltaTime);
+    }
+
+    sceneManager.shutdown();
+  }
+end note
+
+' ============================================================================
+' transition algorithm
+' ============================================================================
+
+note as TransitionAlgorithm
+  **scene transition algorithm**
+
+  {
+    protected void onUpdate(float deltaTime) {
+      // handle pending scene change
+      if (pendingKey != null) {
+        Scene current = getCurrentScene();
+        Scene next = getScene(pendingKey);
+
+        // exit current scene
+        if (current != null) {
+          current.onExit(context);
+        }
+
+        // switch scenes
+        currentKey = pendingKey;
+        pendingKey = null;
+
+        // enter new scene
+        if (next != null) {
+          next.onEnter(context);
+        }
+      }
+
+      // update current scene
+      Scene current = getCurrentScene();
+      if (current != null && !current.isPaused()) {
+        current.update(deltaTime, context);
+        current.submitRenderable(context);
+      }
+    }
+  }
+
+  characteristics:
+  - deferred transitions (safe)
+  - respects pause state
+  - calls lifecycle hooks
+  - null-safe
+end note
+
+' ============================================================================
+' design patterns summary
+' ============================================================================
+
+note as DesignPatterns
+  **design patterns in scene system**
+
+  1. **dependency injection**
+     - SceneManager constructor injection
+     - SceneContext provides dependencies
+     - testable and decoupled
+
+  2. **template method pattern**
+     - Scene abstract base class
+     - lifecycle hooks (onEnter/onExit/update)
+     - consistent scene interface
+
+  3. **deferred state changes**
+     - pendingKey for safe transitions
+     - prevents mid-update scene changes
+     - consistent state management
+
+  4. **facade pattern**
+     - SceneContext as facade
+     - hides engine complexity
+     - controlled system access
+
+  5. **registry pattern**
+     - scenes stored in ObjectMap
+     - keyed by string identifier
+     - dynamic scene lookup
+
+  benefits:
+  - safe scene transitions
+  - testable scene logic
+  - dependency injection
+  - decoupled from engine
+  - flexible scene management
+end note
+
+@enduml

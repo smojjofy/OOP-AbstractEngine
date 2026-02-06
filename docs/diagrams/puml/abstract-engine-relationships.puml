@@ -1,0 +1,250 @@
+@startuml abstract-engine-relationships
+
+' ============================================================================
+' abstract engine architecture - relationship overview
+' ============================================================================
+' this diagram provides a high-level overview of the abstract engine
+' architecture, focusing on structural relationships without implementation
+' details. use this for quick comprehension and presentations.
+' ============================================================================
+
+' styling and colour scheme
+skinparam packageStyle rectangle
+skinparam classBackgroundColor<<interface>> #E3F2FD
+skinparam classBackgroundColor<<abstract>> #FFF9C4
+skinparam classBackgroundColor<<manager>> #FFE0B2
+skinparam classBackgroundColor<<concrete>> #E8F5E9
+skinparam classBackgroundColor<<enum>> #F5F5F5
+skinparam classBorderColor #424242
+skinparam packageBorderColor #1976D2
+skinparam arrowColor #424242
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 80
+
+' ============================================================================
+' engine core - manager hierarchy
+' ============================================================================
+package "engine" <<Rectangle>> {
+  interface IManager <<interface>>
+  interface IUpdatable <<interface>>
+  abstract Manager <<abstract>>
+  abstract UpdatableManager <<abstract>>
+  class Engine <<concrete>>
+  class Settings <<concrete>>
+}
+
+' ============================================================================
+' entity system - entity management
+' ============================================================================
+package "entity" <<Rectangle>> {
+  abstract Entity <<abstract>>
+  interface EntityFactory <<interface>>
+  interface IEntityRepository <<interface>>
+  interface IEntityMutator <<interface>>
+  class EntityManager <<manager>>
+}
+
+' ============================================================================
+' transform system - spatial abstraction
+' ============================================================================
+package "transform" <<Rectangle>> {
+  interface ITransform <<interface>>
+  interface ITransformable <<interface>>
+}
+
+' ============================================================================
+' render system - rendering pipeline
+' ============================================================================
+package "render" <<Rectangle>> {
+  interface IRenderable <<interface>>
+  interface IRenderItem <<interface>>
+  interface IRenderQueue <<interface>>
+  class RenderQueue <<concrete>>
+  class RenderManager <<manager>>
+}
+
+' ============================================================================
+' movement system - physics and movement
+' ============================================================================
+package "movement" <<Rectangle>> {
+  interface IMovable <<interface>>
+  class MovementManager <<manager>>
+}
+
+' ============================================================================
+' collision system - collision detection
+' ============================================================================
+package "collision" <<Rectangle>> {
+  interface ICollidable <<interface>>
+  class CollisionDetector <<concrete>>
+  class CollisionManager <<manager>>
+}
+
+' ============================================================================
+' input system - input handling
+' ============================================================================
+package "input" <<Rectangle>> {
+  class ActionId <<concrete>>
+  enum InputState <<enum>>
+  abstract InputEvent <<abstract>>
+  interface IInputQuery <<interface>>
+  class InputMapping <<concrete>>
+  class InputOutputManager <<manager>>
+}
+
+' ============================================================================
+' scene system - scene management
+' ============================================================================
+package "scene" <<Rectangle>> {
+  interface SceneContext <<interface>>
+  abstract Scene <<abstract>>
+  class SceneManager <<manager>>
+}
+
+' ============================================================================
+' relationships: manager hierarchy
+' ============================================================================
+Manager ..|> IManager
+UpdatableManager --|> Manager
+UpdatableManager ..|> IUpdatable
+
+' ============================================================================
+' relationships: engine orchestration
+' ============================================================================
+Engine *-- IManager
+Engine *-- IUpdatable
+Engine o-- RenderManager
+
+' ============================================================================
+' relationships: entity system
+' ============================================================================
+EntityManager --|> Manager
+EntityManager ..|> IEntityRepository
+EntityManager ..|> IEntityMutator
+EntityManager *-- Entity
+EntityManager ..> EntityFactory
+
+' ============================================================================
+' relationships: transform system
+' ============================================================================
+ITransformable ..> ITransform : returns
+
+' ============================================================================
+' relationships: render system
+' ============================================================================
+IRenderItem --|> IRenderable
+IRenderItem --|> ITransformable
+RenderQueue ..|> IRenderQueue
+RenderManager --|> Manager
+RenderManager *-- RenderQueue
+RenderManager ..> IRenderItem
+
+' ============================================================================
+' relationships: movement system
+' ============================================================================
+MovementManager --|> UpdatableManager
+MovementManager o-- IMovable
+MovementManager ..> ITransformable
+
+' ============================================================================
+' relationships: collision system
+' ============================================================================
+CollisionManager --|> UpdatableManager
+CollisionManager *-- CollisionDetector
+CollisionManager o-- ICollidable
+
+' ============================================================================
+' relationships: input system
+' ============================================================================
+InputOutputManager --|> UpdatableManager
+InputOutputManager ..|> IInputQuery
+InputOutputManager *-- InputMapping
+InputOutputManager ..> ActionId
+InputOutputManager ..> InputState
+InputMapping ..> ActionId
+InputEvent ..> ActionId
+
+' ============================================================================
+' relationships: scene system
+' ============================================================================
+SceneManager --|> UpdatableManager
+SceneManager o-- Scene
+SceneManager *-- SceneContext
+SceneManager ..> IEntityRepository
+SceneManager ..> IRenderQueue
+SceneManager ..> IInputQuery
+Scene ..> SceneContext
+SceneContext ..> IEntityRepository
+SceneContext ..> IRenderQueue
+SceneContext ..> IInputQuery
+SceneContext ..> SceneManager
+
+' ============================================================================
+' layout hints for clean visualisation
+' ============================================================================
+Engine -[hidden]down- EntityManager
+EntityManager -[hidden]down- RenderManager
+RenderManager -[hidden]down- MovementManager
+MovementManager -[hidden]down- CollisionManager
+CollisionManager -[hidden]down- InputOutputManager
+InputOutputManager -[hidden]down- SceneManager
+
+' ============================================================================
+' architectural patterns overview
+' ============================================================================
+note as ArchitectureOverview
+  **abstract engine - architectural patterns**
+
+  **1. template method pattern**
+     Manager → UpdatableManager hierarchy
+     - consistent lifecycle (init/shutdown/update)
+     - subclasses implement protected hooks
+     - final methods ensure correct sequencing
+
+  **2. interface segregation principle**
+     IEntityRepository (read) vs IEntityMutator (write)
+     - clients depend only on needed operations
+     - prevents unintended side effects
+     - improves testability
+
+  **3. composition over inheritance**
+     IRenderItem = IRenderable + ITransformable
+     - flexible behaviour composition
+     - multiple capability interfaces
+     - entities implement combinations
+
+  **4. strategy pattern**
+     EntityFactory functional interface
+     - pluggable entity creation
+     - lambda-compatible design
+     - testable factories
+
+  **5. dependency injection**
+     SceneManager constructor injection
+     - receives IEntityRepository, IRenderQueue, IInputQuery
+     - creates SceneContext from dependencies
+     - testable with mocks
+
+  **6. deferred state changes**
+     SceneManager.pendingKey pattern
+     - prevents mid-update transitions
+     - ensures consistent state
+     - safe scene switching
+
+  **7. observer pattern**
+     ICollidable.onCollision callback
+     - entities respond to collisions
+     - decoupled collision response
+     - flexible behaviour per entity
+
+  **architecture summary**
+  - 8 packages, 32 classes/interfaces
+  - clean separation of concerns
+  - dimension-agnostic (2d/3d support)
+  - manager-based lifecycle
+  - entity-component style design
+end note
+
+@enduml
