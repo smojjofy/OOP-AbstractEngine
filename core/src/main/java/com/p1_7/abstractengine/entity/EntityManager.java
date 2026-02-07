@@ -5,12 +5,12 @@ import java.util.UUID;
 import com.badlogic.gdx.utils.Array;
 
 /**
- * Manages the lifecycle of all entities in the engine.  Acts as both
- * the read-only repository ({@link IEntityRepository}) and the
- * write-side mutator ({@link IEntityMutator}).
+ * manages the lifecycle of all entities in the engine. acts as both
+ * the read-only repository (IEntityRepository) and the
+ * write-side mutator (IEntityMutator).
  *
- * <p>This manager extends {@link com.p1_7.abstractengine.engine.Manager}
- * directly — it has no per-frame update logic of its own.</p>
+ * this manager extends com.p1_7.abstractengine.engine.Manager
+ * directly - it has no per-frame update logic of its own.
  */
 public class EntityManager extends com.p1_7.abstractengine.engine.Manager
         implements IEntityRepository, IEntityMutator {
@@ -23,7 +23,7 @@ public class EntityManager extends com.p1_7.abstractengine.engine.Manager
     // ---------------------------------------------------------------
 
     /**
-     * Creates an entity via the supplied factory, adds it to the
+     * creates an entity via the supplied factory, adds it to the
      * internal store, and returns it.
      *
      * @param factory the factory that constructs the concrete entity
@@ -37,8 +37,8 @@ public class EntityManager extends com.p1_7.abstractengine.engine.Manager
     }
 
     /**
-     * Sets the active flag on the entity identified by {@code id}.
-     * Performs a linear scan of the entity array.
+     * sets the active flag on the entity identified by id.
+     * performs a linear scan of the entity array.
      *
      * @param id     the UUID of the target entity
      * @param active the desired active state
@@ -54,7 +54,7 @@ public class EntityManager extends com.p1_7.abstractengine.engine.Manager
     }
 
     /**
-     * Removes the entity identified by {@code id}.  Performs a linear
+     * removes the entity identified by id. performs a linear
      * scan and removes by index.
      *
      * @param id the UUID of the entity to remove
@@ -74,11 +74,11 @@ public class EntityManager extends com.p1_7.abstractengine.engine.Manager
     // ---------------------------------------------------------------
 
     /**
-     * Retrieves a single entity by its unique identifier.  Performs a
+     * retrieves a single entity by its unique identifier. performs a
      * linear scan.
      *
      * @param id the UUID to look up
-     * @return the matching entity, or {@code null} if not found
+     * @return the matching entity, or null if not found
      */
     @Override
     public Entity getEntity(UUID id) {
@@ -91,10 +91,10 @@ public class EntityManager extends com.p1_7.abstractengine.engine.Manager
     }
 
     /**
-     * Builds and returns a new {@link Array} containing the UUIDs of
+     * builds and returns a new Array containing the UUIDs of
      * every entity in the store.
      *
-     * @return an {@code Array} of all entity identifiers
+     * @return an Array of all entity identifiers
      */
     @Override
     public Array<UUID> getAllEntityIds() {
@@ -110,7 +110,7 @@ public class EntityManager extends com.p1_7.abstractengine.engine.Manager
     // ---------------------------------------------------------------
 
     /**
-     * Returns a debug string listing the UUIDs of all entities
+     * returns a debug string listing the UUIDs of all entities
      * currently in the store.
      *
      * @return a human-readable summary of the entity store

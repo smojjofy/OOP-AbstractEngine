@@ -3,8 +3,8 @@ package com.p1_7.abstractengine.render;
 import com.badlogic.gdx.utils.Array;
 
 /**
- * Simple array-backed implementation of {@link IRenderQueue}.
- * One instance is held for the lifetime of the {@link RenderManager}.
+ * simple array-backed implementation of IRenderQueue.
+ * one instance is held for the lifetime of the RenderManager.
  */
 class RenderQueue implements IRenderQueue {
 
@@ -12,7 +12,7 @@ class RenderQueue implements IRenderQueue {
     private final Array<IRenderItem> items = new Array<>();
 
     /**
-     * Adds an item to the queue for drawing this frame.
+     * adds an item to the queue for drawing this frame.
      *
      * @param item the render item to enqueue
      */
@@ -22,7 +22,7 @@ class RenderQueue implements IRenderQueue {
     }
 
     /**
-     * Removes all items from the queue.
+     * removes all items from the queue.
      */
     @Override
     public void clear() {
@@ -30,7 +30,7 @@ class RenderQueue implements IRenderQueue {
     }
 
     /**
-     * Returns the backing array so that the render manager can
+     * returns the backing array so that the render manager can
      * iterate it.
      *
      * @return the array of queued render items

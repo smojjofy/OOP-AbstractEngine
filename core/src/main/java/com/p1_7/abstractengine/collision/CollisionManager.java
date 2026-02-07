@@ -5,21 +5,21 @@ import com.badlogic.gdx.utils.Array;
 import com.p1_7.abstractengine.engine.UpdatableManager;
 
 /**
- * abstract per-frame manager that tests all registered {@link ICollidable}
+ * abstract per-frame manager that tests all registered ICollidable
  * entities for pairwise overlap using a two-phase architecture:
  * detection followed by resolution.
  *
- * <p>Entities must be explicitly registered via
- * {@link #registerCollidable(ICollidable)}. The detection phase uses a
- * stateless {@link CollisionDetector} and iterates unique pairs (O(n²))
- * to identify all collisions in the current frame. The resolution phase
+ * entities must be explicitly registered via
+ * registerCollidable(ICollidable). the detection phase uses a
+ * stateless CollisionDetector and iterates unique pairs (O(n²))
+ * to identify all collisions in the current frame. the resolution phase
  * processes these detected collisions according to the strategy implemented
- * by concrete subclasses.</p>
+ * by concrete subclasses.
  *
- * <p>Subclasses can override {@link #detect()} to implement optimised
+ * subclasses can override detect() to implement optimised
  * detection algorithms (spatial partitioning, grid-based, etc.) and must
- * implement {@link #resolve(Array)} to define collision resolution behaviour
- * (callbacks, physics impulses, layered filtering, etc.).</p>
+ * implement resolve(Array) to define collision resolution behaviour
+ * (callbacks, physics impulses, layered filtering, etc.).
  */
 public abstract class CollisionManager extends UpdatableManager {
 
@@ -37,7 +37,7 @@ public abstract class CollisionManager extends UpdatableManager {
     // ---------------------------------------------------------------
 
     /**
-     * Adds an {@link ICollidable} to the detection list.
+     * adds an ICollidable to the detection list.
      *
      * @param collidable the collidable entity to register
      */
@@ -46,7 +46,7 @@ public abstract class CollisionManager extends UpdatableManager {
     }
 
     /**
-     * Removes an {@link ICollidable} from the detection list.
+     * removes an ICollidable from the detection list.
      *
      * @param collidable the collidable entity to unregister
      */
@@ -75,13 +75,13 @@ public abstract class CollisionManager extends UpdatableManager {
     // ---------------------------------------------------------------
 
     /**
-     * detects all collisions by iterating unique pairs {@code (i, j)} where
-     * {@code i < j}. detected collisions are stored in {@link #detectedCollisions}
-     * for processing by {@link #resolve(Array)}.
+     * detects all collisions by iterating unique pairs (i, j) where
+     * i < j. detected collisions are stored in detectedCollisions
+     * for processing by resolve(Array).
      *
-     * <p>this method clears the previous frame's collisions before detection.
+     * this method clears the previous frame's collisions before detection.
      * subclasses can override this method to implement optimised detection
-     * algorithms (spatial partitioning, quadtrees, etc.).</p>
+     * algorithms (spatial partitioning, quadtrees, etc.).
      */
     protected void detect() {
         detectedCollisions.clear();
@@ -100,13 +100,11 @@ public abstract class CollisionManager extends UpdatableManager {
      * resolves detected collisions according to the collision resolution
      * strategy implemented by concrete subclasses.
      *
-     * <p>examples of resolution strategies include:
-     * <ul>
-     *   <li>callback-based: invoke {@link ICollidable#onCollision(ICollidable)} on both entities</li>
-     *   <li>physics-based: apply impulses or forces to separate entities</li>
-     *   <li>layered: filter collisions based on entity groups or categories</li>
-     *   <li>batched: group collisions by type and handle differently</li>
-     * </ul>
+     * examples of resolution strategies include:
+     * 1. callback-based: invoke ICollidable.onCollision(ICollidable) on both entities
+     * 2. physics-based: apply impulses or forces to separate entities
+     * 3. layered: filter collisions based on entity groups or categories
+     * 4. batched: group collisions by type and handle differently
      *
      * @param collisions the array of detected collision pairs from this frame
      */

@@ -5,40 +5,40 @@ import com.p1_7.abstractengine.input.IInputQuery;
 import com.p1_7.abstractengine.render.IRenderQueue;
 
 /**
- * Read-only snapshot of engine state passed into every {@link Scene}
+ * read-only snapshot of engine state passed into every Scene
  * callback.
  *
- * <p>A {@link Scene} receives a {@code SceneContext} so that it can
+ * a Scene receives a SceneContext so that it can
  * query entities, submit render items and read input without holding
- * direct references to the underlying managers.</p>
+ * direct references to the underlying managers.
  */
 public interface SceneContext {
 
     /**
-     * Returns the read-only entity repository.
+     * returns the read-only entity repository.
      *
-     * @return the {@link IEntityRepository}; never {@code null}
+     * @return the IEntityRepository; never null
      */
     IEntityRepository entities();
 
     /**
-     * Returns the render queue for submitting items this frame.
+     * returns the render queue for submitting items this frame.
      *
-     * @return the {@link IRenderQueue}; never {@code null}
+     * @return the IRenderQueue; never null
      */
     IRenderQueue renderQueue();
 
     /**
-     * Returns the input query interface for the current frame.
+     * returns the input query interface for the current frame.
      *
-     * @return the {@link IInputQuery}; never {@code null}
+     * @return the IInputQuery; never null
      */
     IInputQuery input();
 
     /**
-     * Returns the scene manager for requesting scene transitions.
+     * returns the scene manager for requesting scene transitions.
      *
-     * @return the {@link SceneManager}; never {@code null}
+     * @return the SceneManager; never null
      */
     SceneManager sceneManager();
 }

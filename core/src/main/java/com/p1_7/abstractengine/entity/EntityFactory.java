@@ -1,21 +1,21 @@
 package com.p1_7.abstractengine.entity;
 
 /**
- * Functional interface that decouples the {@link EntityManager} from
- * any concrete {@link Entity} subclass.
+ * functional interface that decouples the EntityManager from
+ * any concrete Entity subclass.
  *
- * <p>The demo phase supplies a concrete implementation — typically a
- * lambda or method reference — that constructs the desired entity
- * type.  The manager calls {@link #create()} and takes ownership of
- * the returned instance.</p>
+ * the demo phase supplies a concrete implementation - typically a
+ * lambda or method reference - that constructs the desired entity
+ * type. the manager calls create() and takes ownership of
+ * the returned instance.
  */
 @FunctionalInterface
 public interface EntityFactory {
 
     /**
-     * Constructs and returns a new entity instance.
+     * constructs and returns a new entity instance.
      *
-     * @return a freshly created {@link Entity}; must not be {@code null}
+     * @return a freshly created Entity; must not be null
      */
     Entity create();
 }

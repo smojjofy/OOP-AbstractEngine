@@ -1,14 +1,14 @@
 package com.p1_7.abstractengine.engine;
 
 /**
- * Abstract base class that provides the standard lifecycle template for
+ * abstract base class that provides the standard lifecycle template for
  * all managers in the engine.
  *
- * <p>Subclasses override {@link #onInit()} and {@link #onShutdown()} to
- * perform their own setup and teardown.  The public {@link #init()} and
- * {@link #shutdown()} methods are {@code final} and must not be
- * overridden — they manage the {@link #isInitialised()} flag and then
- * delegate to the hooks.</p>
+ * subclasses override onInit() and onShutdown() to
+ * perform their own setup and teardown. the public init() and
+ * shutdown() methods are final and must not be
+ * overridden - they manage the isInitialised() flag and then
+ * delegate to the hooks.
  */
 public abstract class Manager implements IManager {
 
@@ -16,8 +16,8 @@ public abstract class Manager implements IManager {
     private boolean initialised;
 
     /**
-     * Initialises the manager.  Sets the initialised flag and delegates
-     * to {@link #onInit()}.
+     * initialises the manager. sets the initialised flag and delegates
+     * to onInit().
      */
     @Override
     public final void init() {
@@ -26,7 +26,7 @@ public abstract class Manager implements IManager {
     }
 
     /**
-     * Shuts down the manager.  Delegates to {@link #onShutdown()} and
+     * shuts down the manager. delegates to onShutdown() and
      * clears the initialised flag.
      */
     @Override
@@ -36,26 +36,26 @@ public abstract class Manager implements IManager {
     }
 
     /**
-     * Hook called during initialisation.  Override in subclasses to
-     * perform setup work.  Default implementation is a no-op.
+     * hook called during initialisation. override in subclasses to
+     * perform setup work. default implementation is a no-op.
      */
     protected void onInit() {
         // no-op — subclasses may override
     }
 
     /**
-     * Hook called during shutdown.  Override in subclasses to release
-     * resources.  Default implementation is a no-op.
+     * hook called during shutdown. override in subclasses to release
+     * resources. default implementation is a no-op.
      */
     protected void onShutdown() {
         // no-op — subclasses may override
     }
 
     /**
-     * Returns whether this manager has been initialised.
+     * returns whether this manager has been initialised.
      *
-     * @return {@code true} if {@link #init()} has been called and
-     *         {@link #shutdown()} has not yet been called
+     * @return true if init() has been called and
+     *         shutdown() has not yet been called
      */
     public boolean isInitialised() {
         return initialised;

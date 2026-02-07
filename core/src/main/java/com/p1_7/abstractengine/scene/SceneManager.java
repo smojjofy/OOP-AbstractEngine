@@ -8,22 +8,22 @@ import com.p1_7.abstractengine.input.IInputQuery;
 import com.p1_7.abstractengine.render.IRenderQueue;
 
 /**
- * Manages the collection of scenes and drives the active scene's
+ * manages the collection of scenes and drives the active scene's
  * lifecycle and per-frame callbacks.
  *
- * <p>Scene transitions are deferred: {@link #requestChange(String)}
+ * scene transitions are deferred: requestChange(String)
  * stores the target key and the actual swap happens at the top of the
- * next {@code update} tick.  This avoids mutating state mid-frame.</p>
+ * next update tick. this avoids mutating state mid-frame.
  */
 public class SceneManager extends UpdatableManager {
 
     /** all registered scenes, keyed by name */
     private final ObjectMap<String, Scene> scenes = new ObjectMap<>();
 
-    /** the name of the currently active scene (may be {@code null}) */
+    /** the name of the currently active scene (may be null) */
     private String currentKey;
 
-    /** the name of the scene to transition to next frame (may be {@code null}) */
+    /** the name of the scene to transition to next frame (may be null) */
     private String pendingKey;
 
     /** the context object passed into scene callbacks */
@@ -39,8 +39,8 @@ public class SceneManager extends UpdatableManager {
     private final IInputQuery inputQuery;
 
     /**
-     * Constructs a {@code SceneManager} with the three dependencies
-     * it needs to assemble a {@link SceneContext}.
+     * constructs a SceneManager with the three dependencies
+     * it needs to assemble a SceneContext.
      *
      * @param entityRepository the read-only entity store
      * @param renderQueue      the single-frame render queue
@@ -59,9 +59,9 @@ public class SceneManager extends UpdatableManager {
     // ---------------------------------------------------------------
 
     /**
-     * Assembles the {@link SceneContext} from the injected
-     * references.  If an initial scene has already been set via
-     * {@link #setInitialScene(String)}, its {@link Scene#onEnter}
+     * assembles the SceneContext from the injected
+     * references. if an initial scene has already been set via
+     * setInitialScene(String), its Scene.onEnter
      * callback is invoked immediately.
      */
     @Override
@@ -97,7 +97,7 @@ public class SceneManager extends UpdatableManager {
     }
 
     /**
-     * Exits the current scene (if one is active) and clears the
+     * exits the current scene (if one is active) and clears the
      * scene registry.
      */
     @Override
@@ -113,7 +113,7 @@ public class SceneManager extends UpdatableManager {
     // ---------------------------------------------------------------
 
     /**
-     * Adds a scene to the registry, keyed by its name.
+     * adds a scene to the registry, keyed by its name.
      *
      * @param scene the scene to register
      */
@@ -122,9 +122,9 @@ public class SceneManager extends UpdatableManager {
     }
 
     /**
-     * Sets the initial scene key.  Must be called before
-     * {@link com.p1_7.abstractengine.engine.Engine#init()} so that
-     * {@link #onInit()} can enter the scene.
+     * sets the initial scene key. must be called before
+     * com.p1_7.abstractengine.engine.Engine.init() so that
+     * onInit() can enter the scene.
      *
      * @param key the name of the scene to start in
      */
@@ -133,8 +133,8 @@ public class SceneManager extends UpdatableManager {
     }
 
     /**
-     * Requests a deferred transition to the scene identified by
-     * {@code key}.  The transition is resolved at the top of the next
+     * requests a deferred transition to the scene identified by
+     * key. the transition is resolved at the top of the next
      * update tick.
      *
      * @param key the name of the target scene
@@ -148,9 +148,9 @@ public class SceneManager extends UpdatableManager {
     // ---------------------------------------------------------------
 
     /**
-     * Returns the currently active scene.
+     * returns the currently active scene.
      *
-     * @return the active {@link Scene}, or {@code null} if none is set
+     * @return the active Scene, or null if none is set
      */
     public Scene getCurrentScene() {
         if (currentKey == null) {
@@ -160,17 +160,17 @@ public class SceneManager extends UpdatableManager {
     }
 
     /**
-     * Returns the scene registered under the specified key.
+     * returns the scene registered under the specified key.
      *
      * @param key the name of the scene to retrieve
-     * @return the {@link Scene}, or {@code null} if not found
+     * @return the Scene, or null if not found
      */
     public Scene getScene(String key) {
         return scenes.get(key);
     }
 
     /**
-     * Returns an iterable over the names of all registered scenes.
+     * returns an iterable over the names of all registered scenes.
      *
      * @return the set of scene keys
      */
@@ -183,7 +183,7 @@ public class SceneManager extends UpdatableManager {
     // ---------------------------------------------------------------
 
     /**
-     * Resolves any pending scene transition, then drives the active
+     * resolves any pending scene transition, then drives the active
      * scene's update and render-submission hooks.
      *
      * @param deltaTime seconds elapsed since the previous frame

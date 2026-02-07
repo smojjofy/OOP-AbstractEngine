@@ -1,18 +1,18 @@
 package com.p1_7.abstractengine.engine;
 
 /**
- * Abstract manager that participates in the per-frame update loop in
- * addition to the standard lifecycle provided by {@link Manager}.
+ * abstract manager that participates in the per-frame update loop in
+ * addition to the standard lifecycle provided by Manager.
  *
- * <p>Subclasses implement {@link #onUpdate(float)} to define their
- * frame-tick behaviour.  The public {@link #update(float)} method is
- * {@code final} and delegates directly to that hook.</p>
+ * subclasses implement onUpdate(float) to define their
+ * frame-tick behaviour. the public update(float) method is
+ * final and delegates directly to that hook.
  */
 public abstract class UpdatableManager extends Manager implements IUpdatable {
 
     /**
-     * Called once per frame by the engine.  Delegates to
-     * {@link #onUpdate(float)}.
+     * called once per frame by the engine. delegates to
+     * onUpdate(float).
      *
      * @param deltaTime seconds elapsed since the previous frame
      */
@@ -22,7 +22,7 @@ public abstract class UpdatableManager extends Manager implements IUpdatable {
     }
 
     /**
-     * Hook that subclasses must implement to perform their per-frame logic.
+     * hook that subclasses must implement to perform their per-frame logic.
      *
      * @param deltaTime seconds elapsed since the previous frame
      */

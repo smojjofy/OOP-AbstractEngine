@@ -3,17 +3,17 @@ package com.p1_7.abstractengine.entity;
 import java.util.UUID;
 
 /**
- * Write-side contract for the entity store.
+ * write-side contract for the entity store.
  *
- * <p>Code that needs to add, update or remove entities receives this
- * interface.  Read-only access is provided by {@link IEntityRepository}.
- * Ownership of an entity moves to the manager once
- * {@link #createEntity(EntityFactory)} returns.</p>
+ * code that needs to add, update or remove entities receives this
+ * interface. read-only access is provided by IEntityRepository.
+ * ownership of an entity moves to the manager once
+ * createEntity(EntityFactory) returns.
  */
 public interface IEntityMutator {
 
     /**
-     * Creates a new entity via the supplied factory, adds it to the
+     * creates a new entity via the supplied factory, adds it to the
      * store, and returns it.
      *
      * @param factory the factory that constructs the concrete entity
@@ -22,7 +22,7 @@ public interface IEntityMutator {
     Entity createEntity(EntityFactory factory);
 
     /**
-     * Updates the active flag on the entity identified by {@code id}.
+     * updates the active flag on the entity identified by id.
      *
      * @param id     the UUID of the target entity
      * @param active the desired active state
@@ -30,7 +30,7 @@ public interface IEntityMutator {
     void updateEntity(UUID id, boolean active);
 
     /**
-     * Removes the entity identified by {@code id} from the store.
+     * removes the entity identified by id from the store.
      *
      * @param id the UUID of the entity to remove
      */

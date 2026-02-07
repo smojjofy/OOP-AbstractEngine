@@ -4,16 +4,14 @@ import com.badlogic.gdx.utils.Array;
 import com.p1_7.abstractengine.render.RenderManager;
 
 /**
- * Central orchestrator for the abstract engine. Manages the lifecycle
- * and per-frame update of all registered {@link IManager} and
- * {@link IUpdatable} instances, and delegates the explicit render call
- * to the {@link RenderManager}.
+ * central orchestrator for the abstract engine. manages the lifecycle
+ * and per-frame update of all registered IManager and
+ * IUpdatable instances, and delegates the explicit render call
+ * to the RenderManager.
  *
- * <p>
- * Managers are initialised in registration order and shut down in
+ * managers are initialised in registration order and shut down in
  * reverse order so that dependencies are torn down after the objects
  * that depend on them.
- * </p>
  */
 public class Engine {
 
@@ -27,8 +25,8 @@ public class Engine {
     private RenderManager renderManager;
 
     /**
-     * Registers a manager. If the manager also implements
-     * {@link IUpdatable} it is automatically added to the update loop.
+     * registers a manager. if the manager also implements
+     * IUpdatable it is automatically added to the update loop.
      *
      * @param manager the manager to register
      */
@@ -40,7 +38,7 @@ public class Engine {
     }
 
     /**
-     * Registers a standalone updatable that is not itself a manager.
+     * registers a standalone updatable that is not itself a manager.
      *
      * @param updatable the updatable to add to the per-frame loop
      */
@@ -49,8 +47,8 @@ public class Engine {
     }
 
     /**
-     * Stores the render manager for the explicit render step. The
-     * engine calls {@link RenderManager#render()} once per frame
+     * stores the render manager for the explicit render step. the
+     * engine calls RenderManager.render() once per frame
      * separately from the update loop.
      *
      * @param renderManager the render manager instance
@@ -60,7 +58,7 @@ public class Engine {
     }
 
     /**
-     * Initialises every registered manager in registration order.
+     * initialises every registered manager in registration order.
      */
     public void init() {
         for (int i = 0; i < managers.size; i++) {
@@ -69,7 +67,7 @@ public class Engine {
     }
 
     /**
-     * Advances all registered updatables by one frame.
+     * advances all registered updatables by one frame.
      *
      * @param deltaTime seconds elapsed since the previous frame
      */
@@ -80,8 +78,8 @@ public class Engine {
     }
 
     /**
-     * Delegates the current frame's draw call to the render manager.
-     * Does nothing if no render manager has been set.
+     * delegates the current frame's draw call to the render manager.
+     * does nothing if no render manager has been set.
      */
     public void render() {
         if (renderManager != null) {
@@ -90,7 +88,7 @@ public class Engine {
     }
 
     /**
-     * Shuts down every registered manager in reverse registration
+     * shuts down every registered manager in reverse registration
      * order so that dependants are torn down before their dependencies.
      */
     public void shutdown() {

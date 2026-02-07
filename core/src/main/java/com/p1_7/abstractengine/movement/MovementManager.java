@@ -7,15 +7,15 @@ import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.abstractengine.transform.ITransformable;
 
 /**
- * Per-frame manager that advances all registered {@link IMovable}
+ * per-frame manager that advances all registered IMovable
  * entities and, optionally, clamps their positions to a set of
  * world-space boundaries.
  *
- * <p>Entities must be explicitly registered via
- * {@link #registerMovable(IMovable)} before they will be updated.
- * Boundary clamping is dimension-agnostic: the demo calls
- * {@link #setWorldBounds(float[], float[])} with arrays whose length
- * matches the entities' {@link ITransform#getDimensions()}.</p>
+ * entities must be explicitly registered via
+ * registerMovable(IMovable) before they will be updated.
+ * boundary clamping is dimension-agnostic: the demo calls
+ * setWorldBounds(float[], float[]) with arrays whose length
+ * matches the entities' ITransform.getDimensions().
  */
 public class MovementManager extends UpdatableManager {
 
@@ -36,7 +36,7 @@ public class MovementManager extends UpdatableManager {
     // ---------------------------------------------------------------
 
     /**
-     * Adds an {@link IMovable} to the update list.
+     * adds an IMovable to the update list.
      *
      * @param movable the movable entity to register
      */
@@ -45,7 +45,7 @@ public class MovementManager extends UpdatableManager {
     }
 
     /**
-     * Removes an {@link IMovable} from the update list.
+     * removes an IMovable from the update list.
      *
      * @param movable the movable entity to unregister
      */
@@ -58,19 +58,19 @@ public class MovementManager extends UpdatableManager {
     // ---------------------------------------------------------------
 
     /**
-     * Enables or disables boundary clamping after movement.
+     * enables or disables boundary clamping after movement.
      *
-     * @param enabled {@code true} to clamp positions to world bounds
+     * @param enabled true to clamp positions to world bounds
      */
     public void setBoundariesEnabled(boolean enabled) {
         this.boundariesEnabled = enabled;
     }
 
     /**
-     * Sets the per-dimension world-space boundaries.  The demo
-     * typically passes arrays derived from {@link com.p1_7.abstractengine.engine.Settings}
-     * (e.g. {@code min = {0, 0}}, {@code max = {WINDOW_WIDTH, WINDOW_HEIGHT}}).
-     * Both arrays must be the same length; the engine does not enforce
+     * sets the per-dimension world-space boundaries. the demo
+     * typically passes arrays derived from com.p1_7.abstractengine.engine.Settings
+     * (e.g. min = {0, 0}, max = {WINDOW_WIDTH, WINDOW_HEIGHT}).
+     * both arrays must be the same length; the engine does not enforce
      * a specific dimensionality.
      *
      * @param min the lower bounds per dimension
@@ -86,7 +86,7 @@ public class MovementManager extends UpdatableManager {
     // ---------------------------------------------------------------
 
     /**
-     * Advances every registered movable by one physics step, then
+     * advances every registered movable by one physics step, then
      * clamps positions to the world bounds if enabled.
      *
      * @param deltaTime seconds elapsed since the previous frame
@@ -112,9 +112,9 @@ public class MovementManager extends UpdatableManager {
     // ---------------------------------------------------------------
 
     /**
-     * Clamps each dimension of the entity's position so that the
-     * entire body (position + size) stays within {@link #boundsMin}
-     * and {@link #boundsMax}.
+     * clamps each dimension of the entity's position so that the
+     * entire body (position + size) stays within boundsMin
+     * and boundsMax.
      *
      * @param transformable the entity whose position will be clamped
      */

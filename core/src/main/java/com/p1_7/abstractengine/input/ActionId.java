@@ -3,16 +3,16 @@ package com.p1_7.abstractengine.input;
 import java.util.Objects;
 
 /**
- * Represents a logical input action recognised by the engine.
+ * represents a logical input action recognised by the engine.
  *
- * <p>This class uses a string-based identifier system, allowing game
+ * this class uses a string-based identifier system, allowing game
  * code to define custom actions without modifying the core engine.
- * Demo implementations can create their own action constants
- * (e.g., {@code new ActionId("LEFT")}) and bind them via
- * {@link InputMapping}.</p>
+ * demo implementations can create their own action constants
+ * (e.g., new ActionId("LEFT")) and bind them via
+ * InputMapping.
  *
- * <p>The engine provides a single default action, {@link #NONE},
- * for compatibility with stub code.</p>
+ * the engine provides a single default action, NONE,
+ * for compatibility with stub code.
  */
 public class ActionId {
 
@@ -23,7 +23,7 @@ public class ActionId {
     public static final ActionId NONE = new ActionId("NONE");
 
     /**
-     * Constructs an action identifier with the specified name.
+     * constructs an action identifier with the specified name.
      *
      * @param id the unique string identifier for this action
      */
@@ -32,7 +32,7 @@ public class ActionId {
     }
 
     /**
-     * Returns the string identifier for this action.
+     * returns the string identifier for this action.
      *
      * @return the action identifier
      */

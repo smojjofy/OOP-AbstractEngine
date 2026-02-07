@@ -11,34 +11,32 @@ import com.p1_7.abstractengine.engine.Manager;
 import com.p1_7.abstractengine.transform.ITransform;
 
 /**
- * Owns the drawing resources and drives the per-frame render pass.
+ * owns the drawing resources and drives the per-frame render pass.
  *
- * <p>This manager extends {@link Manager} directly — it has no
- * per-frame {@code update()} logic.  All drawing happens inside the
- * explicit {@link #render()} call that the {@link com.p1_7.abstractengine.engine.Engine}
- * issues each frame.</p>
+ * this manager extends Manager directly - it has no
+ * per-frame update() logic. all drawing happens inside the
+ * explicit render() call that the com.p1_7.abstractengine.engine.Engine
+ * issues each frame.
  *
- * <p>The render pass is split into two phases:
- * <ol>
- *   <li><strong>Textured phase</strong> — items whose
- *       {@link IRenderable#getAssetPath()} is non-null are drawn via a
- *       {@link SpriteBatch}.</li>
- *   <li><strong>Procedural phase</strong> — items that return
- *       {@code null} from {@code getAssetPath()} are drawn as filled
- *       rectangles via a {@link ShapeRenderer}.</li>
- * </ol>
- * After both phases complete the queue is cleared.</p>
+ * the render pass is split into two phases:
+ * 1. textured phase - items whose
+ *    IRenderable.getAssetPath() is non-null are drawn via a
+ *    SpriteBatch.
+ * 2. procedural phase - items that return
+ *    null from getAssetPath() are drawn as filled
+ *    rectangles via a ShapeRenderer.
+ * after both phases complete the queue is cleared.
  */
-public class RenderManager extends Manager {
+public abstract class RenderManager extends Manager {
 
     /** sprite batch used for textured items */
-    private SpriteBatch batch;
+    protected SpriteBatch batch;
 
     /** shape renderer used for procedural items */
-    private ShapeRenderer shapeRenderer;
+    protected ShapeRenderer shapeRenderer;
 
     /** asset manager for texture loading and caching */
-    private AssetManager assetManager;
+    protected AssetManager assetManager;
 
     /** single-frame queue of items to draw */
     private final RenderQueue queue = new RenderQueue();
@@ -48,8 +46,8 @@ public class RenderManager extends Manager {
     // ---------------------------------------------------------------
 
     /**
-     * Creates the {@link SpriteBatch}, {@link ShapeRenderer}, and
-     * {@link AssetManager} resources.
+     * creates the SpriteBatch, ShapeRenderer, and
+     * AssetManager resources.
      */
     @Override
     protected void onInit() {
@@ -59,21 +57,15 @@ public class RenderManager extends Manager {
     }
 
     /**
-     * Disposes the {@link SpriteBatch}, {@link ShapeRenderer}, and
-     * {@link AssetManager} resources.
+     * disposes the SpriteBatch, ShapeRenderer, and
+     * AssetManager resources.
      */
     @Override
     protected void onShutdown() {
         // dispose asset manager (disposes all loaded assets)
-        if (assetManager != null) {
-            assetManager.dispose();
-        }
-        if (batch != null) {
-            batch.dispose();
-        }
-        if (shapeRenderer != null) {
-            shapeRenderer.dispose();
-        }
+        if (assetManager != null) { assetManager.dispose(); }
+        if (batch != null) { batch.dispose(); }
+        if (shapeRenderer != null) { shapeRenderer.dispose(); }
     }
 
     // ---------------------------------------------------------------
@@ -81,26 +73,24 @@ public class RenderManager extends Manager {
     // ---------------------------------------------------------------
 
     /**
-     * Returns the render queue that scenes use to submit items for
+     * returns the render queue that scenes use to submit items for
      * drawing.
      *
-     * @return the {@link IRenderQueue} instance
+     * @return the IRenderQueue instance
      */
     public IRenderQueue getRenderQueue() {
         return queue;
     }
 
     /**
-     * Executes the full render pass for the current frame.
+     * executes the full render pass for the current frame.
      *
-     * <ol>
-     *   <li>Textured phase: iterates the queue and draws every item
-     *       that has a non-null asset path via the {@link SpriteBatch}.</li>
-     *   <li>Procedural phase: iterates the queue and draws every item
-     *       that has a null asset path as a filled rectangle via the
-     *       {@link ShapeRenderer}.</li>
-     *   <li>Clears the queue so it is empty for the next frame.</li>
-     * </ol>
+     * 1. textured phase: iterates the queue and draws every item
+     *    that has a non-null asset path via the SpriteBatch.
+     * 2. procedural phase: iterates the queue and draws every item
+     *    that has a null asset path as a filled rectangle via the
+     *    ShapeRenderer.
+     * 3. clears the queue so it is empty for the next frame.
      */
     public void render() {
         // ensure all queued assets are loaded
@@ -110,7 +100,7 @@ public class RenderManager extends Manager {
         batch.begin();
         for (IRenderItem item : queue.items()) {
             if (item.getAssetPath() != null) {
-                draw(item);
+                drawTextured(item);
             }
         }
         batch.end();
@@ -133,13 +123,13 @@ public class RenderManager extends Manager {
     // ---------------------------------------------------------------
 
     /**
-     * Draws a textured or text item.  Loads textures via AssetManager
-     * on first access and draws them with the SpriteBatch.  Handles
+     * draws a textured or text item. loads textures via AssetManager
+     * on first access and draws them with the SpriteBatch. handles
      * special text rendering for LivesDisplay.
      *
      * @param item the render item with a non-null asset path (or text item)
      */
-    private void draw(IRenderItem item) {
+    private void drawTextured(IRenderItem item) {
         String assetPath = item.getAssetPath();
 
         // skip null paths (handled by procedural pass)
@@ -162,56 +152,51 @@ public class RenderManager extends Manager {
     }
 
     /**
-     * Draws a filled rectangle or text at the item's transform position.
-     * Handles special text rendering for LivesDisplay and TextDisplay using BitmapFont.
-     * Falls back to rectangle drawing for other null-path items.
+     * hook for custom procedural rendering logic that requires special handling.
+     * called during the procedural pass for items that return null from getAssetPath()
+     * and cannot be rendered as simple rectangles.
+     *
+     * <p>implementations can check item types and perform custom drawing.
+     * if this method returns true, the item is considered handled and the default
+     * rectangle drawing is skipped. if false, the item will be drawn as a filled rectangle.</p>
+     *
+     * <p>important: if custom rendering requires switching between shapeRenderer and batch,
+     * the implementation must end/begin the renderers correctly.</p>
+     *
+     * @param item the render item to potentially handle
+     * @param batch the sprite batch (not currently active during procedural pass)
+     * @param shapeRenderer the shape renderer (currently active with ShapeType.Filled)
+     * @return true if the item was handled, false to fall back to rectangle drawing
+     */
+    protected abstract boolean renderCustomProcedural(
+        IRenderItem item,
+        SpriteBatch batch,
+        ShapeRenderer shapeRenderer
+    );
+
+    /**
+     * draws a filled rectangle or delegates to custom rendering at the item's transform position.
+     * delegates to subclass hook for special rendering (e.g., text).
+     * falls back to rectangle drawing if not handled by subclass.
      *
      * @param item the render item to draw procedurally
      */
     private void drawProcedural(IRenderItem item) {
-        // handle text rendering for LivesDisplay
-        if (item instanceof com.p1_7.abstractengine.demo.LivesDisplay) {
-            com.p1_7.abstractengine.demo.LivesDisplay display =
-                (com.p1_7.abstractengine.demo.LivesDisplay) item;
+        // delegate to subclass hook for custom rendering
+        boolean handled = renderCustomProcedural(item, batch, shapeRenderer);
+
+        // if not handled by custom logic, fall back to rectangle drawing
+        if (!handled) {
             ITransform transform = item.getTransform();
             float[] position = transform.getPosition();
+            float[] size = transform.getSize();
 
-            // text rendering requires ending shape renderer and starting batch
-            shapeRenderer.end();
-            batch.begin();
-            display.getFont().draw(batch, display.getText(), position[0], position[1]);
-            batch.end();
-            shapeRenderer.begin(ShapeType.Filled);
-            return;
+            float x = position[0];
+            float y = position[1];
+            float w = size[0];
+            float h = size[1];
+
+            shapeRenderer.rect(x, y, w, h);
         }
-
-        // handle text rendering for TextDisplay
-        if (item instanceof com.p1_7.abstractengine.demo.TextDisplay) {
-            com.p1_7.abstractengine.demo.TextDisplay display =
-                (com.p1_7.abstractengine.demo.TextDisplay) item;
-            ITransform transform = item.getTransform();
-            float[] position = transform.getPosition();
-
-            // text rendering requires ending shape renderer and starting batch
-            shapeRenderer.end();
-            batch.begin();
-            display.getFont().draw(batch, display.getText(), position[0], position[1]);
-            batch.end();
-            shapeRenderer.begin(ShapeType.Filled);
-            return;
-        }
-
-        // fallback to rectangle drawing
-        ITransform transform = item.getTransform();
-        float[] position = transform.getPosition();
-        float[] size = transform.getSize();
-
-        // destructure the x, y, width, height from the arrays
-        float x = position[0];
-        float y = position[1];
-        float w = size[0];
-        float h = size[1];
-
-        shapeRenderer.rect(x, y, w, h);
     }
 }

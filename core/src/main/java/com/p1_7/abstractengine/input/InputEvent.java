@@ -1,13 +1,13 @@
 package com.p1_7.abstractengine.input;
 
 /**
- * Abstract base class for all input events produced by the engine.
+ * abstract base class for all input events produced by the engine.
  *
- * <p>Concrete event types (digital, analogue, pointer, etc.) are
- * context-specific and belong in the demo phase.  This class defines
+ * concrete event types (digital, analogue, pointer, etc.) are
+ * context-specific and belong in the demo phase. this class defines
  * the fields and accessors that every event shares: the logical
- * {@link ActionId} that triggered it and the system timestamp at
- * which it occurred.</p>
+ * ActionId that triggered it and the system timestamp at
+ * which it occurred.
  */
 public abstract class InputEvent {
 
@@ -18,7 +18,7 @@ public abstract class InputEvent {
     private final long timestamp;
 
     /**
-     * Constructs an input event with the given action and timestamp.
+     * constructs an input event with the given action and timestamp.
      *
      * @param actionId  the logical action that triggered this event
      * @param timestamp the system time in milliseconds
@@ -29,16 +29,16 @@ public abstract class InputEvent {
     }
 
     /**
-     * Returns the logical action associated with this event.
+     * returns the logical action associated with this event.
      *
-     * @return the action identifier; never {@code null}
+     * @return the action identifier; never null
      */
     public ActionId getActionId() {
         return actionId;
     }
 
     /**
-     * Returns the system timestamp at which this event occurred.
+     * returns the system timestamp at which this event occurred.
      *
      * @return the timestamp in milliseconds
      */

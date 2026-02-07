@@ -3,12 +3,12 @@ package com.p1_7.abstractengine.entity;
 import java.util.UUID;
 
 /**
- * Abstract base class for every entity managed by the engine.
+ * abstract base class for every entity managed by the engine.
  *
- * <p>Each entity is assigned a globally unique identifier at
- * construction time and is active by default.  Concrete subclasses
+ * each entity is assigned a globally unique identifier at
+ * construction time and is active by default. concrete subclasses
  * (created during the demo phase) extend this class to attach
- * transform, movability, collidability and other capabilities.</p>
+ * transform, movability, collidability and other capabilities.
  */
 public abstract class Entity {
 
@@ -19,8 +19,8 @@ public abstract class Entity {
     private boolean active;
 
     /**
-     * Constructs a new entity with a randomly generated UUID and
-     * {@code active} set to {@code true}.
+     * constructs a new entity with a randomly generated UUID and
+     * active set to true.
      */
     protected Entity() {
         this.id = UUID.randomUUID();
@@ -28,27 +28,27 @@ public abstract class Entity {
     }
 
     /**
-     * Returns the unique identifier of this entity.
+     * returns the unique identifier of this entity.
      *
-     * @return the entity's UUID; never {@code null}
+     * @return the entity's UUID; never null
      */
     public UUID getId() {
         return id;
     }
 
     /**
-     * Returns whether this entity is currently active.
+     * returns whether this entity is currently active.
      *
-     * @return {@code true} if the entity participates in updates
+     * @return true if the entity participates in updates
      */
     public boolean isActive() {
         return active;
     }
 
     /**
-     * Sets the active state of this entity.
+     * sets the active state of this entity.
      *
-     * @param active {@code true} to activate, {@code false} to deactivate
+     * @param active true to activate, false to deactivate
      */
     public void setActive(boolean active) {
         this.active = active;

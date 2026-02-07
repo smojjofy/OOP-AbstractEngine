@@ -8,15 +8,15 @@ import com.badlogic.gdx.utils.ObjectSet;
 import com.p1_7.abstractengine.engine.UpdatableManager;
 
 /**
- * Manages per-frame input polling and exposes the resulting action
- * states via {@link IInputQuery}.
+ * manages per-frame input polling and exposes the resulting action
+ * states via IInputQuery.
  *
- * <p>Each frame the manager iterates every value in {@link ActionId},
+ * each frame the manager iterates every value in ActionId,
  * checks whether any bound key or button is physically pressed, and
- * derives the frame-local transition state ({@link InputState})
- * relative to the previous frame.  The entire pipeline is dormant
- * until {@link ActionId} is populated with real values and bindings
- * are added to the {@link InputMapping}.</p>
+ * derives the frame-local transition state (InputState)
+ * relative to the previous frame. the entire pipeline is dormant
+ * until ActionId is populated with real values and bindings
+ * are added to the InputMapping.
  */
 public class InputOutputManager extends UpdatableManager implements IInputQuery {
 
@@ -37,7 +37,7 @@ public class InputOutputManager extends UpdatableManager implements IInputQuery 
     // ---------------------------------------------------------------
 
     /**
-     * Polls the physical input devices and computes the logical
+     * polls the physical input devices and computes the logical
      * action-state transitions for this frame.
      *
      * @param deltaTime seconds elapsed since the previous frame
@@ -81,11 +81,11 @@ public class InputOutputManager extends UpdatableManager implements IInputQuery 
     // ---------------------------------------------------------------
 
     /**
-     * Returns whether the specified action is currently active
-     * (either {@link InputState#PRESSED} or {@link InputState#HELD}).
+     * returns whether the specified action is currently active
+     * (either InputState.PRESSED or InputState.HELD).
      *
      * @param actionId the logical action to query
-     * @return {@code true} if the action is active this frame
+     * @return true if the action is active this frame
      */
     @Override
     public boolean isActionActive(ActionId actionId) {
@@ -94,10 +94,10 @@ public class InputOutputManager extends UpdatableManager implements IInputQuery 
     }
 
     /**
-     * Returns the precise input state for the specified action.
+     * returns the precise input state for the specified action.
      *
      * @param actionId the logical action to query
-     * @return the {@link InputState}, or {@code null} if inactive
+     * @return the InputState, or null if inactive
      */
     @Override
     public InputState getActionState(ActionId actionId) {
@@ -109,20 +109,20 @@ public class InputOutputManager extends UpdatableManager implements IInputQuery 
     // ---------------------------------------------------------------
 
     /**
-     * Returns the input mapping used by this manager.
+     * returns the input mapping used by this manager.
      *
-     * @return the current {@link InputMapping}
+     * @return the current InputMapping
      */
     public InputMapping getInputMapping() {
         return inputMapping;
     }
 
     /**
-     * Enables or disables input polling.  When disabled,
-     * {@link #actionStates} is cleared each frame so that all
+     * enables or disables input polling. when disabled,
+     * actionStates is cleared each frame so that all
      * queries return inactive.
      *
-     * @param enabled {@code true} to enable polling
+     * @param enabled true to enable polling
      */
     public void setInputEnabled(boolean enabled) {
         this.inputEnabled = enabled;
@@ -133,22 +133,22 @@ public class InputOutputManager extends UpdatableManager implements IInputQuery 
     // ---------------------------------------------------------------
 
     /**
-     * Collects all unique action ids that have been bound to at least
+     * collects all unique action ids that have been bound to at least
      * one key or button in the input mapping.
      *
-     * @return an {@link ObjectSet} of all bound actions
+     * @return an ObjectSet of all bound actions
      */
     private ObjectSet<ActionId> getBoundActions() {
         return inputMapping.getAllActions();
     }
 
     /**
-     * Checks whether any physical key or button bound to the given
+     * checks whether any physical key or button bound to the given
      * action is currently held down, using the reverse-lookup helpers
-     * on the {@link InputMapping}.
+     * on the InputMapping.
      *
      * @param action the logical action to check
-     * @return {@code true} if at least one bound input is pressed
+     * @return true if at least one bound input is pressed
      */
     private boolean isPhysicallyDown(ActionId action) {
         // check all bound keyboard keys
