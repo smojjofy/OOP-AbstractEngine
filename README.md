@@ -1,6 +1,6 @@
-# Abstract Engine
+# Abstract Simulation Engine
 
-A abstract simulation engine built with [libGDX](https://libgdx.com/), following OOP and SOLID principles. 
+An abstract simulation engine built with [libGDX](https://libgdx.com/), following OOP and SOLID principles. 
 
 ## Engine Architecture
 
