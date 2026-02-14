@@ -1,9 +1,7 @@
-package com.p1_7.abstractengine.demo.dropletGame;
+package com.p1_7.demo;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.p1_7.abstractengine.demo.common.Background;
-import com.p1_7.abstractengine.demo.common.TextDisplay;
 import com.p1_7.abstractengine.engine.Settings;
 import com.p1_7.abstractengine.scene.Scene;
 import com.p1_7.abstractengine.scene.SceneContext;
@@ -84,9 +82,9 @@ public class GameOverScene extends Scene {
     public void update(float deltaTime, SceneContext context) {
         // space = replay, escape = menu
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            context.sceneManager().requestChange("game");
+            context.changeScene("game");
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            context.sceneManager().requestChange("menu");
+            context.changeScene("menu");
         }
     }
 

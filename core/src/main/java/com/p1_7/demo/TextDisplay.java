@@ -1,4 +1,4 @@
-package com.p1_7.abstractengine.demo.common;
+package com.p1_7.demo;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.p1_7.abstractengine.entity.Entity;

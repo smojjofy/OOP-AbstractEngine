@@ -1,4 +1,4 @@
-package com.p1_7.abstractengine.demo.dropletGame;
+package com.p1_7.demo;
 
 import com.p1_7.abstractengine.input.ActionId;
 

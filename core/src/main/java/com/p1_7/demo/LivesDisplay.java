@@ -1,7 +1,6 @@
-package com.p1_7.abstractengine.demo.dropletGame;
+package com.p1_7.demo;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.p1_7.abstractengine.demo.common.Transform2D;
 import com.p1_7.abstractengine.engine.Settings;
 import com.p1_7.abstractengine.entity.Entity;
 import com.p1_7.abstractengine.render.IRenderItem;

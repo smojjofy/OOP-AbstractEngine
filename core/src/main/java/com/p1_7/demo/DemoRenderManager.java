@@ -1,11 +1,10 @@
-package com.p1_7.abstractengine.demo.dropletGame;
+package com.p1_7.demo;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
-import com.p1_7.abstractengine.demo.common.TextDisplay;
 import com.p1_7.abstractengine.render.IRenderItem;
 import com.p1_7.abstractengine.render.RenderManager;
 import com.p1_7.abstractengine.transform.ITransform;
@@ -14,9 +13,9 @@ import com.p1_7.abstractengine.transform.ITransform;
  * demo-specific render manager that handles text rendering for
  * LivesDisplay and TextDisplay entities.
  *
- * <p>implements custom procedural rendering logic to support BitmapFont
+ * implements custom procedural rendering logic to support BitmapFont
  * text drawing which requires switching from ShapeRenderer to SpriteBatch
- * mid-pass.</p>
+ * mid-pass.
  */
 public class DemoRenderManager extends RenderManager {
 

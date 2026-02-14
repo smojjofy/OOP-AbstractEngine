@@ -1,7 +1,6 @@
-package com.p1_7.abstractengine.demo.dropletGame;
+package com.p1_7.demo;
 
 import com.p1_7.abstractengine.collision.ICollidable;
-import com.p1_7.abstractengine.demo.common.SpriteEntity;
 
 /**
  * falling droplet entity that the player must catch.

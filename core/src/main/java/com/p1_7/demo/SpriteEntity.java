@@ -1,6 +1,6 @@
-package com.p1_7.abstractengine.demo.common;
+package com.p1_7.demo;
 
-import com.badlogic.gdx.math.Rectangle;
+import com.p1_7.abstractengine.collision.IBounds;
 import com.p1_7.abstractengine.collision.ICollidable;
 import com.p1_7.abstractengine.entity.Entity;
 import com.p1_7.abstractengine.movement.IMovable;
@@ -29,7 +29,7 @@ public abstract class SpriteEntity extends Entity implements IRenderItem, IMovab
     protected float[] acceleration = new float[2];
 
     /** cached bounding rectangle derived from transform */
-    private final Rectangle bounds = new Rectangle();
+    private final Rectangle2D bounds = new Rectangle2D();
 
     /**
      * constructs a sprite entity with the specified asset and transform.
@@ -94,7 +94,7 @@ public abstract class SpriteEntity extends Entity implements IRenderItem, IMovab
     // ==================== ICollidable ====================
 
     @Override
-    public Rectangle getBounds() {
+    public IBounds getBounds() {
         // derive bounding box from transform (sync cached rectangle)
         float[] position = transform.getPosition();
         float[] size = transform.getSize();

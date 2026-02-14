@@ -156,12 +156,12 @@ public abstract class RenderManager extends Manager {
      * called during the procedural pass for items that return null from getAssetPath()
      * and cannot be rendered as simple rectangles.
      *
-     * <p>implementations can check item types and perform custom drawing.
+     * implementations can check item types and perform custom drawing.
      * if this method returns true, the item is considered handled and the default
-     * rectangle drawing is skipped. if false, the item will be drawn as a filled rectangle.</p>
+     * rectangle drawing is skipped. if false, the item will be drawn as a filled rectangle.
      *
-     * <p>important: if custom rendering requires switching between shapeRenderer and batch,
-     * the implementation must end/begin the renderers correctly.</p>
+     * important: if custom rendering requires switching between shapeRenderer and batch,
+     * the implementation must end/begin the renderers correctly.
      *
      * @param item the render item to potentially handle
      * @param batch the sprite batch (not currently active during procedural pass)

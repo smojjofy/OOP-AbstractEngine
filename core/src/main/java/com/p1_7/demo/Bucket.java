@@ -1,7 +1,6 @@
-package com.p1_7.abstractengine.demo.dropletGame;
+package com.p1_7.demo;
 
 import com.p1_7.abstractengine.collision.ICollidable;
-import com.p1_7.abstractengine.demo.common.SpriteEntity;
 import com.p1_7.abstractengine.input.IInputQuery;
 
 /**

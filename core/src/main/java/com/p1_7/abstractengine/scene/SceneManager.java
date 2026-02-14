@@ -85,8 +85,13 @@ public class SceneManager extends UpdatableManager {
             }
 
             @Override
-            public SceneManager sceneManager() {
-                return SceneManager.this;
+            public void changeScene(String key) {
+                SceneManager.this.requestChange(key);
+            }
+
+            @Override
+            public Scene getScene(String key) {
+                return SceneManager.this.getScene(key);
             }
         };
 

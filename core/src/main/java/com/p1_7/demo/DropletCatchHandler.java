@@ -1,4 +1,4 @@
-package com.p1_7.abstractengine.demo.dropletGame;
+package com.p1_7.demo;
 
 /**
  * functional interface for handling droplet catch events.

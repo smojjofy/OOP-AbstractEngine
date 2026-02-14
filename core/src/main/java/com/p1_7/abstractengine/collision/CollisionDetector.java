@@ -4,14 +4,13 @@ package com.p1_7.abstractengine.collision;
  * stateless utility that checks whether two ICollidable
  * objects overlap.
  *
- * the check is performed by comparing the axis-aligned bounding
- * rectangles returned by each collidable via
- * com.badlogic.gdx.math.Rectangle.overlaps(com.badlogic.gdx.math.Rectangle).
+ * the check is performed by delegating to the IBounds.overlaps()
+ * method on the bounds returned by each collidable.
  */
 public class CollisionDetector {
 
     /**
-     * determines whether the bounding rectangles of the two
+     * determines whether the bounding volumes of the two
      * collidables overlap.
      *
      * @param a the first collidable

@@ -1,4 +1,4 @@
-package com.p1_7.abstractengine.demo.dropletGame;
+package com.p1_7.demo;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -6,7 +6,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.p1_7.abstractengine.collision.CollisionManager;
-import com.p1_7.abstractengine.demo.common.Background;
 import com.p1_7.abstractengine.engine.Settings;
 import com.p1_7.abstractengine.entity.IEntityMutator;
 import com.p1_7.abstractengine.movement.MovementManager;
@@ -200,11 +199,11 @@ public class GameScene extends Scene {
                     gameOver = true;
 
                     // pass score to game over scene and transition
-                    GameOverScene gameOverScene = (GameOverScene) context.sceneManager().getScene("gameover");
+                    GameOverScene gameOverScene = (GameOverScene) context.getScene("gameover");
                     if (gameOverScene != null) {
                         gameOverScene.setScore(score);
                     }
-                    context.sceneManager().requestChange("gameover");
+                    context.changeScene("gameover");
                 }
             }
         }

@@ -1,9 +1,7 @@
-package com.p1_7.abstractengine.demo.dropletGame;
+package com.p1_7.demo;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.p1_7.abstractengine.demo.common.Background;
-import com.p1_7.abstractengine.demo.common.TextDisplay;
 import com.p1_7.abstractengine.engine.Settings;
 import com.p1_7.abstractengine.scene.Scene;
 import com.p1_7.abstractengine.scene.SceneContext;
@@ -62,7 +60,7 @@ public class MenuScene extends Scene {
         // check for space key or enter to start game
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
             Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            context.sceneManager().requestChange("game");
+            context.changeScene("game");
         }
     }
 

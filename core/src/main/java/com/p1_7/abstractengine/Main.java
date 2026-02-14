@@ -5,12 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import com.p1_7.abstractengine.demo.dropletGame.DemoActions;
-import com.p1_7.abstractengine.demo.dropletGame.DemoCollisionManager;
-import com.p1_7.abstractengine.demo.dropletGame.DemoRenderManager;
-import com.p1_7.abstractengine.demo.dropletGame.GameOverScene;
-import com.p1_7.abstractengine.demo.dropletGame.GameScene;
-import com.p1_7.abstractengine.demo.dropletGame.MenuScene;
+import com.p1_7.demo.DemoActions;
+import com.p1_7.demo.DemoCollisionManager;
+import com.p1_7.demo.DemoRenderManager;
+import com.p1_7.demo.GameOverScene;
+import com.p1_7.demo.GameScene;
+import com.p1_7.demo.MenuScene;
 import com.p1_7.abstractengine.engine.Engine;
 import com.p1_7.abstractengine.engine.Settings;
 import com.p1_7.abstractengine.entity.EntityManager;
@@ -19,10 +19,6 @@ import com.p1_7.abstractengine.input.InputOutputManager;
 import com.p1_7.abstractengine.movement.MovementManager;
 import com.p1_7.abstractengine.scene.SceneManager;
 
-/**
- * com.badlogic.gdx.ApplicationListener implementation shared by all
- * platforms.
- */
 public class Main extends ApplicationAdapter {
 
     private Engine engine;
@@ -44,12 +40,17 @@ public class Main extends ApplicationAdapter {
         collisionManager = new DemoCollisionManager();
         inputOutputManager = new InputOutputManager();
         renderManager = new DemoRenderManager();
-        sceneManager = new SceneManager(entityManager, renderManager.getRenderQueue(), inputOutputManager);
+        sceneManager = new SceneManager(
+            entityManager,
+            renderManager.getRenderQueue(),
+            inputOutputManager
+        );
+
+        float[] worldMinBound = { 0f, 0f };
+        float[] worldMaxBound = { Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT };
 
         // 3. configure movement boundaries
-        movementManager.setWorldBounds(
-                new float[] { 0f, 0f },
-                new float[] { Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT });
+        movementManager.setWorldBounds(worldMinBound, worldMaxBound);
 
         // 4. configure input bindings
         InputMapping mapping = inputOutputManager.getInputMapping();
@@ -88,7 +89,6 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         engine.update(Gdx.graphics.getDeltaTime());
         engine.render();
     }

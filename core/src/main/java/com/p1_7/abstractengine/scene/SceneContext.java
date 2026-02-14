@@ -36,9 +36,21 @@ public interface SceneContext {
     IInputQuery input();
 
     /**
-     * returns the scene manager for requesting scene transitions.
+     * requests a deferred transition to the scene identified by key.
+     * the transition is resolved at the top of the next update tick.
      *
-     * @return the SceneManager; never null
+     * @param key the name of the target scene
      */
-    SceneManager sceneManager();
+    void changeScene(String key);
+
+    /**
+     * returns the scene registered under the specified key.
+     *
+     * useful for inter-scene communication, such as passing data
+     * to the target scene before transitioning.
+     *
+     * @param key the name of the scene to retrieve
+     * @return the Scene, or null if not found
+     */
+    Scene getScene(String key);
 }

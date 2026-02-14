@@ -1,12 +1,10 @@
 package com.p1_7.abstractengine.collision;
 
-import com.badlogic.gdx.math.Rectangle;
-
 /**
  * capability interface for any entity that participates in collision
  * detection.
  *
- * the bounding Rectangle is used by
+ * the bounding volume returned by getBounds() is used by
  * CollisionDetector to perform overlap tests. the
  * onCollision(ICollidable) callback is invoked by the
  * CollisionManager when an overlap is detected with another
@@ -15,12 +13,15 @@ import com.badlogic.gdx.math.Rectangle;
 public interface ICollidable {
 
     /**
-     * returns the axis-aligned bounding rectangle that represents
-     * this entity's collision shape.
+     * returns the collision bounds that represent this entity's shape.
      *
-     * @return the bounding rectangle; must not be null
+     * implementations may return axis-aligned rectangles, circles,
+     * polygons, or other shapes depending on their dimensionality
+     * and collision requirements.
+     *
+     * @return the bounding volume; must not be null
      */
-    Rectangle getBounds();
+    IBounds getBounds();
 
     /**
      * called when this entity has been found to overlap with another.

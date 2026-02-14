@@ -1,4 +1,4 @@
-package com.p1_7.abstractengine.demo.dropletGame;
+package com.p1_7.demo;
 
 import com.badlogic.gdx.utils.Array;
 
@@ -9,15 +9,15 @@ import com.p1_7.abstractengine.collision.CollisionPair;
  * demo-specific collision manager that resolves collisions by invoking
  * callback methods on both entities.
  *
- * <p>this implementation provides the simple callback-based resolution
+ * this implementation provides the simple callback-based resolution
  * strategy used in the demo application. each detected collision results
  * in both entities receiving their {@link com.p1_7.abstractengine.collision.ICollidable#onCollision}
- * callback with a reference to the other entity.</p>
+ * callback with a reference to the other entity.
  *
- * <p>this is the simplest collision resolution strategy and is suitable
+ * this is the simplest collision resolution strategy and is suitable
  * for applications where entities manage their own collision response logic.
  * more complex applications may implement different resolution strategies
- * such as physics-based impulses or layered collision filtering.</p>
+ * such as physics-based impulses or layered collision filtering.
  */
 public class DemoCollisionManager extends CollisionManager {
 
