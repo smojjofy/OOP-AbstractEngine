@@ -3,16 +3,8 @@ package com.p1_7.demo;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.utils.ScreenUtils;
 
-import com.p1_7.demo.DemoActions;
-import com.p1_7.demo.DemoCollisionManager;
-import com.p1_7.demo.DemoRenderManager;
-import com.p1_7.demo.GameOverScene;
-import com.p1_7.demo.GameScene;
-import com.p1_7.demo.MenuScene;
 import com.p1_7.abstractengine.engine.Engine;
-import com.p1_7.abstractengine.engine.Settings;
 import com.p1_7.abstractengine.entity.EntityManager;
 import com.p1_7.abstractengine.input.InputMapping;
 import com.p1_7.abstractengine.input.InputOutputManager;
@@ -40,11 +32,7 @@ public class Main extends ApplicationAdapter {
         collisionManager = new DemoCollisionManager();
         inputOutputManager = new InputOutputManager();
         renderManager = new DemoRenderManager();
-        sceneManager = new SceneManager(
-            entityManager,
-            renderManager.getRenderQueue(),
-            inputOutputManager
-        );
+        sceneManager = new SceneManager(entityManager, renderManager.getRenderQueue(), inputOutputManager);
 
         float[] worldMinBound = { 0f, 0f };
         float[] worldMaxBound = { Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT };

@@ -2,7 +2,6 @@ package com.p1_7.demo;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.p1_7.abstractengine.engine.Settings;
 import com.p1_7.abstractengine.scene.Scene;
 import com.p1_7.abstractengine.scene.SceneContext;
 

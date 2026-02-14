@@ -6,7 +6,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.p1_7.abstractengine.collision.CollisionManager;
-import com.p1_7.abstractengine.engine.Settings;
 import com.p1_7.abstractengine.entity.IEntityMutator;
 import com.p1_7.abstractengine.movement.MovementManager;
 import com.p1_7.abstractengine.scene.Scene;
