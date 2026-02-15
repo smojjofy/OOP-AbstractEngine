@@ -1,26 +1,11 @@
 package com.p1_7.demo.display;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.p1_7.abstractengine.entity.Entity;
-import com.p1_7.abstractengine.render.IRenderItem;
-import com.p1_7.abstractengine.transform.ITransform;
-import com.p1_7.demo.core.Transform2D;
-import com.p1_7.demo.core.Transform2D;
-
 /**
  * text entity displaying current score.
  *
- * uses libGDX BitmapFont for text rendering. returns null
- * from getAssetPath() to signal to RenderManager that this
- * requires text rendering instead of texture drawing.
+ * extends basetextdisplay to leverage shared text rendering logic.
  */
-public class ScoreDisplay extends Entity implements IRenderItem {
-
-    /** 2d spatial transform */
-    private final Transform2D transform;
-
-    /** font used for rendering the score text */
-    private final BitmapFont font;
+public class ScoreDisplay extends BaseTextDisplay {
 
     /** current score */
     private int score;
@@ -33,10 +18,9 @@ public class ScoreDisplay extends Entity implements IRenderItem {
      * @param initialScore the starting score
      */
     public ScoreDisplay(float x, float y, int initialScore) {
-        super();
+        // call baseclass constructor with 100x20 size and 1.0 scale
+        super(x, y, 100f, 20f, 1.0f);
         this.score = initialScore;
-        this.font = new BitmapFont(); // libgdx default font
-        this.transform = new Transform2D(x, y, 100f, 20f);
     }
 
     /**
@@ -62,35 +46,8 @@ public class ScoreDisplay extends Entity implements IRenderItem {
      *
      * @return the score text string
      */
+    @Override
     public String getText() {
         return "Score: " + score;
-    }
-
-    /**
-     * returns the font used for rendering.
-     *
-     * @return the BitmapFont instance
-     */
-    public BitmapFont getFont() {
-        return font;
-    }
-
-    /**
-     * disposes the font resource.
-     * should be called when the scene exits.
-     */
-    public void dispose() {
-        font.dispose();
-    }
-
-    @Override
-    public String getAssetPath() {
-        // null signals text rendering instead of texture
-        return null;
-    }
-
-    @Override
-    public ITransform getTransform() {
-        return transform;
     }
 }

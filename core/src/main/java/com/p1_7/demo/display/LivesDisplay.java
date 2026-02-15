@@ -1,27 +1,14 @@
 package com.p1_7.demo.display;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.p1_7.abstractengine.entity.Entity;
-import com.p1_7.abstractengine.render.IRenderItem;
-import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.demo.Settings;
-import com.p1_7.demo.core.Transform2D;
-import com.p1_7.demo.core.Transform2D;
 
 /**
  * text entity displaying remaining lives count.
  *
- * uses libGDX BitmapFont for text rendering. returns null
- * from getAssetPath() to signal to RenderManager that this
- * requires text rendering instead of texture drawing.
+ * extends basetextdisplay to leverage shared text rendering logic.
+ * positioned at the top-left corner of the screen.
  */
-public class LivesDisplay extends Entity implements IRenderItem {
-
-    /** 2d spatial transform */
-    private final Transform2D transform;
-
-    /** font used for rendering the lives text */
-    private final BitmapFont font;
+public class LivesDisplay extends BaseTextDisplay {
 
     /** current lives count */
     private int lives;
@@ -32,14 +19,9 @@ public class LivesDisplay extends Entity implements IRenderItem {
      * @param initialLives the starting number of lives
      */
     public LivesDisplay(int initialLives) {
-        super();
+        // position at top-left corner with 100x20 size and 1.0 scale
+        super(10f, Settings.WINDOW_HEIGHT - 10f, 100f, 20f, 1.0f);
         this.lives = initialLives;
-        this.font = new BitmapFont(); // libgdx default font
-
-        // position at top-left corner
-        float x = 10f;
-        float y = Settings.WINDOW_HEIGHT - 10f;
-        this.transform = new Transform2D(x, y, 100f, 20f);
     }
 
     /**
@@ -65,35 +47,8 @@ public class LivesDisplay extends Entity implements IRenderItem {
      *
      * @return the lives text string
      */
+    @Override
     public String getText() {
         return "Lives: " + lives;
-    }
-
-    /**
-     * returns the font used for rendering.
-     *
-     * @return the BitmapFont instance
-     */
-    public BitmapFont getFont() {
-        return font;
-    }
-
-    /**
-     * disposes the font resource.
-     * should be called when the scene exits.
-     */
-    public void dispose() {
-        font.dispose();
-    }
-
-    @Override
-    public String getAssetPath() {
-        // null signals text rendering instead of texture
-        return null;
-    }
-
-    @Override
-    public ITransform getTransform() {
-        return transform;
     }
 }

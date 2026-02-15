@@ -152,27 +152,30 @@ public abstract class RenderManager extends Manager {
     }
 
     /**
-     * hook for custom procedural rendering logic that requires special handling.
-     * called during the procedural pass for items that return null from getAssetPath()
-     * and cannot be rendered as simple rectangles.
+     * hook for custom procedural rendering logic.
      *
-     * implementations can check item types and perform custom drawing.
-     * if this method returns true, the item is considered handled and the default
-     * rectangle drawing is skipped. if false, the item will be drawn as a filled rectangle.
-     *
-     * important: if custom rendering requires switching between shapeRenderer and batch,
-     * the implementation must end/begin the renderers correctly.
+     * checks if the item implements icustomrenderable and delegates to its rendercustom() method.
+     * subclasses can override to add additional custom rendering beyond icustomrenderable.
      *
      * @param item the render item to potentially handle
-     * @param batch the sprite batch (not currently active during procedural pass)
-     * @param shapeRenderer the shape renderer (currently active with ShapeType.Filled)
+     * @param batch the sprite batch (not currently active)
+     * @param shapeRenderer the shape renderer (currently active)
      * @return true if the item was handled, false to fall back to rectangle drawing
      */
-    protected abstract boolean renderCustomProcedural(
+    protected boolean renderCustomProcedural(
         IRenderItem item,
         SpriteBatch batch,
         ShapeRenderer shapeRenderer
-    );
+    ) {
+        // check if item implements ICustomRenderable interface
+        if (item instanceof ICustomRenderable) {
+            ((ICustomRenderable) item).renderCustom(batch, shapeRenderer);
+            return true;
+        }
+
+        // not handled, fall back to default rectangle rendering
+        return false;
+    }
 
     /**
      * draws a filled rectangle or delegates to custom rendering at the item's transform position.

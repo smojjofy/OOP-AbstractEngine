@@ -1,29 +1,13 @@
 package com.p1_7.demo.display;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.p1_7.abstractengine.entity.Entity;
-import com.p1_7.abstractengine.render.IRenderItem;
-import com.p1_7.abstractengine.transform.ITransform;
-import com.p1_7.demo.core.Transform2D;
-import com.p1_7.demo.core.Transform2D;
-
 /**
  * reusable text rendering entity for displaying arbitrary text.
  *
- * uses libGDX BitmapFont for text rendering. returns null
- * from getAssetPath() to signal to RenderManager that this
- * requires text rendering instead of texture drawing.
- *
+ * extends basetextdisplay to leverage shared text rendering logic.
  * font scale can be adjusted at construction time to create
  * titles, subtitles, or body text.
  */
-public class TextDisplay extends Entity implements IRenderItem {
-
-    /** 2d spatial transform */
-    private final Transform2D transform;
-
-    /** font used for rendering the text */
-    private final BitmapFont font;
+public class TextDisplay extends BaseTextDisplay {
 
     /** current text content */
     private String text;
@@ -37,13 +21,9 @@ public class TextDisplay extends Entity implements IRenderItem {
      * @param scale the font scale multiplier (1.0f = normal size)
      */
     public TextDisplay(String text, float x, float y, float scale) {
-        super();
+        // call baseclass constructor with 0x0 size (not used for text)
+        super(x, y, 0f, 0f, scale);
         this.text = text;
-        this.font = new BitmapFont(); // libgdx default font
-        this.font.getData().setScale(scale);
-
-        // transform width/height are not used for text, but required by interface
-        this.transform = new Transform2D(x, y, 0f, 0f);
     }
 
     /**
@@ -60,35 +40,8 @@ public class TextDisplay extends Entity implements IRenderItem {
      *
      * @return the text string
      */
+    @Override
     public String getText() {
         return text;
-    }
-
-    /**
-     * returns the font used for rendering.
-     *
-     * @return the BitmapFont instance
-     */
-    public BitmapFont getFont() {
-        return font;
-    }
-
-    /**
-     * disposes the font resource.
-     * should be called when the text display is no longer needed.
-     */
-    public void dispose() {
-        font.dispose();
-    }
-
-    @Override
-    public String getAssetPath() {
-        // null signals text rendering instead of texture
-        return null;
-    }
-
-    @Override
-    public ITransform getTransform() {
-        return transform;
     }
 }

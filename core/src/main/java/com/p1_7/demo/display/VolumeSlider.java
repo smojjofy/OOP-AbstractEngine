@@ -3,11 +3,12 @@ package com.p1_7.demo.display;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.p1_7.abstractengine.entity.Entity;
+import com.p1_7.abstractengine.render.ICustomRenderable;
 import com.p1_7.abstractengine.render.IRenderItem;
 import com.p1_7.abstractengine.transform.ITransform;
-import com.p1_7.demo.Settings;
-import com.p1_7.demo.core.Transform2D;
 import com.p1_7.demo.Settings;
 import com.p1_7.demo.core.Transform2D;
 
@@ -18,7 +19,7 @@ import com.p1_7.demo.core.Transform2D;
  * renders as a horizontal bar with filled portion representing current volume.
  * updates Settings.MUSIC_VOLUME when changed.
  */
-public class VolumeSlider extends Entity implements IRenderItem {
+public class VolumeSlider extends Entity implements IRenderItem, ICustomRenderable {
 
     /** 2d spatial transform */
     private final Transform2D transform;
@@ -92,6 +93,27 @@ public class VolumeSlider extends Entity implements IRenderItem {
      */
     public float getHeight() {
         return height;
+    }
+
+    /**
+     * renders the volume slider as a grey bar with green fill representing current volume.
+     *
+     * @param batch the sprite batch (not used)
+     * @param shapeRenderer the shape renderer (currently active)
+     */
+    @Override
+    public void renderCustom(SpriteBatch batch, ShapeRenderer shapeRenderer) {
+        float[] position = transform.getPosition();
+        float x = position[0];
+        float y = position[1];
+
+        // draw background bar (grey)
+        shapeRenderer.setColor(0.3f, 0.3f, 0.3f, 1f);
+        shapeRenderer.rect(x, y, width, height);
+
+        // draw filled portion (green)
+        shapeRenderer.setColor(0.2f, 0.8f, 0.2f, 1f);
+        shapeRenderer.rect(x, y, width * value, height);
     }
 
     @Override
