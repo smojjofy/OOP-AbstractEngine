@@ -18,7 +18,7 @@ import com.p1_7.abstractengine.engine.UpdatableManager;
  * until ActionId is populated with real values and bindings
  * are added to the InputMapping.
  */
-public class InputOutputManager extends UpdatableManager implements IInputQuery {
+public class InputManager extends UpdatableManager implements IInputQuery {
 
     /** the key/button ↔ action mapping used for lookups */
     private final InputMapping inputMapping = new InputMapping();

@@ -7,7 +7,7 @@ import com.badlogic.gdx.Input;
 import com.p1_7.abstractengine.engine.Engine;
 import com.p1_7.abstractengine.entity.EntityManager;
 import com.p1_7.abstractengine.input.InputMapping;
-import com.p1_7.abstractengine.input.InputOutputManager;
+import com.p1_7.abstractengine.input.InputManager;
 import com.p1_7.abstractengine.movement.MovementManager;
 import com.p1_7.abstractengine.scene.SceneManager;
 import com.p1_7.demo.managers.DemoCollisionManager;
@@ -24,7 +24,7 @@ public class Main extends ApplicationAdapter {
     private EntityManager entityManager;
     private MovementManager movementManager;
     private DemoCollisionManager collisionManager;
-    private InputOutputManager inputOutputManager;
+    private InputManager inputManager;
     private RenderManager renderManager;
     private SceneManager sceneManager;
 
@@ -37,9 +37,9 @@ public class Main extends ApplicationAdapter {
         entityManager = new EntityManager();
         movementManager = new MovementManager();
         collisionManager = new DemoCollisionManager();
-        inputOutputManager = new InputOutputManager();
+        inputManager = new InputManager();
         renderManager = new RenderManager();
-        sceneManager = new SceneManager(entityManager, renderManager.getRenderQueue(), inputOutputManager);
+        sceneManager = new SceneManager(entityManager, renderManager.getRenderQueue(), inputManager);
 
         float[] worldMinBound = { 0f, 0f };
         float[] worldMaxBound = { Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT };
@@ -48,7 +48,7 @@ public class Main extends ApplicationAdapter {
         movementManager.setWorldBounds(worldMinBound, worldMaxBound);
 
         // 4. configure input bindings
-        InputMapping mapping = inputOutputManager.getInputMapping();
+        InputMapping mapping = inputManager.getInputMapping();
         mapping.bindKey(Input.Keys.LEFT, DemoActions.LEFT);
         mapping.bindKey(Input.Keys.A, DemoActions.LEFT);
         mapping.bindKey(Input.Keys.RIGHT, DemoActions.RIGHT);
@@ -74,7 +74,7 @@ public class Main extends ApplicationAdapter {
         engine.registerManager(entityManager);
         engine.registerManager(movementManager);
         engine.registerManager(collisionManager);
-        engine.registerManager(inputOutputManager);
+        engine.registerManager(inputManager);
         engine.registerManager(renderManager);
         engine.registerManager(sceneManager);
 

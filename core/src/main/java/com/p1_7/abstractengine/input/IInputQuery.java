@@ -5,7 +5,7 @@ package com.p1_7.abstractengine.input;
  *
  * scenes and other engine components receive this interface so
  * that they can interrogate input without coupling to the
- * InputOutputManager directly.
+ * InputManager directly.
  */
 public interface IInputQuery {
 
