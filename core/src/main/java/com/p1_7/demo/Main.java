@@ -11,7 +11,7 @@ import com.p1_7.abstractengine.input.InputOutputManager;
 import com.p1_7.abstractengine.movement.MovementManager;
 import com.p1_7.abstractengine.scene.SceneManager;
 import com.p1_7.demo.managers.DemoCollisionManager;
-import com.p1_7.demo.managers.DemoRenderManager;
+import com.p1_7.abstractengine.render.RenderManager;
 import com.p1_7.demo.scenes.GameOverScene;
 import com.p1_7.demo.scenes.GameScene;
 import com.p1_7.demo.scenes.MenuScene;
@@ -25,7 +25,7 @@ public class Main extends ApplicationAdapter {
     private MovementManager movementManager;
     private DemoCollisionManager collisionManager;
     private InputOutputManager inputOutputManager;
-    private DemoRenderManager renderManager;
+    private RenderManager renderManager;
     private SceneManager sceneManager;
 
     @Override
@@ -38,7 +38,7 @@ public class Main extends ApplicationAdapter {
         movementManager = new MovementManager();
         collisionManager = new DemoCollisionManager();
         inputOutputManager = new InputOutputManager();
-        renderManager = new DemoRenderManager();
+        renderManager = new RenderManager();
         sceneManager = new SceneManager(entityManager, renderManager.getRenderQueue(), inputOutputManager);
 
         float[] worldMinBound = { 0f, 0f };

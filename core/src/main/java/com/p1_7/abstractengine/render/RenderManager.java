@@ -27,7 +27,7 @@ import com.p1_7.abstractengine.transform.ITransform;
  *    rectangles via a ShapeRenderer.
  * after both phases complete the queue is cleared.
  */
-public abstract class RenderManager extends Manager {
+public class RenderManager extends Manager {
 
     /** sprite batch used for textured items */
     protected SpriteBatch batch;
