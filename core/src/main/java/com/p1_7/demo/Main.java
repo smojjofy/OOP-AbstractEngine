@@ -56,15 +56,13 @@ public class Main extends ApplicationAdapter {
 
         // 5. create and register all scenes
         MenuScene menuScene = new MenuScene();
-        sceneManager.registerScene(menuScene);
-
         GameScene gameScene = new GameScene(movementManager, collisionManager, entityManager);
-        sceneManager.registerScene(gameScene);
-
         GameOverScene gameOverScene = new GameOverScene();
-        sceneManager.registerScene(gameOverScene);
-
         PauseScene pauseScene = new PauseScene(entityManager);
+
+        sceneManager.registerScene(menuScene);
+        sceneManager.registerScene(gameScene);
+        sceneManager.registerScene(gameOverScene);
         sceneManager.registerScene(pauseScene);
 
         // set menu as initial scene
