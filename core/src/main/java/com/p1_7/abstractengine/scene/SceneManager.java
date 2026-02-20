@@ -163,6 +163,7 @@ public class SceneManager extends UpdatableManager {
      * @param key the name of the target scene
      */
     public void requestChange(String key) {
+        validateSceneKey(key);
         this.pendingKey = key;
     }
 
@@ -174,7 +175,26 @@ public class SceneManager extends UpdatableManager {
      * @param key the name of the target scene
      */
     public void requestSuspend(String key) {
+        validateSceneKey(key);
         this.pendingSuspendKey = key;
+    }
+
+    /**
+     * validates a scene key for deferred transition requests.
+     *
+     * @param key the target scene key
+     * @throws IllegalArgumentException if key is null, blank, or not registered
+     */
+    private void validateSceneKey(String key) {
+        if (key == null) {
+            throw new IllegalArgumentException("key cannot be null");
+        }
+        if (key.trim().isEmpty()) {
+            throw new IllegalArgumentException("key cannot be blank");
+        }
+        if (!scenes.containsKey(key)) {
+            throw new IllegalArgumentException("scene not registered: " + key);
+        }
     }
 
     // ---------------------------------------------------------------

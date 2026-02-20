@@ -75,9 +75,15 @@ public class GameOverScene extends Scene {
     @Override
     public void onExit(SceneContext context) {
         // dispose fonts
-        titleDisplay.dispose();
-        scoreDisplay.dispose();
-        promptDisplay.dispose();
+        if (titleDisplay != null) {
+            titleDisplay.dispose();
+        }
+        if (scoreDisplay != null) {
+            scoreDisplay.dispose();
+        }
+        if (promptDisplay != null) {
+            promptDisplay.dispose();
+        }
     }
 
     @Override
