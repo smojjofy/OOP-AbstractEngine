@@ -57,7 +57,7 @@ public abstract class CollisionManager extends UpdatableManager {
 
     /**
      * sets the world bounds for broad-phase spatial indexing. once set,
-     * {@link #detect()} uses a {@link SpatialTree} instead of brute-force.
+     * detect() uses a SpatialTree instead of brute-force.
      *
      * @param minPosition minimum corner of the world region
      * @param extent      size of the world region in each dimension
@@ -96,7 +96,7 @@ public abstract class CollisionManager extends UpdatableManager {
     }
 
     /**
-     * brute-force O(n²) pairwise collision detection.
+     * brute-force pairwise collision detection.
      */
     private void detectBruteForce() {
         for (int i = 0; i < collidables.size() - 1; i++) {
