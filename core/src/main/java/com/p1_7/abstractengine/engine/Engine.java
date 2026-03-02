@@ -155,7 +155,8 @@ public class Engine {
      */
     public void init() {
         // build sorted order from dependency graph
-        List<IManager> sorted = topologicalSort();
+        DependencySorter sorter = new DependencySorter();
+        List<IManager> sorted = sorter.sort(managers, managerMap);
 
         // reorder managers list to sorted result
         managers.clear();
@@ -202,94 +203,6 @@ public class Engine {
         for (int i = 0; i < managers.size(); i++) {
             managers.get(i).init();
         }
-    }
-
-    /**
-     * topologically sorts managers using kahn's algorithm. managers with no
-     * dependency relationship retain their original registration order.
-     *
-     * @return managers in dependency-resolved order
-     * @throws IllegalArgumentException if a dependency type is not registered
-     * @throws IllegalStateException    if a circular dependency is detected
-     */
-    private List<IManager> topologicalSort() {
-        int n = managers.size();
-
-        // map each manager to its index for fast lookup
-        Map<IManager, Integer> indexOf = new HashMap<>(n);
-        for (int i = 0; i < n; i++) {
-            indexOf.put(managers.get(i), i);
-        }
-
-        // build adjacency list and in-degree count
-        // edge: dependency -> dependant (dependency must come first)
-        List<List<Integer>> adjacency = new ArrayList<>(n);
-        int[] inDegree = new int[n];
-        for (int i = 0; i < n; i++) {
-            adjacency.add(new ArrayList<>());
-        }
-
-        for (int i = 0; i < n; i++) {
-            IManager m = managers.get(i);
-            if (!(m instanceof Manager)) {
-                continue;
-            }
-            Class<? extends IManager>[] deps = ((Manager) m).getDependencies();
-            for (Class<? extends IManager> depType : deps) {
-                IManager depManager = managerMap.get(depType);
-                if (depManager == null) {
-                    throw new IllegalArgumentException(
-                        m.getClass().getSimpleName()
-                        + " depends on " + depType.getSimpleName()
-                        + " but no such manager is registered");
-                }
-                Integer depIndex = indexOf.get(depManager);
-                // edge from dependency to dependant
-                adjacency.get(depIndex).add(i);
-                inDegree[i]++;
-            }
-        }
-
-        // seed queue with zero-in-degree nodes in registration order (fifo for stability)
-        List<Integer> queue = new ArrayList<>();
-        int head = 0;
-        for (int i = 0; i < n; i++) {
-            if (inDegree[i] == 0) {
-                queue.add(i);
-            }
-        }
-
-        List<IManager> sorted = new ArrayList<>(n);
-        while (head < queue.size()) {
-            int current = queue.get(head++);
-            sorted.add(managers.get(current));
-
-            for (int j = 0; j < adjacency.get(current).size(); j++) {
-                int neighbour = adjacency.get(current).get(j);
-                inDegree[neighbour]--;
-                if (inDegree[neighbour] == 0) {
-                    queue.add(neighbour);
-                }
-            }
-        }
-
-        if (sorted.size() != n) {
-            // identify managers involved in the cycle
-            StringBuilder cycleInfo = new StringBuilder("circular dependency detected among: ");
-            boolean first = true;
-            for (int i = 0; i < n; i++) {
-                if (inDegree[i] > 0) {
-                    if (!first) {
-                        cycleInfo.append(", ");
-                    }
-                    cycleInfo.append(managers.get(i).getClass().getSimpleName());
-                    first = false;
-                }
-            }
-            throw new IllegalStateException(cycleInfo.toString());
-        }
-
-        return sorted;
     }
 
     /**
