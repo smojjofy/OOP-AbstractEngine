@@ -25,26 +25,6 @@ a comprehensive guide to building games and simulations with the AbstractEngine 
 
 AbstractEngine is a lightweight, platform-agnostic game engine written in Java. it provides the core systems every game or simulation needs — entity management, scene orchestration, input handling, physics movement, collision detection, and rendering — without coupling you to any particular graphics library or platform.
 
-### Architecture
-
-```
-┌─────────────────────────────────────────────────┐
-│                     Engine                       │
-│                                                  │
-│  ┌─────────────┐  ┌─────────────┐  ┌──────────┐ │
-│  │ EntityManager│  │ SceneManager│  │InputManager││
-│  └─────────────┘  └─────────────┘  └──────────┘ │
-│                                                  │
-│  ┌──────────────┐  ┌────────────────┐            │
-│  │MovementManager│  │CollisionManager│            │
-│  └──────────────┘  └────────────────┘            │
-│                                                  │
-│  ┌──────────────┐                                │
-│  │ RenderManager │  (platform-specific subclass)  │
-│  └──────────────┘                                │
-└─────────────────────────────────────────────────┘
-```
-
 ### Core Design Principles
 
 - **Manager lifecycle** — all systems are `Manager` subclasses with a consistent `init` → `update` → `shutdown` lifecycle. the `Engine` sorts them by dependency order automatically.
