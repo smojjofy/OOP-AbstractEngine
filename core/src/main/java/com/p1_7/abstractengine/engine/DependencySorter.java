@@ -9,7 +9,10 @@ import java.util.Map;
  * algorithm over a directed acyclic graph built from each manager's declared
  * dependencies.
  */
-public class DependencySorter {
+public final class DependencySorter {
+
+    private DependencySorter() {
+    }
 
     /**
      * builds a dependency graph from the given managers and returns them in
@@ -22,7 +25,7 @@ public class DependencySorter {
      * @throws IllegalArgumentException if a dependency type is not registered
      * @throws IllegalStateException    if a circular dependency is detected
      */
-    public List<IManager> sort(
+    public static List<IManager> sort(
             List<IManager> managers,
             Map<Class<? extends IManager>, IManager> managerMap) {
 
@@ -41,7 +44,7 @@ public class DependencySorter {
      * @param managerMap type-keyed index for resolving dependency types
      * @return the populated directed acyclic graph
      */
-    private DirectedAcyclicGraph<IManager> buildGraph(
+    private static DirectedAcyclicGraph<IManager> buildGraph(
             List<IManager> managers,
             Map<Class<? extends IManager>, IManager> managerMap) {
 
@@ -82,7 +85,7 @@ public class DependencySorter {
      * @return sorted node list
      * @throws IllegalStateException if the graph contains a cycle
      */
-    private List<IManager> kahnSort(DirectedAcyclicGraph<IManager> graph) {
+    private static List<IManager> kahnSort(DirectedAcyclicGraph<IManager> graph) {
         List<IManager> nodes = graph.getNodes();
         int n = graph.size();
 

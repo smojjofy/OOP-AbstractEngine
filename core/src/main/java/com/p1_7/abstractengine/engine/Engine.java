@@ -155,8 +155,7 @@ public class Engine {
      */
     public void init() {
         // build sorted order from dependency graph
-        DependencySorter sorter = new DependencySorter();
-        List<IManager> sorted = sorter.sort(managers, managerMap);
+        List<IManager> sorted = DependencySorter.sort(managers, managerMap);
 
         // reorder managers list to sorted result
         managers.clear();
