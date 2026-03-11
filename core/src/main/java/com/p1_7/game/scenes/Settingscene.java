@@ -34,7 +34,7 @@ import com.p1_7.game.platform.GdxSpriteBatch;
  *   Mouse           - click buttons
  *   ESC / Backspace - back to menu
  */
-public class Settingscene extends Scene {
+public class SettingScene extends Scene {
 
     // ── asset paths ──────────────────────────────────────────────
     private static final String BG_ASSET    = "menu/background.png";
@@ -59,7 +59,7 @@ public class Settingscene extends Scene {
     private MenuButton         btnVolumeUp;
     private MenuButton         btnBack;
 
-    public Settingscene() {
+    public SettingScene() {
         this.name = "settings";
     }
 

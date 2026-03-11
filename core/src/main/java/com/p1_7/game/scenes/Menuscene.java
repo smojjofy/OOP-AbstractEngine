@@ -36,7 +36,7 @@ import com.p1_7.game.platform.GdxSpriteBatch;
  *   button_hover.png
  *   Kenney_Future.ttf
  */
-public class Menuscene extends Scene {
+public class MenuScene extends Scene {
 
     // ── asset paths ──────────────────────────────────────────────
     private static final String BG_ASSET    = "menu/background.png";
@@ -60,7 +60,7 @@ public class Menuscene extends Scene {
     private MenuButton     btnSettings;
     private MenuButton     btnExit;
 
-    public Menuscene() {
+    public MenuScene() {
         this.name = "menu";
     }
 
