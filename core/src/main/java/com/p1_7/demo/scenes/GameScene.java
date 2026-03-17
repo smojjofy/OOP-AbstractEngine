@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.p1_7.abstractengine.collision.CollisionManager;
 import com.p1_7.abstractengine.entity.IEntityManager;
 import com.p1_7.abstractengine.entity.IEntityMutator;
-import com.p1_7.abstractengine.input.IInputQuery;
+import com.p1_7.abstractengine.input.IInputManager;
 import com.p1_7.abstractengine.movement.MovementManager;
 import com.p1_7.abstractengine.render.IRenderQueue;
 import com.p1_7.abstractengine.scene.Scene;
@@ -70,6 +70,11 @@ public class GameScene extends Scene {
 
     private final MovementManager movementManager;
     private final CollisionManager collisionManager;
+
+    // ==================== context services ====================
+
+    /** cached input manager reference, valid only between onEnter and onExit */
+    private IInputManager input;
 
     /**
      * constructs a game scene with references to required managers.
@@ -135,6 +140,9 @@ public class GameScene extends Scene {
 
         // 9. spawn initial droplet
         spawnDroplet(context.get(IEntityManager.class));
+
+        // cache input manager for use during update
+        this.input = context.get(IInputManager.class);
     }
 
     @Override
@@ -186,6 +194,8 @@ public class GameScene extends Scene {
             scoreDisplay.dispose();
             context.get(IEntityManager.class).removeEntity(scoreDisplay.getId());
         }
+
+        this.input = null;
     }
 
     @Override
@@ -233,7 +243,7 @@ public class GameScene extends Scene {
         }
 
         // 1. update bucket movement
-        bucket.updateMovement(context.get(IInputQuery.class));
+        bucket.updateMovement(input);
 
         // 2. update spawn timer and spawn new droplets
         spawnTimer += deltaTime;
