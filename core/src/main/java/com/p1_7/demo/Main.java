@@ -6,7 +6,6 @@ import com.badlogic.gdx.Input;
 
 import com.p1_7.abstractengine.engine.Engine;
 import com.p1_7.abstractengine.entity.EntityManager;
-import com.p1_7.abstractengine.input.InputMapping;
 import com.p1_7.abstractengine.input.InputManager;
 import com.p1_7.abstractengine.movement.MovementManager;
 import com.p1_7.abstractengine.scene.SceneManager;
@@ -49,11 +48,10 @@ public class Main extends ApplicationAdapter {
         movementManager.setWorldBounds(worldMinBound, worldMaxBound);
 
         // 4. configure input bindings
-        InputMapping mapping = inputManager.getInputMapping();
-        mapping.bindKey(Input.Keys.LEFT, DemoActions.LEFT);
-        mapping.bindKey(Input.Keys.A, DemoActions.LEFT);
-        mapping.bindKey(Input.Keys.RIGHT, DemoActions.RIGHT);
-        mapping.bindKey(Input.Keys.D, DemoActions.RIGHT);
+        inputManager.bindKey(Input.Keys.LEFT, DemoActions.LEFT);
+        inputManager.bindKey(Input.Keys.A, DemoActions.LEFT);
+        inputManager.bindKey(Input.Keys.RIGHT, DemoActions.RIGHT);
+        inputManager.bindKey(Input.Keys.D, DemoActions.RIGHT);
 
         // 5. create and register all scenes
         MenuScene menuScene = new MenuScene();

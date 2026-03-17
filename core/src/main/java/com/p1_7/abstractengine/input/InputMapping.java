@@ -20,13 +20,13 @@ public class InputMapping {
     private final Map<Integer, ActionId> buttonBindings = new HashMap<>();
 
     public InputMapping() {
-        resetToDefaults();
+        clearAllBindings();
     }
 
     /**
      * clears all key and button bindings.
      */
-    public void resetToDefaults() {
+    public void clearAllBindings() {
         keyBindings.clear();
         buttonBindings.clear();
     }
@@ -66,7 +66,11 @@ public class InputMapping {
         keyBindings.put(keyCode, actionId);
     }
 
-    // Unbinds keyboard key from map
+    /**
+     * removes the binding for the given keyboard key, if one exists.
+     *
+     * @param keyCode the key code to unbind
+     */
     public void unbindKey(int keyCode) {
         keyBindings.remove(keyCode);
     }
@@ -85,24 +89,28 @@ public class InputMapping {
         buttonBindings.put(buttonCode, actionId);
     }
 
-    // Unbinds button from map
+    /**
+     * removes the binding for the given controller button, if one exists.
+     *
+     * @param buttonCode the button code to unbind
+     */
     public void unbindButton(int buttonCode) {
         buttonBindings.remove(buttonCode);
     }
 
-    // Unbinds all keys and buttons mapped to the given action
-    public void unbindAction(ActionId action) {
-        if (action == null) {
-            throw new IllegalArgumentException("action cannot be null");
+    /**
+     * removes all key and button bindings associated with the given action.
+     *
+     * @param actionId the action whose bindings should be removed
+     * @throws IllegalArgumentException if actionId is null
+     */
+    public void unbindAction(ActionId actionId) {
+        if (actionId == null) {
+            throw new IllegalArgumentException("actionId cannot be null");
         }
 
-        if (keyBindings != null) {
-            keyBindings.entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue().equals(action));
-        }
-
-        if (buttonBindings != null) {
-            buttonBindings.entrySet().removeIf(entry -> entry.getValue() != null && entry.getValue().equals(action));
-        }
+        keyBindings.entrySet().removeIf(entry -> entry.getValue().equals(actionId));
+        buttonBindings.entrySet().removeIf(entry -> entry.getValue().equals(actionId));
     }
 
     /**
@@ -110,11 +118,15 @@ public class InputMapping {
      *
      * @param actionId the action to search for
      * @return a list of matching key codes (may be empty)
+     * @throws IllegalArgumentException if actionId is null
      */
     public List<Integer> getKeysForAction(ActionId actionId) {
+        if (actionId == null) {
+            throw new IllegalArgumentException("actionId cannot be null");
+        }
         List<Integer> keys = new ArrayList<>();
         for (Map.Entry<Integer, ActionId> entry : keyBindings.entrySet()) {
-            if (entry.getValue() != null && entry.getValue().equals(actionId)) {
+            if (entry.getValue().equals(actionId)) {
                 keys.add(entry.getKey());
             }
         }
@@ -126,11 +138,15 @@ public class InputMapping {
      *
      * @param actionId the action to search for
      * @return a list of matching button codes (may be empty)
+     * @throws IllegalArgumentException if actionId is null
      */
     public List<Integer> getButtonsForAction(ActionId actionId) {
+        if (actionId == null) {
+            throw new IllegalArgumentException("actionId cannot be null");
+        }
         List<Integer> buttons = new ArrayList<>();
         for (Map.Entry<Integer, ActionId> entry : buttonBindings.entrySet()) {
-            if (entry.getValue() != null && entry.getValue().equals(actionId)) {
+            if (entry.getValue().equals(actionId)) {
                 buttons.add(entry.getKey());
             }
         }
@@ -146,15 +162,11 @@ public class InputMapping {
         Set<ActionId> actions = new HashSet<>();
 
         for (Map.Entry<Integer, ActionId> entry : keyBindings.entrySet()) {
-            if (entry.getValue() != null) {
-                actions.add(entry.getValue());
-            }
+            actions.add(entry.getValue());
         }
 
         for (Map.Entry<Integer, ActionId> entry : buttonBindings.entrySet()) {
-            if (entry.getValue() != null) {
-                actions.add(entry.getValue());
-            }
+            actions.add(entry.getValue());
         }
 
         return actions;
