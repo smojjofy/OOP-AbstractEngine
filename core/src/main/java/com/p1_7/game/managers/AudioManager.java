@@ -1,5 +1,7 @@
 package com.p1_7.game.managers;
 
+import com.badlogic.gdx.Audio;
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -18,6 +20,12 @@ import java.util.Map;
  * than being polled each frame.
  */
 public class AudioManager extends Manager implements IAudioManager {
+
+    /** gdx audio backend, stored to avoid repeated static field access */
+    private final Audio audio = Gdx.audio;
+
+    /** gdx file system backend, stored to avoid repeated static field access */
+    private final Files files = Gdx.files;
 
     /** cached music tracks, keyed by caller-supplied name */
     private final Map<String, Music> musicCache = new HashMap<>();
@@ -40,7 +48,7 @@ public class AudioManager extends Manager implements IAudioManager {
      */
     public void loadMusic(String key, String filePath) {
         if (!musicCache.containsKey(key)) {
-            musicCache.put(key, Gdx.audio.newMusic(Gdx.files.internal(filePath)));
+            musicCache.put(key, audio.newMusic(files.internal(filePath)));
         } else {
             Gdx.app.log("AudioManager", "loadMusic: key '" + key + "' already loaded, ignoring");
         }
@@ -55,7 +63,7 @@ public class AudioManager extends Manager implements IAudioManager {
      */
     public void loadSound(String key, String filePath) {
         if (!soundCache.containsKey(key)) {
-            soundCache.put(key, Gdx.audio.newSound(Gdx.files.internal(filePath)));
+            soundCache.put(key, audio.newSound(files.internal(filePath)));
         } else {
             Gdx.app.log("AudioManager", "loadSound: key '" + key + "' already loaded, ignoring");
         }
