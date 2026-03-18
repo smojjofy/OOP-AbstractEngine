@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.p1_7.abstractengine.entity.Entity;
-import com.p1_7.abstractengine.input.IInputManager;
+import com.p1_7.abstractengine.input.IInputExtensionRegistry;
 import com.p1_7.abstractengine.render.IDrawContext;
 import com.p1_7.abstractengine.render.IRenderable;
 import com.p1_7.abstractengine.render.IRenderQueue;
@@ -78,8 +78,8 @@ public class LevelCompleteScene extends Scene {
 
         generator.dispose();
 
-        IInputManager inputManager = context.get(IInputManager.class);
-        cursorSource = inputManager.getExtension(ICursorSource.class);
+        IInputExtensionRegistry inputRegistry = context.get(IInputExtensionRegistry.class);
+        cursorSource = inputRegistry.getExtension(ICursorSource.class);
 
         float cx = Settings.getWindowWidth() / 2f;
         float cy = Settings.getWindowHeight() / 2f;

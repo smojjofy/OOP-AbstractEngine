@@ -11,7 +11,7 @@ import com.p1_7.abstractengine.engine.UpdatableManager;
  * polls physical input devices each frame and exposes derived action states
  * via IInputManager.
  */
-public class InputManager extends UpdatableManager implements IInputManager {
+public class InputManager extends UpdatableManager implements IInputManager, IInputExtensionRegistry {
 
     /** the platform-specific input source for polling key and button state */
     private final IInputSource inputSource;
