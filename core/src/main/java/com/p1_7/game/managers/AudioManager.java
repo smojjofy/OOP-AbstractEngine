@@ -40,13 +40,12 @@ public class AudioManager extends Manager implements IAudioManager {
     private String currentMusicKey;
 
     /**
-     * loads all demo assets into their respective caches on engine init.
-     * playback is the scene's responsibility via playMusic/playSound.
+     * loads game assets into the cache on engine init so they are ready
+     * before any scene requests playback.
      */
     @Override
     protected void onInit() {
-        loadMusic("main", "music.mp3");
-        loadSound("drop", "drop.mp3");
+        loadMusic("bgMusic", "music.mp3");
     }
 
     /**

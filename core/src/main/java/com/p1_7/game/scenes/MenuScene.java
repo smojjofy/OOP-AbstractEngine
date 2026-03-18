@@ -21,6 +21,7 @@ import com.p1_7.abstractengine.scene.SceneContext;
 import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.game.Settings;
 import com.p1_7.game.core.Transform2D;
+import com.p1_7.game.managers.IAudioManager;
 import com.p1_7.game.entities.MenuButton;
 import com.p1_7.game.platform.GdxShapeRenderer;
 import com.p1_7.game.platform.GdxSpriteBatch;
@@ -67,6 +68,11 @@ public class MenuScene extends Scene {
 
     @Override
     public void onEnter(SceneContext context) {
+        IAudioManager audio = context.get(IAudioManager.class);
+
+        // start background music (asset pre-loaded in AudioManager.onInit)
+        audio.playMusic("bgMusic", true);
+
         // ── generate fonts from TTF ──────────────────────────────
         FreeTypeFontGenerator generator =
             new FreeTypeFontGenerator(Gdx.files.internal(TTF_ASSET));
