@@ -58,4 +58,16 @@ public interface IAudioManager {
      * @return the current volume level in the range [0.0, 1.0]
      */
     float getMusicVolume();
+
+    /**
+     * pauses the currently playing music track.
+     * if no track is active this is a no-op.
+     */
+    void pauseMusic();
+
+    /**
+     * resumes the currently playing music track, reapplying the stored volume.
+     * if no track is active this is a no-op.
+     */
+    void resumeMusic();
 }

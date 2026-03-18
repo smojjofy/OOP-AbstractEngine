@@ -61,10 +61,6 @@ public class Main extends ApplicationAdapter {
         engine.registerManager(sceneManager);
 
         engine.init();
-
-        // audio setup — load and start background music
-        audioManager.loadMusic("bgMusic", "music.mp3");
-        audioManager.playMusic("bgMusic", true);
     }
 
     /**

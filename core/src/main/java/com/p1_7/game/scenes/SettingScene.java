@@ -45,8 +45,8 @@ public class SettingScene extends Scene {
     private static final String TTF_ASSET   = "menu/Kenney_Future.ttf";
 
     // ── layout ───────────────────────────────────────────────────
-    private static final float CENTRE_X = Settings.WINDOW_WIDTH  / 2f;
-    private static final float CENTRE_Y = Settings.WINDOW_HEIGHT / 2f;
+    private static final float CENTRE_X = Settings.windowWidth  / 2f;
+    private static final float CENTRE_Y = Settings.windowHeight / 2f;
 
     // ── fonts ─────────────────────────────────────────────────────
     private BitmapFont headingFont;
@@ -98,7 +98,7 @@ public class SettingScene extends Scene {
 
         // ── entities ─────────────────────────────────────────────
         background  = new SettingsBackground(BG_ASSET);
-        heading     = new LabelText("SETTINGS",   CENTRE_X, Settings.WINDOW_HEIGHT * 0.72f,
+        heading     = new LabelText("SETTINGS",   CENTRE_X, Settings.windowHeight * 0.72f,
                                     headingFont);
         volumeLabel = new LabelText(volumeText(audio), CENTRE_X, CENTRE_Y + 60f,
                                     labelFont);
@@ -173,7 +173,7 @@ public class SettingScene extends Scene {
             this.assetPath = assetPath;
             this.texture   = new Texture(Gdx.files.internal(assetPath));
             this.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            this.transform = new Transform2D(0, 0, Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT);
+            this.transform = new Transform2D(0, 0, Settings.windowWidth, Settings.windowHeight);
         }
 
         @Override public String     getAssetPath() { return assetPath; }

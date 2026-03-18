@@ -11,10 +11,10 @@ package com.p1_7.game;
 public class Settings {
 
     /** width of the application window in pixels */
-    public static int WINDOW_WIDTH = 1280;
+    public static int windowWidth = 1280;
 
     /** height of the application window in pixels */
-    public static int WINDOW_HEIGHT = 720;
+    public static int windowHeight = 720;
 
     /** music volume level (0.0 = silent, 1.0 = maximum) */
     public static float musicVolume = 0.5f;
