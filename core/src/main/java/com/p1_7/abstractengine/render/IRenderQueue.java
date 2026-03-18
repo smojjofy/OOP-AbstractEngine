@@ -8,9 +8,9 @@ public interface IRenderQueue {
     /**
      * adds an item to the queue for drawing this frame.
      *
-     * @param item the render item to enqueue
+     * @param item the renderable to enqueue
      */
-    void queue(IRenderItem item);
+    void queue(IRenderable item);
 
     /**
      * removes all items from the queue. called by the render manager
@@ -21,7 +21,7 @@ public interface IRenderQueue {
     /**
      * returns an iterable over every item currently in the queue.
      *
-     * @return an iterable of queued render items
+     * @return an iterable of queued renderables
      */
-    Iterable<IRenderItem> items();
+    Iterable<IRenderable> items();
 }

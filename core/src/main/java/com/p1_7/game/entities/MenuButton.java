@@ -6,17 +6,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.p1_7.abstractengine.entity.Entity;
-import com.p1_7.abstractengine.render.ICustomRenderable;
-import com.p1_7.abstractengine.render.IRenderItem;
-import com.p1_7.abstractengine.render.IShapeRenderer;
-import com.p1_7.abstractengine.render.ISpriteBatch;
+import com.p1_7.abstractengine.render.IDrawContext;
+import com.p1_7.abstractengine.render.IRenderable;
 import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.game.core.Transform2D;
-import com.p1_7.game.platform.GdxShapeRenderer;
-import com.p1_7.game.platform.GdxSpriteBatch;
+import com.p1_7.game.platform.GdxDrawContext;
 import com.p1_7.game.Settings;
 
 /**
@@ -35,7 +30,7 @@ import com.p1_7.game.Settings;
  * Call resetClick() after handling the action so it fires only once.
  * Call dispose() inside the scene's onExit() to free GPU resources.
  */
-public class MenuButton extends Entity implements IRenderItem, ICustomRenderable {
+public class MenuButton extends Entity implements IRenderable {
 
     // ── dimensions ──────────────────────────────────────────────
     public static final float BUTTON_WIDTH  = 260f;
@@ -88,7 +83,7 @@ public class MenuButton extends Entity implements IRenderItem, ICustomRenderable
 
         Texture hover = (hoverPath != null)
                 ? new Texture(Gdx.files.internal(hoverPath))
-                : normal;                        // reuse normal, tinted in renderCustom
+                : normal;                        // reuse normal, tinted in render()
         if (hoverPath != null) {
             hover.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         }
@@ -153,68 +148,45 @@ public class MenuButton extends Entity implements IRenderItem, ICustomRenderable
     /** Clears the click flag — call after handling the action. */
     public void resetClick()   { clicked = false; }
 
-    // ── IRenderItem ──────────────────────────────────────────────
+    // ── IRenderable ──────────────────────────────────────────────
 
-    /** Returns null — always uses the custom render path. */
+    /** Returns null — manages its own textures directly. */
     @Override public String     getAssetPath() { return null; }
     @Override public ITransform getTransform() { return transform; }
 
-    // ── ICustomRenderable ────────────────────────────────────────
-
     /**
      * Draws the button background (textured or procedural) then the label.
+     * Pass transitions are fully managed by GdxDrawContext; no begin/end calls here.
      *
-     * The engine leaves the ShapeRenderer open when it calls renderCustom(),
-     * so we end it before opening the SpriteBatch and restore it afterwards
-     * so that subsequent custom renderables work correctly.
+     * @param ctx the draw context for this frame
      */
     @Override
-    public void renderCustom(ISpriteBatch batch, IShapeRenderer shapeRenderer) {
-        SpriteBatch   sb = ((GdxSpriteBatch)   batch).unwrap();
-        ShapeRenderer sr = ((GdxShapeRenderer) shapeRenderer).unwrap();
+    public void render(IDrawContext ctx) {
+        GdxDrawContext gdxCtx = (GdxDrawContext) ctx;
 
         float x = transform.getPosition(0);
         float y = transform.getPosition(1);
 
         if (texNormal != null) {
             // ── textured mode ──────────────────────────────────
-            sr.end();
-            sb.begin();
-
-            sb.setColor(hovered ? TINT_HOVER : TINT_NORMAL);
-            sb.draw(hovered ? texHover : texNormal, x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
-
-            // draw centred label
-            layout.setText(font, label);
-            font.setColor(Color.WHITE);
-            font.draw(sb, label,
-                x + (BUTTON_WIDTH  - layout.width)  / 2f,
-                y + (BUTTON_HEIGHT + layout.height) / 2f);
-
-            sb.setColor(Color.WHITE);   // reset tint
-            sb.end();
-            sr.begin(ShapeRenderer.ShapeType.Filled);
-
+            gdxCtx.drawRawTexture(hovered ? texHover : texNormal,
+                                  hovered ? TINT_HOVER : TINT_NORMAL,
+                                  x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
         } else {
             // ── procedural fallback ────────────────────────────
-            sr.setColor(COLOUR_BORDER);
-            sr.rect(x - BORDER_THICK, y - BORDER_THICK,
-                    BUTTON_WIDTH  + BORDER_THICK * 2,
-                    BUTTON_HEIGHT + BORDER_THICK * 2);
-
-            sr.setColor(hovered ? COLOUR_HOVER : COLOUR_NORMAL);
-            sr.rect(x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
-
-            sr.end();
-            sb.begin();
-            layout.setText(font, label);
-            font.setColor(Color.WHITE);
-            font.draw(sb, label,
-                x + (BUTTON_WIDTH  - layout.width)  / 2f,
-                y + (BUTTON_HEIGHT + layout.height) / 2f);
-            sb.end();
-            sr.begin(ShapeRenderer.ShapeType.Filled);
+            gdxCtx.fillRect(COLOUR_BORDER,
+                            x - BORDER_THICK, y - BORDER_THICK,
+                            BUTTON_WIDTH  + BORDER_THICK * 2,
+                            BUTTON_HEIGHT + BORDER_THICK * 2);
+            gdxCtx.fillRect(hovered ? COLOUR_HOVER : COLOUR_NORMAL,
+                            x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
         }
+
+        // label drawn in both modes, centred over the button body
+        layout.setText(font, label);
+        gdxCtx.drawFont(font, label,
+            x + (BUTTON_WIDTH  - layout.width)  / 2f,
+            y + (BUTTON_HEIGHT + layout.height) / 2f);
     }
 
     /**

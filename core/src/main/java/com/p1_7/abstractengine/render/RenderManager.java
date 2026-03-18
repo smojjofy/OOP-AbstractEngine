@@ -1,12 +1,11 @@
 package com.p1_7.abstractengine.render;
 
 import com.p1_7.abstractengine.engine.Manager;
-import com.p1_7.abstractengine.transform.ITransform;
 
 /**
  * owns the drawing resources and drives the per-frame render pass for all
  * queued items. subclasses provide the platform-specific sprite batch,
- * shape renderer, and asset store via factory methods.
+ * shape renderer, asset store, and draw context via factory methods.
  */
 public abstract class RenderManager extends Manager {
 
@@ -18,6 +17,9 @@ public abstract class RenderManager extends Manager {
 
     /** asset store for texture loading and caching */
     protected IAssetStore assetStore;
+
+    /** per-frame draw context; owns all pass transitions */
+    protected IDrawContext drawCtx;
 
     /** single-frame queue of items to draw */
     private final RenderQueue queue = new RenderQueue();
@@ -44,13 +46,26 @@ public abstract class RenderManager extends Manager {
     protected abstract IAssetStore createAssetStore();
 
     /**
+     * creates the draw context backed by the drawing resources.
+     *
+     * @param batch         the sprite batch
+     * @param shapeRenderer the shape renderer
+     * @param assetStore    the asset store
+     * @return a new IDrawContext instance
+     */
+    protected abstract IDrawContext createDrawContext(ISpriteBatch batch,
+                                                      IShapeRenderer shapeRenderer,
+                                                      IAssetStore assetStore);
+
+    /**
      * creates the drawing resources via the platform factory methods.
      */
     @Override
     protected void onInit() {
-        batch = createSpriteBatch();
+        batch         = createSpriteBatch();
         shapeRenderer = createShapeRenderer();
-        assetStore = createAssetStore();
+        assetStore    = createAssetStore();
+        drawCtx       = createDrawContext(batch, shapeRenderer, assetStore);
     }
 
     /**
@@ -58,8 +73,8 @@ public abstract class RenderManager extends Manager {
      */
     @Override
     protected void onShutdown() {
-        if (assetStore != null) { assetStore.dispose(); }
-        if (batch != null) { batch.dispose(); }
+        if (assetStore    != null) { assetStore.dispose(); }
+        if (batch         != null) { batch.dispose(); }
         if (shapeRenderer != null) { shapeRenderer.dispose(); }
     }
 
@@ -75,50 +90,17 @@ public abstract class RenderManager extends Manager {
 
     /**
      * executes the full render pass for the current frame, then clears the queue.
+     * each item drives its own pass transitions via the draw context; a single
+     * flush() call closes the final pass after all items have been drawn.
      */
     public void render() {
         assetStore.finishLoading();
 
-        // textured pass
-        batch.begin();
-        for (IRenderItem item : queue.items()) {
-            if (item.getAssetPath() != null) {
-                drawTextured(item);
-            }
+        for (IRenderable item : queue.items()) {
+            item.render(drawCtx);
         }
-        batch.end();
 
-        // procedural pass — only items implementing ICustomRenderable
-        shapeRenderer.begin();
-        for (IRenderItem item : queue.items()) {
-            if (item.getAssetPath() == null && item instanceof ICustomRenderable) {
-                ((ICustomRenderable) item).renderCustom(batch, shapeRenderer);
-            }
-        }
-        shapeRenderer.end();
-
+        drawCtx.flush();
         queue.clear();
-    }
-
-    /**
-     * draws a textured item using its asset path.
-     *
-     * @param item the render item with a non-null asset path
-     */
-    private void drawTextured(IRenderItem item) {
-        String assetPath = item.getAssetPath();
-
-        if (assetPath == null) {
-            return;
-        }
-
-        // blocking load on first access
-        Object textureHandle = assetStore.loadTexture(assetPath);
-
-        ITransform transform = item.getTransform();
-
-        batch.draw(textureHandle,
-            transform.getPosition(0), transform.getPosition(1),
-            transform.getSize(0), transform.getSize(1));
     }
 }

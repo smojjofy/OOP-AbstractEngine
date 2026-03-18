@@ -8,16 +8,16 @@ import java.util.List;
  */
 class RenderQueue implements IRenderQueue {
 
-    /** the backing store for queued items */
-    private final List<IRenderItem> items = new ArrayList<>();
+    /** the backing store for queued renderables */
+    private final List<IRenderable> items = new ArrayList<>();
 
     /**
-     * adds an item to the queue for drawing this frame.
+     * adds a renderable to the queue for drawing this frame.
      *
-     * @param item the render item to enqueue
+     * @param item the renderable to enqueue
      */
     @Override
-    public void queue(IRenderItem item) {
+    public void queue(IRenderable item) {
         items.add(item);
     }
 
@@ -30,12 +30,12 @@ class RenderQueue implements IRenderQueue {
     }
 
     /**
-     * returns the queued render items.
+     * returns the queued renderables.
      *
-     * @return the list of queued render items
+     * @return the list of queued renderables
      */
     @Override
-    public List<IRenderItem> items() {
+    public List<IRenderable> items() {
         return items;
     }
 }

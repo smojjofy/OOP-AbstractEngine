@@ -5,15 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.p1_7.abstractengine.entity.Entity;
-import com.p1_7.abstractengine.render.ICustomRenderable;
-import com.p1_7.abstractengine.render.IRenderItem;
-import com.p1_7.abstractengine.render.IShapeRenderer;
-import com.p1_7.abstractengine.render.ISpriteBatch;
+import com.p1_7.abstractengine.render.IDrawContext;
+import com.p1_7.abstractengine.render.IRenderable;
 import com.p1_7.abstractengine.render.IRenderQueue;
 import com.p1_7.abstractengine.scene.Scene;
 import com.p1_7.abstractengine.scene.SceneContext;
@@ -21,8 +17,7 @@ import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.game.Settings;
 import com.p1_7.game.core.Transform2D;
 import com.p1_7.game.entities.MenuButton;
-import com.p1_7.game.platform.GdxShapeRenderer;
-import com.p1_7.game.platform.GdxSpriteBatch;
+import com.p1_7.game.platform.GdxDrawContext;
 
 public class LevelCompleteScene extends Scene {
 
@@ -146,7 +141,7 @@ public class LevelCompleteScene extends Scene {
         return currentLevel >= MAX_LEVEL;
     }
 
-    private static class Background implements IRenderItem {
+    private static class Background implements IRenderable {
         private final Transform2D transform;
         private final String assetPath;
 
@@ -155,11 +150,19 @@ public class LevelCompleteScene extends Scene {
             this.transform = new Transform2D(0, 0, Settings.getWindowWidth(), Settings.getWindowHeight());
         }
 
-        @Override public String getAssetPath() { return assetPath; }
+        @Override public String     getAssetPath() { return assetPath; }
         @Override public ITransform getTransform() { return transform; }
+
+        @Override
+        public void render(IDrawContext ctx) {
+            GdxDrawContext gdxCtx = (GdxDrawContext) ctx;
+            gdxCtx.drawTexture(assetPath,
+                transform.getPosition(0), transform.getPosition(1),
+                transform.getSize(0),     transform.getSize(1));
+        }
     }
 
-    private static class LabelText extends Entity implements IRenderItem, ICustomRenderable {
+    private static class LabelText extends Entity implements IRenderable {
         private final Transform2D transform;
         private final BitmapFont font;
         private final String text;
@@ -170,21 +173,16 @@ public class LevelCompleteScene extends Scene {
             this.transform = new Transform2D(cx, cy, 0f, 0f);
         }
 
-        @Override public String getAssetPath() { return null; }
+        @Override public String     getAssetPath() { return null; }
         @Override public ITransform getTransform() { return transform; }
 
         @Override
-        public void renderCustom(ISpriteBatch batch, IShapeRenderer shapeRenderer) {
-            ShapeRenderer sr = ((GdxShapeRenderer) shapeRenderer).unwrap();
-            SpriteBatch sb = ((GdxSpriteBatch) batch).unwrap();
-            sr.end();
-            sb.begin();
+        public void render(IDrawContext ctx) {
+            GdxDrawContext gdxCtx = (GdxDrawContext) ctx;
             GlyphLayout layout = new GlyphLayout(font, text);
-            font.draw(sb, text,
-                transform.getPosition(0) - layout.width / 2f,
+            gdxCtx.drawFont(font, text,
+                transform.getPosition(0) - layout.width  / 2f,
                 transform.getPosition(1) + layout.height / 2f);
-            sb.end();
-            sr.begin(ShapeRenderer.ShapeType.Filled);
         }
     }
 }

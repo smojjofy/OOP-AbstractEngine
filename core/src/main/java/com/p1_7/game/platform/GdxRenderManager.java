@@ -3,6 +3,7 @@ package com.p1_7.game.platform;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.p1_7.abstractengine.render.IAssetStore;
+import com.p1_7.abstractengine.render.IDrawContext;
 import com.p1_7.abstractengine.render.IShapeRenderer;
 import com.p1_7.abstractengine.render.ISpriteBatch;
 import com.p1_7.abstractengine.render.RenderManager;
@@ -32,5 +33,23 @@ public class GdxRenderManager extends RenderManager {
     @Override
     protected IAssetStore createAssetStore() {
         return new GdxAssetStore();
+    }
+
+    /**
+     * creates the libgdx draw context. the downcasts are safe here because
+     * this manager creates the concrete types directly.
+     *
+     * @param batch         the sprite batch
+     * @param shapeRenderer the shape renderer
+     * @param assetStore    the asset store
+     * @return a new GdxDrawContext
+     */
+    @Override
+    protected IDrawContext createDrawContext(ISpriteBatch batch,
+                                             IShapeRenderer shapeRenderer,
+                                             IAssetStore assetStore) {
+        return new GdxDrawContext((GdxSpriteBatch) batch,
+                                  (GdxShapeRenderer) shapeRenderer,
+                                  assetStore);
     }
 }
