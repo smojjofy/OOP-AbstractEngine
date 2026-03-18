@@ -132,8 +132,7 @@ public class LevelCompleteScene extends Scene {
     }
 
     @Override
-    public void submitRenderable(SceneContext context) {
-        IRenderQueue renderQueue = context.get(IRenderQueue.class);
+    public void submitRenderable(IRenderQueue renderQueue) {
         renderQueue.queue(background);
         renderQueue.queue(title);
         renderQueue.queue(promptStatus);
