@@ -188,27 +188,23 @@ public class Transform2D implements ITransform {
     }
 
     @Override
-    public float[] getPosition() { return position; }
+    public float getPosition(int axis) { return position[axis]; }
 
     @Override
-    public void setPosition(float[] position) {
-        System.arraycopy(position, 0, this.position, 0, 2);
-    }
+    public void setPosition(int axis, float value) { position[axis] = value; }
 
     @Override
-    public float[] getSize() { return size; }
+    public float getSize(int axis) { return size[axis]; }
 
     @Override
-    public void setSize(float[] size) {
-        System.arraycopy(size, 0, this.size, 0, 2);
-    }
+    public void setSize(int axis, float value) { size[axis] = value; }
 
     @Override
     public int getDimensions() { return 2; }
 }
 ```
 
-> **tip:** use `System.arraycopy` in your setters to avoid exposing internal arrays. `getDimensions()` lets engine code verify dimensional consistency at runtime.
+> **tip:** accessors are per-axis (e.g. `getPosition(0)` for x, `getPosition(1)` for y). this prevents callers from holding a reference to the internal array and mutating it externally. `getDimensions()` lets engine code verify dimensional consistency at runtime.
 
 ### IBounds
 
@@ -346,17 +342,17 @@ public abstract class SpriteEntity extends Entity
         velocity[0] += acceleration[0] * deltaTime;
         velocity[1] += acceleration[1] * deltaTime;
 
-        float[] position = transform.getPosition();
-        position[0] += velocity[0] * deltaTime;
-        position[1] += velocity[1] * deltaTime;
+        transform.setPosition(0, transform.getPosition(0) + velocity[0] * deltaTime);
+        transform.setPosition(1, transform.getPosition(1) + velocity[1] * deltaTime);
     }
 
     @Override
     public IBounds getBounds() {
         // derive bounding box from transform (sync cached rectangle)
-        float[] position = transform.getPosition();
-        float[] size = transform.getSize();
-        bounds.set(position[0], position[1], size[0], size[1]);
+        bounds.set(
+            transform.getPosition(0), transform.getPosition(1),
+            transform.getSize(0),     transform.getSize(1)
+        );
         return bounds;
     }
 
@@ -371,7 +367,8 @@ use `EntityFactory` lambdas to create entities through the entity manager:
 
 ```java
 // create entity via the entity manager
-Entity bucket = context.entities().createEntity(() -> new Bucket(300, 0));
+IEntityManager entities = context.get(IEntityManager.class);
+Entity bucket = entities.createEntity(() -> new Bucket(300, 0));
 ```
 
 `createEntity` calls the factory's `create()` method, adds the resulting entity to the internal store, and returns it.
@@ -409,10 +406,10 @@ public class GameScene extends Scene {
     }
 
     @Override
-    public void submitRenderable(SceneContext context) {
+    public void submitRenderable(IRenderQueue renderQueue) {
         // called every frame after update
         // push visible entities into the render queue
-        context.renderQueue().queue(myEntity);
+        renderQueue.queue(myEntity);
     }
 }
 ```
@@ -441,12 +438,18 @@ public void onResume(SceneContext context) {
 
 | Method | Returns | Purpose |
 |--------|---------|---------|
-| `entities()` | `IEntityManager` | create, update, remove, and query entities |
-| `renderQueue()` | `IRenderQueue` | submit items for drawing this frame |
-| `input()` | `IInputQuery` | query logical input actions |
+| `get(Class<T> type)` | `T` | look up any registered service by its type |
 | `changeScene(String key)` | `void` | transition to a different scene |
 | `suspendScene(String key)` | `void` | push a new scene, suspending the current one |
 | `getScene(String key)` | `Scene` | retrieve a registered scene by name |
+
+use `get` to access the core services:
+
+```java
+IEntityManager entities = context.get(IEntityManager.class);
+IRenderQueue   queue    = context.get(IRenderQueue.class);
+IInputQuery    input    = context.get(IInputQuery.class);
+```
 
 ### Scene Transitions
 
@@ -498,29 +501,28 @@ bind physical keys to logical actions via `InputMapping`:
 ```java
 InputManager inputManager = new InputManager(new MyInputSource());
 
-// retrieve the mapping and configure bindings
-InputMapping mapping = inputManager.getInputMapping();
-mapping.bindKey(Keys.LEFT,  GameActions.MOVE_LEFT);
-mapping.bindKey(Keys.A,     GameActions.MOVE_LEFT);   // multiple keys per action
-mapping.bindKey(Keys.RIGHT, GameActions.MOVE_RIGHT);
-mapping.bindKey(Keys.D,     GameActions.MOVE_RIGHT);
-mapping.bindKey(Keys.SPACE, GameActions.JUMP);
-mapping.bindKey(Keys.ESCAPE, GameActions.PAUSE);
+// InputManager implements IInputMapping directly — bind keys on it directly
+inputManager.bindKey(Keys.LEFT,  GameActions.MOVE_LEFT);
+inputManager.bindKey(Keys.A,     GameActions.MOVE_LEFT);   // multiple keys per action
+inputManager.bindKey(Keys.RIGHT, GameActions.MOVE_RIGHT);
+inputManager.bindKey(Keys.D,     GameActions.MOVE_RIGHT);
+inputManager.bindKey(Keys.SPACE, GameActions.JUMP);
+inputManager.bindKey(Keys.ESCAPE, GameActions.PAUSE);
 
 // you can also bind mouse/controller buttons
-mapping.bindButton(Buttons.LEFT, GameActions.SHOOT);
+inputManager.bindButton(Buttons.LEFT, GameActions.SHOOT);
 
 engine.registerManager(inputManager);
 ```
 
 ### Querying Input
 
-use `IInputQuery` (available via `SceneContext.input()`) to check action states:
+use `IInputQuery` (available via `context.get(IInputQuery.class)`) to check action states:
 
 ```java
 @Override
 public void update(float deltaTime, SceneContext context) {
-    IInputQuery input = context.input();
+    IInputQuery input = context.get(IInputQuery.class);
 
     // check if an action is active (PRESSED or HELD)
     if (input.isActionActive(GameActions.MOVE_LEFT)) {
@@ -565,9 +567,8 @@ public void move(float deltaTime) {
     velocity[0] += acceleration[0] * deltaTime;
     velocity[1] += acceleration[1] * deltaTime;
 
-    float[] position = transform.getPosition();
-    position[0] += velocity[0] * deltaTime;
-    position[1] += velocity[1] * deltaTime;
+    transform.setPosition(0, transform.getPosition(0) + velocity[0] * deltaTime);
+    transform.setPosition(1, transform.getPosition(1) + velocity[1] * deltaTime);
 }
 ```
 
@@ -722,11 +723,10 @@ entities are not drawn automatically. each frame, your scene must push visible e
 
 ```java
 @Override
-public void submitRenderable(SceneContext context) {
-    IRenderQueue queue = context.renderQueue();
-    queue.queue(background);   // draw first (back layer)
-    queue.queue(player);       // draw on top
-    queue.queue(healthBar);    // draw last (front layer)
+public void submitRenderable(IRenderQueue renderQueue) {
+    renderQueue.queue(background);   // draw first (back layer)
+    renderQueue.queue(player);       // draw on top
+    renderQueue.queue(healthBar);    // draw last (front layer)
 }
 ```
 
@@ -827,10 +827,9 @@ public class Main {
 
         // input
         InputManager inputManager = new InputManager(new MyInputSource());
-        InputMapping mapping = inputManager.getInputMapping();
-        mapping.bindKey(Keys.LEFT,  GameActions.MOVE_LEFT);
-        mapping.bindKey(Keys.RIGHT, GameActions.MOVE_RIGHT);
-        mapping.bindKey(Keys.SPACE, GameActions.JUMP);
+        inputManager.bindKey(Keys.LEFT,  GameActions.MOVE_LEFT);
+        inputManager.bindKey(Keys.RIGHT, GameActions.MOVE_RIGHT);
+        inputManager.bindKey(Keys.SPACE, GameActions.JUMP);
         engine.registerManager(inputManager);
 
         // movement
@@ -889,8 +888,8 @@ public class GameScene extends Scene {
     @Override
     public void onEnter(SceneContext context) {
         // create the player entity
-        player = (Player) context.entities().createEntity(
-            () -> new Player(400, 50));
+        IEntityManager entities = context.get(IEntityManager.class);
+        player = (Player) entities.createEntity(() -> new Player(400, 50));
 
         // register with physics systems
         movementManager.registerMovable(player);
@@ -902,12 +901,12 @@ public class GameScene extends Scene {
         // clean up
         movementManager.unregisterMovable(player);
         collisionManager.unregisterCollidable(player);
-        context.entities().removeEntity(player.getId());
+        context.get(IEntityManager.class).removeEntity(player.getId());
     }
 
     @Override
     public void update(float deltaTime, SceneContext context) {
-        IInputQuery input = context.input();
+        IInputQuery input = context.get(IInputQuery.class);
 
         // set velocity based on input
         float speed = 200f;
@@ -918,8 +917,8 @@ public class GameScene extends Scene {
     }
 
     @Override
-    public void submitRenderable(SceneContext context) {
-        context.renderQueue().queue(player);
+    public void submitRenderable(IRenderQueue renderQueue) {
+        renderQueue.queue(player);
     }
 }
 ```
