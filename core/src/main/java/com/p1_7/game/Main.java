@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.p1_7.abstractengine.engine.Engine;
 import com.p1_7.abstractengine.entity.EntityManager;
 import com.p1_7.abstractengine.input.InputManager;
-import com.p1_7.abstractengine.scene.SceneManager;
 
 import com.p1_7.game.input.GameActions;
 import com.p1_7.game.input.ICursorSource;
@@ -49,8 +48,7 @@ public class Main extends ApplicationAdapter {
             new InputManager(new GdxInputSource(), GameActions.getDefaultBindings());
         inputManager.registerExtension(ICursorSource.class, new GdxCursorSource());
 
-        // core managers, registration order does not matter;
-        // engine reorders managers via topological sort on a directed acyclic graph.
+        // core managers are ordered by their declared dependencies during init.
         engine.registerManager(new EntityManager());
         engine.registerManager(inputManager);
         engine.registerManager(new GdxRenderManager());
@@ -58,7 +56,7 @@ public class Main extends ApplicationAdapter {
         engine.registerManager(fontManager);
 
         // scene setup
-        SceneManager sceneManager = new SceneManager();
+        GameSceneManager sceneManager = new GameSceneManager();
         sceneManager.registerService(IAudioManager.class, audioManager);
         sceneManager.registerService(IFontManager.class, fontManager);
 
