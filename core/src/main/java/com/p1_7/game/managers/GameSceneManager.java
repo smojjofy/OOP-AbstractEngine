@@ -1,11 +1,10 @@
-package com.p1_7.game;
+package com.p1_7.game.managers;
 
 import com.p1_7.abstractengine.engine.IManager;
 import com.p1_7.abstractengine.entity.EntityManager;
 import com.p1_7.abstractengine.input.InputManager;
 import com.p1_7.abstractengine.render.RenderManager;
 import com.p1_7.abstractengine.scene.SceneManager;
-import com.p1_7.game.managers.FontManager;
 
 /**
  * Game-specific scene manager dependencies.

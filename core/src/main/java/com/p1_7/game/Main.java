@@ -10,6 +10,7 @@ import com.p1_7.abstractengine.input.InputManager;
 import com.p1_7.game.input.GameActions;
 import com.p1_7.game.input.ICursorSource;
 import com.p1_7.game.managers.AudioManager;
+import com.p1_7.game.managers.GameSceneManager;
 import com.p1_7.game.managers.IAudioManager;
 import com.p1_7.game.managers.FontManager;
 import com.p1_7.game.managers.IFontManager;
