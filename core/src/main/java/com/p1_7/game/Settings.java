@@ -10,6 +10,12 @@ package com.p1_7.game;
  */
 public class Settings {
 
+    /** lowest supported brightness level; used to avoid a fully black screen */
+    public static final float MIN_BRIGHTNESS_LEVEL = 0.1f;
+
+    /** default brightness level used on startup */
+    public static final float DEFAULT_BRIGHTNESS_LEVEL = 0.9f;
+
     /**
      * Preset resolution options available to the player.
      *
@@ -44,7 +50,7 @@ public class Settings {
     private static int   windowWidth     = 1280;
     private static int   windowHeight    = 720;
     private static float musicVolume     = 0.5f;
-    private static float brightnessLevel = 0.0f;
+    private static float brightnessLevel = DEFAULT_BRIGHTNESS_LEVEL;
 
     /** returns the window width in pixels */
     public static int getWindowWidth() { return windowWidth; }
@@ -55,7 +61,7 @@ public class Settings {
     /** returns the music volume in the range [0.0, 1.0] */
     public static float getMusicVolume() { return musicVolume; }
 
-    /** returns the brightness overlay level in the range [0.0, 1.0] */
+    /** returns the screen brightness level in the range [0.1, 1.0] */
     public static float getBrightnessLevel() { return brightnessLevel; }
 
     /**
@@ -68,12 +74,12 @@ public class Settings {
     }
 
     /**
-     * Sets the brightness overlay level, clamped to the valid range [0.0, 1.0].
+     * Sets the screen brightness level, clamped to the valid range [0.1, 1.0].
      *
-     * @param level the desired brightness level; values outside [0.0, 1.0] are clamped
+     * @param level the desired brightness level; values outside [0.1, 1.0] are clamped
      */
     public static void setBrightnessLevel(float level) {
-        brightnessLevel = Math.max(0.0f, Math.min(1.0f, level));
+        brightnessLevel = Math.max(MIN_BRIGHTNESS_LEVEL, Math.min(1.0f, level));
     }
 
     /**
