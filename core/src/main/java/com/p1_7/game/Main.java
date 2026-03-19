@@ -17,7 +17,7 @@ import com.p1_7.game.platform.GdxInputSource;
 import com.p1_7.game.platform.GdxRenderManager;
 import com.p1_7.game.scenes.LevelCompleteScene;
 import com.p1_7.game.scenes.MenuScene;
-import com.p1_7.game.scenes.SettingScene;
+import com.p1_7.game.scenes.settings.SettingScene;
 
 /**
  * Entry point for the game application.

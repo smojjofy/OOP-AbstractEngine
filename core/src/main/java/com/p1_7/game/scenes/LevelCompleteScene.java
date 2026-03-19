@@ -4,10 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.p1_7.abstractengine.entity.Entity;
 import com.p1_7.abstractengine.input.IInputExtensionRegistry;
 import com.p1_7.abstractengine.render.IDrawContext;
 import com.p1_7.abstractengine.render.IRenderable;
@@ -18,6 +16,7 @@ import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.game.Settings;
 import com.p1_7.game.core.Transform2D;
 import com.p1_7.game.entities.BrightnessOverlay;
+import com.p1_7.game.entities.LabelText;
 import com.p1_7.game.entities.MenuButton;
 import com.p1_7.game.input.ICursorSource;
 import com.p1_7.game.platform.GdxDrawContext;
@@ -177,30 +176,6 @@ public class LevelCompleteScene extends Scene {
             gdxCtx.drawTexture(assetPath,
                 transform.getPosition(0), transform.getPosition(1),
                 transform.getSize(0),     transform.getSize(1));
-        }
-    }
-
-    private static class LabelText extends Entity implements IRenderable {
-        private final Transform2D transform;
-        private final BitmapFont font;
-        private final String text;
-
-        LabelText(String text, float cx, float cy, BitmapFont font) {
-            this.text = text;
-            this.font = font;
-            this.transform = new Transform2D(cx, cy, 0f, 0f);
-        }
-
-        @Override public String     getAssetPath() { return null; }
-        @Override public ITransform getTransform() { return transform; }
-
-        @Override
-        public void render(IDrawContext ctx) {
-            GdxDrawContext gdxCtx = (GdxDrawContext) ctx;
-            GlyphLayout layout = new GlyphLayout(font, text);
-            gdxCtx.drawFont(font, text,
-                transform.getPosition(0) - layout.width  / 2f,
-                transform.getPosition(1) + layout.height / 2f);
         }
     }
 }

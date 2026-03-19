@@ -1,0 +1,48 @@
+package com.p1_7.game.scenes.settings;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.p1_7.abstractengine.render.IDrawContext;
+import com.p1_7.abstractengine.render.IRenderable;
+import com.p1_7.abstractengine.transform.ITransform;
+import com.p1_7.game.Settings;
+import com.p1_7.game.core.Transform2D;
+import com.p1_7.game.platform.GdxDrawContext;
+
+final class SettingsBackground implements IRenderable {
+
+    private final Transform2D transform;
+    private final String assetPath;
+    private final Texture texture;
+
+    SettingsBackground(String assetPath) {
+        this.assetPath = assetPath;
+        this.texture = new Texture(Gdx.files.internal(assetPath));
+        this.texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        this.transform = new Transform2D(0f, 0f, Settings.getWindowWidth(), Settings.getWindowHeight());
+    }
+
+    @Override
+    public String getAssetPath() {
+        return assetPath;
+    }
+
+    @Override
+    public ITransform getTransform() {
+        return transform;
+    }
+
+    @Override
+    public void render(IDrawContext ctx) {
+        GdxDrawContext gdxCtx = (GdxDrawContext) ctx;
+        gdxCtx.drawTexture(assetPath,
+            transform.getPosition(0), transform.getPosition(1),
+            transform.getSize(0), transform.getSize(1));
+    }
+
+    void dispose() {
+        if (texture != null) {
+            texture.dispose();
+        }
+    }
+}
