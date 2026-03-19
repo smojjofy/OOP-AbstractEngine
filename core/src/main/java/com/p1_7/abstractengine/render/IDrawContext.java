@@ -12,4 +12,10 @@ public interface IDrawContext {
      * called by the render manager once after all items have been rendered.
      */
     void flush();
+
+    /**
+     * releases any draw-context-owned resources.
+     * called by the render manager during shutdown.
+     */
+    void dispose();
 }

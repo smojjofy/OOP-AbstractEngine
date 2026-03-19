@@ -18,6 +18,8 @@ import com.p1_7.abstractengine.scene.SceneContext;
 import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.game.Settings;
 import com.p1_7.game.core.Transform2D;
+import com.p1_7.game.entities.BrightnessOverlay;
+import com.p1_7.game.entities.BrightnessSlider;
 import com.p1_7.game.input.ICursorSource;
 import com.p1_7.game.managers.IAudioManager;
 import com.p1_7.game.entities.MenuButton;
@@ -62,7 +64,10 @@ public class SettingScene extends Scene {
     private LabelText          heading;
     private LabelText          volumeLabel;
     private VolumeSlider       volumeSlider;
+    private LabelText          brightnessLabel;
+    private BrightnessSlider   brightnessSlider;
     private MenuButton         backButton;
+    private BrightnessOverlay  brightnessOverlay;
 
     public SettingScene() {
         this.name = "settings";
@@ -110,17 +115,24 @@ public class SettingScene extends Scene {
         background  = new SettingsBackground(BG_ASSET);
         heading     = new LabelText("SETTINGS",   centreX, Settings.getWindowHeight() * 0.72f,
                                     headingFont);
-        volumeLabel = new LabelText(volumeText(audio), centreX, centreY + 60f,
+        volumeLabel = new LabelText(volumeText(audio), centreX, centreY + 110f,
                                     labelFont);
+        brightnessLabel = new LabelText(brightnessText(), centreX, centreY - 5f,
+                                        labelFont);
 
-        volumeSlider = new VolumeSlider(centreX, centreY - 10f, 340f, audio.getMusicVolume());
-        backButton   = MenuButton.withTexture("BACK", centreX, centreY - 120f, buttonFont, BTN_ASSET, HOVER_ASSET);
+        volumeSlider = new VolumeSlider(centreX, centreY + 40f, 340f, audio.getMusicVolume());
+        brightnessSlider = new BrightnessSlider(centreX, centreY - 75f, 340f,
+                                                Settings.getBrightnessLevel());
+        backButton   = MenuButton.withTexture("BACK", centreX, centreY - 190f, buttonFont, BTN_ASSET, HOVER_ASSET);
+        brightnessOverlay = new BrightnessOverlay();
     }
 
     @Override
     public void onExit(SceneContext context) {
         if (volumeSlider != null) volumeSlider.dispose();
+        if (brightnessSlider != null) brightnessSlider.dispose();
         if (backButton   != null) backButton.dispose();
+        if (brightnessOverlay != null) brightnessOverlay.dispose();
         if (background       != null) background.dispose();
         if (headingFont      != null) headingFont.dispose();
         if (labelFont        != null) labelFont.dispose();
@@ -139,12 +151,17 @@ public class SettingScene extends Scene {
 
         if (cursorSource == null) return;
         volumeSlider.updateInput(cursorSource);
+        brightnessSlider.updateInput(cursorSource);
         backButton.updateInput(cursorSource);
 
         if (volumeSlider.hasMoved()) {
             audio.setMusicVolume(volumeSlider.getValue());
             volumeLabel.setText(volumeText(audio));
             volumeSlider.resetMoved();
+        }
+        if (brightnessSlider.hasMoved()) {
+            brightnessLabel.setText(brightnessText());
+            brightnessSlider.resetMoved();
         }
         if (backButton.isClicked()) {
             backButton.resetClick();
@@ -158,11 +175,18 @@ public class SettingScene extends Scene {
         renderQueue.queue(heading);
         renderQueue.queue(volumeLabel);
         renderQueue.queue(volumeSlider);
+        renderQueue.queue(brightnessLabel);
+        renderQueue.queue(brightnessSlider);
         renderQueue.queue(backButton);
+        renderQueue.queue(brightnessOverlay);
     }
 
     private String volumeText(IAudioManager audio) {
         return "Music Volume:  " + Math.round(audio.getMusicVolume() * 100) + "%";
+    }
+
+    private String brightnessText() {
+        return "Brightness:  " + Math.round(Settings.getBrightnessLevel() * 100) + "%";
     }
 
     // ── inner entities ────────────────────────────────────────────

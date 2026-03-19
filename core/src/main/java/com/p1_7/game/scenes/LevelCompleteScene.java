@@ -17,6 +17,7 @@ import com.p1_7.abstractengine.scene.SceneContext;
 import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.game.Settings;
 import com.p1_7.game.core.Transform2D;
+import com.p1_7.game.entities.BrightnessOverlay;
 import com.p1_7.game.entities.MenuButton;
 import com.p1_7.game.input.ICursorSource;
 import com.p1_7.game.platform.GdxDrawContext;
@@ -43,6 +44,7 @@ public class LevelCompleteScene extends Scene {
     private LabelText hintEsc;
     private MenuButton continueButton;
     private MenuButton mainMenuButton;
+    private BrightnessOverlay brightnessOverlay;
     private int currentLevel = 1;
     private float inputCooldown;
 
@@ -97,6 +99,7 @@ public class LevelCompleteScene extends Scene {
         mainMenuButton = MenuButton.withTexture("MAIN MENU", cx, cy - 85f, buttonFont, BTN_ASSET, HOVER_ASSET);
         hintSpace = new LabelText(spaceHint, cx, cy - 175f, promptFont);
         hintEsc = new LabelText("ESC - Main Menu", cx, cy - 220f, promptFont);
+        brightnessOverlay = new BrightnessOverlay();
 
         inputCooldown = INPUT_COOLDOWN_SECONDS;
     }
@@ -105,6 +108,7 @@ public class LevelCompleteScene extends Scene {
     public void onExit(SceneContext context) {
         if (continueButton != null) continueButton.dispose();
         if (mainMenuButton != null) mainMenuButton.dispose();
+        if (brightnessOverlay != null) brightnessOverlay.dispose();
         if (titleFont      != null) titleFont.dispose();
         if (promptFont     != null) promptFont.dispose();
         if (buttonFont     != null) buttonFont.dispose();
@@ -148,6 +152,7 @@ public class LevelCompleteScene extends Scene {
         renderQueue.queue(mainMenuButton);
         renderQueue.queue(hintSpace);
         renderQueue.queue(hintEsc);
+        renderQueue.queue(brightnessOverlay);
     }
 
     private boolean isLastLevel() {

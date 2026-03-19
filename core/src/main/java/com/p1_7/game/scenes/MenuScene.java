@@ -18,6 +18,7 @@ import com.p1_7.abstractengine.scene.SceneContext;
 import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.game.Settings;
 import com.p1_7.game.core.Transform2D;
+import com.p1_7.game.entities.BrightnessOverlay;
 import com.p1_7.game.input.ICursorSource;
 import com.p1_7.game.managers.IAudioManager;
 import com.p1_7.game.entities.MenuButton;
@@ -62,6 +63,7 @@ public class MenuScene extends Scene {
     private MenuButton     startButton;
     private MenuButton     settingsButton;
     private MenuButton     exitButton;
+    private BrightnessOverlay brightnessOverlay;
 
     public MenuScene() {
         this.name = "menu";
@@ -117,6 +119,7 @@ public class MenuScene extends Scene {
                         centreX, firstButtonY - BUTTON_SPACING,      buttonFont, BTN_ASSET, HOVER_ASSET);
         exitButton     = MenuButton.withTexture("EXIT",
                         centreX, firstButtonY - BUTTON_SPACING * 2f, buttonFont, BTN_ASSET, HOVER_ASSET);
+        brightnessOverlay = new BrightnessOverlay();
     }
 
     @Override
@@ -124,6 +127,7 @@ public class MenuScene extends Scene {
         if (startButton    != null) startButton.dispose();
         if (settingsButton != null) settingsButton.dispose();
         if (exitButton     != null) exitButton.dispose();
+        if (brightnessOverlay != null) brightnessOverlay.dispose();
         if (background  != null) background.dispose();
         if (titleFont   != null) titleFont.dispose();
         if (buttonFont  != null) buttonFont.dispose();
@@ -165,6 +169,7 @@ public class MenuScene extends Scene {
         renderQueue.queue(startButton);
         renderQueue.queue(settingsButton);
         renderQueue.queue(exitButton);
+        renderQueue.queue(brightnessOverlay);
     }
 
     // ── inner entities ────────────────────────────────────────────

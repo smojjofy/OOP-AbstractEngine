@@ -73,6 +73,7 @@ public abstract class RenderManager extends Manager {
      */
     @Override
     protected void onShutdown() {
+        if (drawCtx       != null) { drawCtx.dispose(); }
         if (assetStore    != null) { assetStore.dispose(); }
         if (batch         != null) { batch.dispose(); }
         if (shapeRenderer != null) { shapeRenderer.dispose(); }

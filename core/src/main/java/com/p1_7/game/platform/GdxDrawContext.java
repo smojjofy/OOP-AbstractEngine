@@ -1,6 +1,7 @@
 package com.p1_7.game.platform;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -25,6 +26,7 @@ public class GdxDrawContext implements IDrawContext {
     private final SpriteBatch   batch;
     private final ShapeRenderer shapeRenderer;
     private final IAssetStore   assetStore;
+    private final Texture       solidPixel;
 
     private Pass                     currentPass      = Pass.NONE;
     private ShapeRenderer.ShapeType  activeShapeType  = null;
@@ -41,6 +43,7 @@ public class GdxDrawContext implements IDrawContext {
         this.batch         = batch.unwrap();
         this.shapeRenderer = shapeRenderer.unwrap();
         this.assetStore    = assetStore;
+        this.solidPixel    = createSolidPixel();
     }
 
     /**
@@ -56,6 +59,15 @@ public class GdxDrawContext implements IDrawContext {
         }
         currentPass     = Pass.NONE;
         activeShapeType = null;
+    }
+
+    /**
+     * releases resources owned directly by the draw context.
+     */
+    @Override
+    public void dispose() {
+        flush();
+        solidPixel.dispose();
     }
 
     /**
@@ -90,6 +102,20 @@ public class GdxDrawContext implements IDrawContext {
         batch.setColor(tint);
         batch.draw(texture, x, y, w, h);
         batch.setColor(Color.WHITE);
+    }
+
+    /**
+     * draws a tinted quad via SpriteBatch using an internal 1x1 white texture.
+     * this is the preferred path for translucent fullscreen overlays.
+     *
+     * @param color the tint and alpha to apply
+     * @param x     left edge in world coordinates
+     * @param y     bottom edge in world coordinates
+     * @param w     width
+     * @param h     height
+     */
+    public void drawTintedQuad(Color color, float x, float y, float w, float h) {
+        drawRawTexture(solidPixel, color, x, y, w, h);
     }
 
     /**
@@ -165,5 +191,14 @@ public class GdxDrawContext implements IDrawContext {
         shapeRenderer.begin(type);
         currentPass     = Pass.SHAPE;
         activeShapeType = type;
+    }
+
+    private Texture createSolidPixel() {
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return texture;
     }
 }
