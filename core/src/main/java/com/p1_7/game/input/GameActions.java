@@ -1,5 +1,6 @@
 package com.p1_7.game.input;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +10,8 @@ import com.p1_7.abstractengine.input.ActionId;
 import com.p1_7.abstractengine.input.InputBindingSpec;
 
 /**
- * Canonical remappable game actions and their default keyboard bindings.
+ * Canonical gameplay and UI actions plus their default input bindings.
+ * The settings remap table still exposes only the movement subset.
  */
 public final class GameActions {
 
@@ -17,6 +19,9 @@ public final class GameActions {
     public static final ActionId MOVE_DOWN  = new ActionId("MOVE_DOWN");
     public static final ActionId MOVE_LEFT  = new ActionId("MOVE_LEFT");
     public static final ActionId MOVE_RIGHT = new ActionId("MOVE_RIGHT");
+    public static final ActionId MENU_BACK = new ActionId("MENU_BACK");
+    public static final ActionId MENU_CONFIRM = new ActionId("MENU_CONFIRM");
+    public static final ActionId POINTER_PRIMARY = new ActionId("POINTER_PRIMARY");
 
     private static final List<BindingSpec> MOVEMENT_BINDINGS = createMovementBindings();
 
@@ -32,8 +37,8 @@ public final class GameActions {
     }
 
     /**
-     * Returns the default movement bindings in an engine-level format that can
-     * be applied by InputManager during construction.
+     * Returns the default gameplay and UI bindings in an engine-level format
+     * that can be applied by InputManager during construction.
      *
      * @return immutable engine-level default bindings
      */
@@ -45,6 +50,12 @@ public final class GameActions {
                 binding.getPrimaryKeyCode(),
                 binding.getAlternateKeyCode()));
         }
+        bindings.add(InputBindingSpec.keys(MENU_BACK, Input.Keys.ESCAPE, Input.Keys.BACKSPACE));
+        bindings.add(InputBindingSpec.keys(MENU_CONFIRM, Input.Keys.SPACE));
+        bindings.add(new InputBindingSpec(
+            POINTER_PRIMARY,
+            Collections.<Integer>emptyList(),
+            Arrays.asList(Input.Buttons.LEFT)));
         return Collections.unmodifiableList(bindings);
     }
 
