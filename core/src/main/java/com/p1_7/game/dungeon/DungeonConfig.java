@@ -23,7 +23,7 @@ public class DungeonConfig {
     /** maximum room side length; must be odd */
     public final int maxRoomSize;
 
-    /** RNG seed for reproducible generation */
+    /** rng seed for reproducible generation */
     public final long seed;
 
     /**
@@ -34,7 +34,7 @@ public class DungeonConfig {
      * @param maxAttempts room placement attempts before giving up
      * @param minRoomSize minimum room side length (odd)
      * @param maxRoomSize maximum room side length (odd)
-     * @param seed        RNG seed for reproducibility
+     * @param seed        rng seed for reproducibility
      */
     public DungeonConfig(int gridWidth, int gridHeight, int maxAttempts,
                          int minRoomSize, int maxRoomSize, long seed) {

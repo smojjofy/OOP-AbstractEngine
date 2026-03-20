@@ -40,7 +40,7 @@ public class Room {
      *
      * integer division on odd dimensions always lands on the exact centre cell.
      *
-     * @return a two-element array {@code {centreX, centreY}}
+     * @return a two-element array where index 0 is the centre column and index 1 is the centre row
      */
     public int[] centre() {
         return new int[]{ x + width / 2, y + height / 2 };
@@ -48,7 +48,7 @@ public class Room {
 
     /**
      * checks whether this room's bounding box overlaps another room's bounding box,
-     * expanded by {@code margin} cells on each side.
+     * expanded by margin cells on each side.
      *
      * @param other  the room to test against
      * @param margin additional cells of clearance required on each side
