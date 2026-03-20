@@ -17,6 +17,7 @@ import com.p1_7.game.managers.IFontManager;
 import com.p1_7.game.platform.GdxCursorSource;
 import com.p1_7.game.platform.GdxInputSource;
 import com.p1_7.game.platform.GdxRenderManager;
+import com.p1_7.game.scenes.GameScene;
 import com.p1_7.game.scenes.LevelCompleteScene;
 import com.p1_7.game.scenes.MenuScene;
 import com.p1_7.game.scenes.settings.SettingScene;
@@ -69,6 +70,9 @@ public class Main extends ApplicationAdapter {
 
         // temporary level-complete screen for flow testing
         sceneManager.registerScene(new LevelCompleteScene());
+
+        // core gameplay scene
+        sceneManager.registerScene(new GameScene());
 
         sceneManager.setInitialScene("menu"); // start at the main menu
         engine.registerManager(sceneManager);

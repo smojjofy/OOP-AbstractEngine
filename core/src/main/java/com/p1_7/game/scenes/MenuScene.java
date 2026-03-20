@@ -125,7 +125,7 @@ public class MenuScene extends Scene {
 
         if (startButton.isClicked()) {
             startButton.resetClick();
-            context.changeScene("level-complete"); // temporary test route until GameScene exists
+            context.changeScene("game");
             return;
         }
         if (settingsButton.isClicked()) {
