@@ -35,9 +35,20 @@ public class DungeonConfig {
      * @param minRoomSize minimum room side length (odd)
      * @param maxRoomSize maximum room side length (odd)
      * @param seed        rng seed for reproducibility
+     * @throws IllegalArgumentException if grid dimensions are non-positive, room sizes are even,
+     *                                  or minRoomSize exceeds maxRoomSize
      */
     public DungeonConfig(int gridWidth, int gridHeight, int maxAttempts,
                          int minRoomSize, int maxRoomSize, long seed) {
+        if (gridWidth <= 0 || gridHeight <= 0) {
+            throw new IllegalArgumentException("grid dimensions must be positive");
+        }
+        if (minRoomSize % 2 == 0 || maxRoomSize % 2 == 0) {
+            throw new IllegalArgumentException("room sizes must be odd");
+        }
+        if (minRoomSize > maxRoomSize) {
+            throw new IllegalArgumentException("minRoomSize must not exceed maxRoomSize");
+        }
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;
         this.maxAttempts = maxAttempts;

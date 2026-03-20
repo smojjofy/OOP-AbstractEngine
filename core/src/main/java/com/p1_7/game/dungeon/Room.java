@@ -27,8 +27,12 @@ public class Room {
      * @param y      grid row of the top-left corner
      * @param width  number of columns (must be odd)
      * @param height number of rows (must be odd)
+     * @throws IllegalArgumentException if width or height is even
      */
     public Room(int x, int y, int width, int height) {
+        if (width % 2 == 0 || height % 2 == 0) {
+            throw new IllegalArgumentException("room dimensions must be odd; got " + width + "x" + height);
+        }
         this.x = x;
         this.y = y;
         this.width = width;
@@ -51,7 +55,8 @@ public class Room {
      * expanded by margin cells on each side.
      *
      * @param other  the room to test against
-     * @param margin additional cells of clearance required on each side
+     * @param margin cells of expansion applied to each room's bounding box on each side;
+     *               a gap of more than 2*margin cells is required for the method to return false
      * @return true if the rooms overlap including the margin
      */
     public boolean overlaps(Room other, int margin) {

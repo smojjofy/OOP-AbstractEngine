@@ -35,17 +35,22 @@ public class DungeonMap {
     /**
      * constructs a dungeon map from a pre-generated grid and room list.
      *
-     * a defensive copy of rooms is taken so the caller's list cannot
+     * defensive copies of both grid and rooms are taken so the caller cannot
      * mutate the map after construction.
      *
      * @param grid  row-major cell grid, dimensions [height][width]
      * @param rooms rooms in insertion order; index 0 must be the player spawn
      */
     public DungeonMap(CellType[][] grid, List<Room> rooms) {
-        this.grid = grid;
         this.height = grid.length;
         // guard against an empty grid to avoid ArrayIndexOutOfBoundsException
         this.width = (grid.length > 0) ? grid[0].length : 0;
+        // defensive copy so the caller cannot mutate the grid after construction
+        CellType[][] copy = new CellType[this.height][this.width];
+        for (int row = 0; row < this.height; row++) {
+            System.arraycopy(grid[row], 0, copy[row], 0, this.width);
+        }
+        this.grid = copy;
         this.rooms = new ArrayList<>(rooms);
     }
 
