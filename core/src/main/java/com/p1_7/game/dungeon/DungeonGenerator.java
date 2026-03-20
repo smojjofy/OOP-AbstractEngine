@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * stateless service that procedurally generates a {@link DungeonMap} from a {@link DungeonConfig}.
+ * stateless service that procedurally generates a DungeonMap from a DungeonConfig.
  *
- * the generator holds no fields; all mutable state is scoped to the {@code generate} method.
+ * the generator holds no fields; all mutable state is scoped to the generate method.
  * supplying the same config (including seed) always produces an identical map.
  */
 public class DungeonGenerator {
@@ -18,12 +18,16 @@ public class DungeonGenerator {
      *
      * @param config tuning parameters for generation; must not be null
      * @return a fully generated DungeonMap
-     * @throws IllegalStateException if no rooms could be placed within the allowed attempts
+     * @throws IllegalArgumentException if config is null
+     * @throws IllegalStateException    if no rooms could be placed within the allowed attempts
      */
     public DungeonMap generate(DungeonConfig config) {
+        if (config == null) {
+            throw new IllegalArgumentException("config must not be null");
+        }
         CellType[][] grid = initialiseGrid(config.gridWidth, config.gridHeight);
         List<Room> rooms = placeRooms(grid, config);
-        carveCorridors(grid, rooms, config);
+        carveCorridors(grid, rooms);
         return new DungeonMap(grid, rooms);
     }
 
@@ -43,11 +47,12 @@ public class DungeonGenerator {
     }
 
     /**
-     * attempts to place rooms into the grid for up to {@code config.maxAttempts} iterations.
+     * attempts to place rooms into the grid for up to config.maxAttempts iterations.
      *
      * room dimensions and top-left positions are constrained to odd values so corridor
-     * connections always land on odd-indexed cells. a candidate is rejected if it overlaps
-     * any already-placed room by a 1-cell margin.
+     * connections always land on odd-indexed cells. a candidate is skipped if no valid
+     * odd top-left position exists, or rejected if it overlaps an already-placed room
+     * by a 1-cell margin.
      *
      * @param grid   the working grid to carve rooms into
      * @param config generation parameters (room size range, grid bounds, attempt limit, seed)
@@ -63,16 +68,18 @@ public class DungeonGenerator {
             int roomWidth  = config.minRoomSize + 2 * rng.nextInt((config.maxRoomSize - config.minRoomSize) / 2 + 1);
             int roomHeight = config.minRoomSize + 2 * rng.nextInt((config.maxRoomSize - config.minRoomSize) / 2 + 1);
 
-            // skip if the room cannot fit inside the grid at all
+            // skip if no valid odd top-left position exists for this room on this grid;
+            // maxX/maxY of 0 means only position 0 (even) is available, violating odd-alignment
             int maxX = config.gridWidth  - roomWidth;
             int maxY = config.gridHeight - roomHeight;
-            if (maxX < 0 || maxY < 0) {
+            if (maxX < 1 || maxY < 1) {
                 continue;
             }
 
-            // pick odd top-left coordinates so room centres sit on odd cells
-            int roomX = (maxX >= 2) ? 1 + 2 * rng.nextInt(maxX / 2) : 0;
-            int roomY = (maxY >= 2) ? 1 + 2 * rng.nextInt(maxY / 2) : 0;
+            // pick odd top-left coordinates so room centres sit on odd cells;
+            // (maxX + 1) / 2 counts the number of valid odd positions in [1, maxX]
+            int roomX = 1 + 2 * rng.nextInt((maxX + 1) / 2);
+            int roomY = 1 + 2 * rng.nextInt((maxY + 1) / 2);
 
             Room candidate = new Room(roomX, roomY, roomWidth, roomHeight);
 
@@ -108,25 +115,24 @@ public class DungeonGenerator {
      */
     private void carveRoom(CellType[][] grid, Room room) {
         for (int row = room.y; row < room.y + room.height; row++) {
-            for (int col = room.x; col < room.x + room.width; col++) {
-                grid[row][col] = CellType.FLOOR;
-            }
+            Arrays.fill(grid[row], room.x, room.x + room.width, CellType.FLOOR);
         }
     }
 
     /**
      * carves L-shaped corridors connecting each consecutive pair of rooms.
      *
-     * @param grid   the working grid to modify
-     * @param rooms  placed rooms in insertion order
-     * @param config provides grid bounds for index clamping
+     * a single-room dungeon requires no corridors; this method is a no-op in that case.
+     *
+     * @param grid  the working grid to modify
+     * @param rooms placed rooms in insertion order
      */
-    private void carveCorridors(CellType[][] grid, List<Room> rooms, DungeonConfig config) {
+    private void carveCorridors(CellType[][] grid, List<Room> rooms) {
         for (int i = 0; i < rooms.size() - 1; i++) {
             int[] from = rooms.get(i).centre();
             int[] to   = rooms.get(i + 1).centre();
             // from[0]/to[0] are columns; from[1]/to[1] are rows
-            carveCorridor(grid, from[0], from[1], to[0], to[1], config);
+            carveCorridor(grid, from[0], from[1], to[0], to[1]);
         }
     }
 
@@ -134,34 +140,33 @@ public class DungeonGenerator {
      * carves a single L-shaped corridor from (x1, y1) to (x2, y2).
      *
      * the horizontal leg walks along row y1 from column x1 to x2; the vertical
-     * leg then walks along column x2 from row y1 to y2. all indices are clamped
-     * to valid grid bounds before each write.
+     * leg then walks along column x2 from row y1 to y2. loop bounds are clamped
+     * to valid grid indices before iteration so no per-write guard is needed.
      *
-     * @param grid   the working grid to modify
-     * @param x1     starting column (centre of the source room)
-     * @param y1     starting row    (centre of the source room)
-     * @param x2     ending column   (centre of the target room)
-     * @param y2     ending row      (centre of the target room)
-     * @param config provides gridWidth and gridHeight for bound clamping
+     * @param grid the working grid to modify
+     * @param x1   starting column (centre of the source room)
+     * @param y1   starting row    (centre of the source room)
+     * @param x2   ending column   (centre of the target room)
+     * @param y2   ending row      (centre of the target room)
      */
-    private void carveCorridor(CellType[][] grid, int x1, int y1, int x2, int y2, DungeonConfig config) {
-        int maxCol = config.gridWidth  - 1;
-        int maxRow = config.gridHeight - 1;
+    private void carveCorridor(CellType[][] grid, int x1, int y1, int x2, int y2) {
+        int maxCol = grid[0].length - 1;
+        int maxRow = grid.length    - 1;
 
         // horizontal leg: walk from x1 to x2 along row y1
-        int colStart    = Math.min(x1, x2);
-        int colEnd      = Math.max(x1, x2);
-        int fixedRow    = Math.max(0, Math.min(y1, maxRow));
+        int colStart = Math.max(0, Math.min(x1, x2));
+        int colEnd   = Math.min(maxCol, Math.max(x1, x2));
+        int fixedRow = Math.max(0, Math.min(y1, maxRow));
         for (int col = colStart; col <= colEnd; col++) {
-            grid[fixedRow][Math.max(0, Math.min(col, maxCol))] = CellType.FLOOR;
+            grid[fixedRow][col] = CellType.FLOOR;
         }
 
         // vertical leg: walk from y1 to y2 along column x2
-        int rowStart    = Math.min(y1, y2);
-        int rowEnd      = Math.max(y1, y2);
-        int fixedCol    = Math.max(0, Math.min(x2, maxCol));
+        int rowStart = Math.max(0, Math.min(y1, y2));
+        int rowEnd   = Math.min(maxRow, Math.max(y1, y2));
+        int fixedCol = Math.max(0, Math.min(x2, maxCol));
         for (int row = rowStart; row <= rowEnd; row++) {
-            grid[Math.max(0, Math.min(row, maxRow))][fixedCol] = CellType.FLOOR;
+            grid[row][fixedCol] = CellType.FLOOR;
         }
     }
 }
