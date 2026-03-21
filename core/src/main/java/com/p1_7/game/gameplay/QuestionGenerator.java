@@ -22,17 +22,34 @@ public class QuestionGenerator {
     private final Random random;
 
     /**
-     * constructs a question generator for the given difficulty level.
+     * constructs a question generator for the given difficulty level using an unseeded random source.
      *
      * @param difficulty the difficulty that controls operand range; must not be null
      * @throws IllegalArgumentException if difficulty is null
      */
     public QuestionGenerator(Difficulty difficulty) {
+        this(difficulty, new Random());
+    }
+
+    /**
+     * constructs a question generator with an explicit random source.
+     *
+     * prefer this overload in tests: passing a seeded random instance makes generation
+     * deterministic, allowing specific behaviours (e.g. operand swapping) to be asserted reliably.
+     *
+     * @param difficulty the difficulty that controls operand range; must not be null
+     * @param random     the random source to use for all generation decisions; must not be null
+     * @throws IllegalArgumentException if difficulty or random is null
+     */
+    public QuestionGenerator(Difficulty difficulty, Random random) {
         if (difficulty == null) {
             throw new IllegalArgumentException("difficulty must not be null");
         }
+        if (random == null) {
+            throw new IllegalArgumentException("random must not be null");
+        }
         this.difficulty = difficulty;
-        this.random = new Random();
+        this.random = random;
     }
 
     /**
@@ -108,6 +125,13 @@ public class QuestionGenerator {
             }
 
             options.add(candidate);
+        }
+
+        // guard against an exhausted offset pool producing fewer than 4 options
+        if (options.size() != 4) {
+            throw new IllegalStateException(
+                "buildOptions failed to produce 4 unique non-negative distractors for correctAnswer="
+                    + correctAnswer + "; only produced " + options.size());
         }
 
         // shuffle so the correct answer does not always appear at index 0

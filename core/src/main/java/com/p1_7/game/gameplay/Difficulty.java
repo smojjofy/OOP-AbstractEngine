@@ -30,6 +30,10 @@ public enum Difficulty {
      * @param maxOperand the inclusive upper bound for operands
      */
     Difficulty(int minOperand, int maxOperand) {
+        if (minOperand > maxOperand) {
+            throw new IllegalArgumentException(
+                "minOperand (" + minOperand + ") must be <= maxOperand (" + maxOperand + ")");
+        }
         this.minOperand = minOperand;
         this.maxOperand = maxOperand;
     }
