@@ -16,6 +16,7 @@ import com.p1_7.abstractengine.scene.Scene;
 import com.p1_7.abstractengine.scene.SceneContext;
 import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.game.core.Transform2D;
+import com.p1_7.game.entities.BrightnessOverlay;
 import com.p1_7.game.entities.QuestionPanel;
 import com.p1_7.game.gameplay.Difficulty;
 import com.p1_7.game.gameplay.ILevelOrchestrator;
@@ -51,6 +52,12 @@ public class GameScene extends Scene {
 
     /** hold time in seconds for the FEEDBACK phase — longer to allow the player to read the result */
     private static final float FEEDBACK_HOLD_SECONDS = 2.0f;
+
+    /** width of the centre trigger zone within each answer room in pixels */
+    private static final float TRIGGER_WIDTH  = 100f;
+
+    /** height of the centre trigger zone within each answer room in pixels */
+    private static final float TRIGGER_HEIGHT = 80f;
 
     /** pre-allocated overlay colours — reused every frame to avoid per-frame allocation */
     private static final Color OVERLAY_CORRECT    = new Color(0.08f, 0.62f, 0.22f, 0.42f);
@@ -124,6 +131,9 @@ public class GameScene extends Scene {
 
     /** full-screen tinted overlay with result text; visible only during FEEDBACK */
     private IRenderable feedbackOverlay;
+
+    /** full-screen brightness overlay; must be queued last so it composites over all other elements */
+    private BrightnessOverlay brightnessOverlay;
 
     /** score counter rendered in the top-right corner */
     private IRenderable scoreDisplay;
@@ -283,6 +293,8 @@ public class GameScene extends Scene {
             }
         };
 
+        this.brightnessOverlay = new BrightnessOverlay();
+
         // health display: top-left, 3 squares (filled red = remaining health, dark grey = lost)
         this.healthDisplay = new IRenderable() {
             private static final float SQ     = 20f;
@@ -340,6 +352,8 @@ public class GameScene extends Scene {
         feedbackOverlay    = null;
         scoreDisplay       = null;
         healthDisplay      = null;
+        if (brightnessOverlay != null) brightnessOverlay.dispose();
+        brightnessOverlay  = null;
 
         layout           = null;
         player           = null;
@@ -420,7 +434,8 @@ public class GameScene extends Scene {
         renderQueue.queue(questionPanel);   // slides above the world during QUESTION_INTRO
         renderQueue.queue(scoreDisplay);
         renderQueue.queue(healthDisplay);
-        renderQueue.queue(feedbackOverlay); // topmost — composites over all others
+        renderQueue.queue(feedbackOverlay);
+        renderQueue.queue(brightnessOverlay); // topmost — dims the whole frame per settings
     }
 
     // ── private helpers ───────────────────────────────────────────────────────
@@ -495,14 +510,16 @@ public class GameScene extends Scene {
      * @return true if the two AABBs overlap on both axes
      */
     private boolean overlapsRoom(IBounds playerBounds, float[] room) {
+        // compute the centre trigger zone — smaller than the full room to require deliberate entry
+        float triggerX = room[0] + (room[2] - TRIGGER_WIDTH)  / 2f;
+        float triggerY = room[1] + (room[3] - TRIGGER_HEIGHT) / 2f;
+
         float[] pMin = playerBounds.getMinPosition();
         float[] pExt = playerBounds.getExtent();
         float pMaxX = pMin[0] + pExt[0];
         float pMaxY = pMin[1] + pExt[1];
-        float rMaxX = room[0] + room[2];
-        float rMaxY = room[1] + room[3];
-        return pMaxX > room[0] && pMin[0] < rMaxX
-            && pMaxY > room[1] && pMin[1] < rMaxY;
+        return pMaxX > triggerX                 && pMin[0] < triggerX + TRIGGER_WIDTH
+            && pMaxY > triggerY                 && pMin[1] < triggerY + TRIGGER_HEIGHT;
     }
 
     /**
