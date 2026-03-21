@@ -37,8 +37,8 @@ public class QuestionPanel extends Entity implements IRenderable {
     /** duration of the slide animation in seconds; must match PHASE_HOLD_SECONDS in GameScene */
     private static final float ANIM_DURATION = 1.0f;
 
-    /** semi-transparent dark background colour */
-    private static final Color PANEL_BG = new Color(0.1f, 0.1f, 0.1f, 0.85f);
+    /** deep navy background — matches the steel-blue dungeon palette */
+    private static final Color PANEL_BG = new Color(0.04f, 0.07f, 0.14f, 0.92f);
 
     /** transform used to satisfy ITransformable; y-axis is kept in sync with currentY */
     private final Transform2D transform;

@@ -12,4 +12,6 @@ public interface IFontManager {
     BitmapFont getDarkTextFont(int size);
 
     BitmapFont getPromptFont();
+
+    BitmapFont getLightTextFont(int size);
 }

@@ -15,7 +15,7 @@ import com.p1_7.game.input.GameActions;
 import com.p1_7.game.platform.GdxDrawContext;
 
 /**
- * the player entity — a cyan square that moves freely around the maze.
+ * the player entity — a sky-cyan square that moves freely around the maze.
  *
  * movement is locked during non-interactive phases (QUESTION_INTRO, FEEDBACK,
  * ROUND_RESET). wall collision is handled reactively by MazeCollisionManager,
@@ -30,6 +30,9 @@ public class Player extends Entity implements IRenderable, IMovable, ICollidable
 
     /** movement speed in pixels per second */
     private static final float SPEED = 200f;
+
+    /** player fill colour — sky cyan, distinct against the dark background */
+    private static final Color PLAYER_COLOUR = new Color(0.30f, 0.82f, 0.98f, 1f);
 
     /** player width and height in pixels */
     private static final float SIZE = 32f;
@@ -86,14 +89,14 @@ public class Player extends Entity implements IRenderable, IMovable, ICollidable
     }
 
     /**
-     * draws the player as a solid cyan rectangle.
+     * draws the player as a solid sky-cyan rectangle.
      *
      * @param ctx the draw context for this frame
      */
     @Override
     public void render(IDrawContext ctx) {
         GdxDrawContext gdx = (GdxDrawContext) ctx;
-        gdx.rect(Color.CYAN,
+        gdx.rect(PLAYER_COLOUR,
                  transform.getPosition(0),
                  transform.getPosition(1),
                  SIZE, SIZE, true);

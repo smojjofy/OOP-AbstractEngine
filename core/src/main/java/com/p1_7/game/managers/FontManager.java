@@ -71,6 +71,25 @@ public class FontManager extends Manager implements IFontManager {
             new Color(1f, 1f, 1f, 0.35f));
     }
 
+    /**
+     * returns a cool off-white bitmap font suitable for rendering on dark backgrounds,
+     * such as the game scene HUD and answer-room labels.
+     *
+     * @param size point size of the generated font
+     * @return cached bitmap font in cool off-white with a faint dark drop shadow
+     */
+    @Override
+    public BitmapFont getLightTextFont(int size) {
+        return getOrCreate("light-text:" + size,
+            size,
+            // cool off-white — readable on the near-black game scene background
+            new Color(0.88f, 0.92f, 1f, 1f),
+            1,
+            -1,
+            // faint dark shadow to lift the text off any mid-tone surface
+            new Color(0f, 0f, 0f, 0.55f));
+    }
+
     private BitmapFont getOrCreate(String key, int size, Color color,
                                    int shadowOffsetX, int shadowOffsetY, Color shadowColor) {
         BitmapFont cached = fontCache.get(key);

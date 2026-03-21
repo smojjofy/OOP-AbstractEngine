@@ -53,9 +53,15 @@ public class GameScene extends Scene {
     private static final float FEEDBACK_HOLD_SECONDS = 2.0f;
 
     /** pre-allocated overlay colours — reused every frame to avoid per-frame allocation */
-    private static final Color OVERLAY_CORRECT    = new Color(0f, 0.7f, 0f, 0.35f);
-    private static final Color OVERLAY_WRONG      = new Color(0.8f, 0f, 0f, 0.35f);
-    private static final Color HEALTH_LOST_COLOUR = new Color(0.3f, 0.3f, 0.3f, 1f);
+    private static final Color OVERLAY_CORRECT    = new Color(0.08f, 0.62f, 0.22f, 0.42f);
+    private static final Color OVERLAY_WRONG      = new Color(0.75f, 0.08f, 0.08f, 0.42f);
+
+    /** room outline colour — steel blue, visible against the black background */
+    private static final Color ROOM_OUTLINE_COLOUR = new Color(0.30f, 0.45f, 0.62f, 1f);
+
+    /** health pip colours — warm red for remaining health, dark steel-blue for lost */
+    private static final Color HEALTH_ACTIVE_COLOUR = new Color(0.90f, 0.20f, 0.20f, 1f);
+    private static final Color HEALTH_LOST_COLOUR   = new Color(0.18f, 0.22f, 0.28f, 1f);
 
     /** the fixed spatial layout providing spawn point, room bounds, and wall bounds */
     private MazeLayout layout;
@@ -176,8 +182,8 @@ public class GameScene extends Scene {
 
         // source fonts from the font manager
         IFontManager fontManager = context.get(IFontManager.class);
-        this.promptFont = fontManager.getPromptFont();
-        this.hudFont    = fontManager.getDarkTextFont(22);
+        this.promptFont = fontManager.getLightTextFont(28);
+        this.hudFont    = fontManager.getLightTextFont(22);
 
         // allocate per-room answer caches before the loop so closures can capture the array references
         this.roomAnswerTexts   = new String[4];
@@ -210,8 +216,8 @@ public class GameScene extends Scene {
                 @Override
                 public void render(IDrawContext ctx) {
                     GdxDrawContext gdx = (GdxDrawContext) ctx;
-                    // grey outline marking the room boundary
-                    gdx.rect(Color.GRAY, rect[0], rect[1], rect[2], rect[3], false);
+                    // steel-blue outline marking the room boundary
+                    gdx.rect(ROOM_OUTLINE_COLOUR, rect[0], rect[1], rect[2], rect[3], false);
                     // layout and text were pre-computed in refreshRoomAnswerCache — no allocation
                     GlyphLayout gl = capturedAnswerLayouts[roomIndex];
                     gdx.drawFont(roomFont, capturedAnswerTexts[roomIndex],
@@ -229,6 +235,7 @@ public class GameScene extends Scene {
         questionPanel.beginIntro(orchestrator.getCurrentQuestion().getPrompt());
         // prevent onPhaseChanged from firing beginIntro a second time on the first update tick
         this.lastKnownPhase = orchestrator.getPhase();
+        this.phaseHoldTimer = PHASE_HOLD_SECONDS; // initialise hold for the initial QUESTION_INTRO
 
         // capture hudFont as a final local so closures below are independent of the field lifecycle
         final BitmapFont capturedHudFont = hudFont;
@@ -288,7 +295,7 @@ public class GameScene extends Scene {
                 for (int i = 0; i < 3; i++) {
                     float x = BASE_X + i * (SQ + GAP);
                     if (i < health) {
-                        gdx.rect(Color.RED, x, BASE_Y, SQ, SQ, true);
+                        gdx.rect(HEALTH_ACTIVE_COLOUR, x, BASE_Y, SQ, SQ, true);
                     } else {
                         // reuse static constant — no allocation
                         gdx.rect(HEALTH_LOST_COLOUR, x, BASE_Y, SQ, SQ, false);
