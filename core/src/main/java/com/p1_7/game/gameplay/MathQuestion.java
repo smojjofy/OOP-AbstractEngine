@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public final class MathQuestion {
 
-    /** the human-readable question text, e.g. {@code "3 + 4 = ?"} */
+    /** the human-readable question text, e.g. "3 + 4 = ?" */
     private final String prompt;
 
     /** the single correct integer answer to the question */
@@ -28,12 +28,12 @@ public final class MathQuestion {
     /**
      * constructs a math question with the given prompt, correct answer, and answer options.
      *
-     * <p>the options list must contain exactly four elements, all of which must be unique,
+     * the options list must contain exactly four elements, all of which must be unique,
      * and the correct answer must appear among them.
      *
      * @param prompt        the question text shown to the player; must not be null
      * @param correctAnswer the single correct integer answer
-     * @param options       exactly four unique non-null integers that include {@code correctAnswer}
+     * @param options       exactly four unique non-null integers that include correctAnswer
      * @throws IllegalArgumentException if {@code prompt} is null, if {@code options} does not
      *                                  contain exactly 4 elements, if any elements are null or
      *                                  duplicated, or if {@code correctAnswer} is not present
