@@ -10,10 +10,7 @@ import com.p1_7.abstractengine.movement.MovementManager;
  * declaring GameSceneManager as a dependency ensures this manager's onUpdate()
  * runs after GameSceneManager.onUpdate() — which calls GameScene.update() and
  * sets the player's velocity — so position integration always uses the
- * velocity that was resolved for the current frame.
- *
- * MazeCollisionManager declares this class as its own dependency so wall
- * correction runs after integration has completed.
+ * velocity resolved for the current frame.
  */
 public final class GameMovementManager extends MovementManager {
 
