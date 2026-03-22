@@ -1,4 +1,4 @@
-package com.p1_7.game.scenes.settings;
+package com.p1_7.game.ui;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -11,13 +11,13 @@ import com.p1_7.abstractengine.render.IRenderable;
 import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.game.platform.GdxDrawContext;
 
-final class RemapSlot extends Entity implements IRenderable {
+public final class RemapSlot extends Entity implements IRenderable {
 
-    static final float TABLE_WIDTH = 560f;
-    static final float ACTION_COLUMN_WIDTH = 190f;
-    static final float KEY_COLUMN_WIDTH = 170f;
-    static final float CELL_HEIGHT = 30f;
-    static final float CELL_GAP = 15f;
+    public static final float TABLE_WIDTH = 560f;
+    public static final float ACTION_COLUMN_WIDTH = 190f;
+    public static final float KEY_COLUMN_WIDTH = 170f;
+    public static final float CELL_HEIGHT = 30f;
+    public static final float CELL_GAP = 15f;
 
     private static final Color CELL_FILL = new Color(0.54f, 0.58f, 0.86f, 0.94f);
     private static final Color CELL_HOVER = new Color(0.66f, 0.71f, 0.95f, 0.98f);
@@ -25,7 +25,7 @@ final class RemapSlot extends Entity implements IRenderable {
     private static final Color CELL_BORDER = new Color(0.90f, 0.94f, 1.0f, 1f);
     private static final Color TEXT_COLOR = new Color(0.12f, 0.16f, 0.28f, 1f);
 
-    enum BindingColumn {
+    public enum BindingColumn {
         PRIMARY("Primary"),
         ALTERNATE("Alternate");
 
@@ -35,7 +35,7 @@ final class RemapSlot extends Entity implements IRenderable {
             this.label = label;
         }
 
-        String getLabel() {
+        public String getLabel() {
             return label;
         }
     }
@@ -55,7 +55,7 @@ final class RemapSlot extends Entity implements IRenderable {
     private BindingColumn hoveredColumn;
     private BindingColumn activeColumn;
 
-    RemapSlot(String label,
+    public RemapSlot(String label,
               ActionId actionId,
               int primaryKeyCode,
               int alternateKeyCode,
@@ -76,23 +76,23 @@ final class RemapSlot extends Entity implements IRenderable {
         this.cellBaselineY = centreY + 8f;
     }
 
-    String getLabel() {
+    public String getLabel() {
         return label;
     }
 
-    ActionId getActionId() {
+    public ActionId getActionId() {
         return actionId;
     }
 
-    int getPrimaryKeyCode() {
+    public int getPrimaryKeyCode() {
         return primaryKeyCode;
     }
 
-    int getAlternateKeyCode() {
+    public int getAlternateKeyCode() {
         return alternateKeyCode;
     }
 
-    BindingColumn hitTest(float x, float y) {
+    public BindingColumn hitTest(float x, float y) {
         if (contains(primaryCellX, y, x)) {
             return BindingColumn.PRIMARY;
         }
@@ -107,15 +107,15 @@ final class RemapSlot extends Entity implements IRenderable {
             && y >= cellY && y <= cellY + CELL_HEIGHT;
     }
 
-    void setHoveredColumn(BindingColumn column) {
+    public void setHoveredColumn(BindingColumn column) {
         this.hoveredColumn = column;
     }
 
-    void setActiveColumn(BindingColumn column) {
+    public void setActiveColumn(BindingColumn column) {
         this.activeColumn = column;
     }
 
-    BindingColumn findColumnForKey(int keyCode) {
+    public BindingColumn findColumnForKey(int keyCode) {
         if (primaryKeyCode == keyCode) {
             return BindingColumn.PRIMARY;
         }
@@ -125,15 +125,15 @@ final class RemapSlot extends Entity implements IRenderable {
         return null;
     }
 
-    int getKeyCode(BindingColumn column) {
+    public int getKeyCode(BindingColumn column) {
         return column == BindingColumn.PRIMARY ? primaryKeyCode : alternateKeyCode;
     }
 
-    int getOtherKeyCode(BindingColumn column) {
+    public int getOtherKeyCode(BindingColumn column) {
         return column == BindingColumn.PRIMARY ? alternateKeyCode : primaryKeyCode;
     }
 
-    void setKeyCode(BindingColumn column, int keyCode) {
+    public void setKeyCode(BindingColumn column, int keyCode) {
         if (column == BindingColumn.PRIMARY) {
             primaryKeyCode = keyCode;
         } else {

@@ -1,4 +1,4 @@
-package com.p1_7.game.scenes.settings;
+package com.p1_7.game.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.p1_7.abstractengine.entity.Entity;
@@ -15,7 +15,7 @@ import com.p1_7.game.platform.GdxDrawContext;
 /**
  * Horizontal volume slider entity.
  */
-final class VolumeSlider extends Entity implements IRenderable {
+public final class VolumeSlider extends Entity implements IRenderable {
 
     private static final float KNOB_RADIUS = 14f;
     private static final float TRACK_HALF_H = 5f;
@@ -35,7 +35,7 @@ final class VolumeSlider extends Entity implements IRenderable {
     private boolean dragging = false;
     private boolean moved = false;
 
-    VolumeSlider(float centreX, float centreY, float trackWidth, float initialValue) {
+    public VolumeSlider(float centreX, float centreY, float trackWidth, float initialValue) {
         this.trackLeft = centreX - trackWidth / 2f;
         this.trackCentreY = centreY;
         this.trackWidth = trackWidth;
@@ -49,7 +49,7 @@ final class VolumeSlider extends Entity implements IRenderable {
         );
     }
 
-    void updateInput(ICursorSource cursor, IInputQuery inputQuery) {
+    public void updateInput(ICursorSource cursor, IInputQuery inputQuery) {
         float mx = cursor.getCursorX();
         float my = cursor.getCursorY();
         float knobX = trackLeft + value * trackWidth;
@@ -77,15 +77,15 @@ final class VolumeSlider extends Entity implements IRenderable {
         }
     }
 
-    float getValue() {
+    public float getValue() {
         return value;
     }
 
-    boolean hasMoved() {
+    public boolean hasMoved() {
         return moved;
     }
 
-    void resetMoved() {
+    public void resetMoved() {
         moved = false;
     }
 
@@ -112,5 +112,5 @@ final class VolumeSlider extends Entity implements IRenderable {
             knobX, trackCentreY, knobRadius, true);
     }
 
-    void dispose() { }
+    public void dispose() { }
 }
