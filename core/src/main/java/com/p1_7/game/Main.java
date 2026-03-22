@@ -25,7 +25,7 @@ import com.p1_7.game.scenes.GameScene;
 import com.p1_7.game.scenes.GameOverScene;
 import com.p1_7.game.scenes.LevelCompleteScene;
 import com.p1_7.game.scenes.MenuScene;
-import com.p1_7.game.scenes.settings.SettingScene;
+import com.p1_7.game.scenes.SettingScene;
 
 /**
  * Entry point for the game application.

@@ -1,4 +1,4 @@
-package com.p1_7.game.scenes.settings;
+package com.p1_7.game.scenes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +21,9 @@ import com.p1_7.game.ui.BackgroundImage;
 import com.p1_7.game.ui.BrightnessOverlay;
 import com.p1_7.game.ui.BrightnessSlider;
 import com.p1_7.game.ui.MenuButton;
+import com.p1_7.game.ui.RemapSlot;
 import com.p1_7.game.ui.Text;
+import com.p1_7.game.ui.VolumeSlider;
 import com.p1_7.game.input.GameActions;
 import com.p1_7.game.input.ICursorSource;
 import com.p1_7.game.managers.IAudioManager;
