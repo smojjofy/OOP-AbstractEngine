@@ -18,12 +18,14 @@ public interface IManager {
 
     /**
      * called by the engine during the wiring pass to give this manager a resolver
-     * for looking up its declared dependencies. default is a no-op; Manager
-     * overrides this via the setDependencies / onWire template-method pair.
+     * for looking up its declared dependencies. the default is a no-op suitable
+     * for IManager implementations that do not use the wiring mechanism.
+     * Manager subclasses must not override this method (it is declared final there);
+     * they should override onWire() instead.
      *
      * @param resolver the resolver used to look up dependency instances
      */
     default void setDependencies(ManagerResolver resolver) {
-        // no-op — Manager subclasses handle this via onWire()
+        // no-op — implementations that need wiring should override this method
     }
 }

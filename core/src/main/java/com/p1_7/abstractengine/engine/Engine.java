@@ -182,7 +182,7 @@ public class Engine {
             }
         }
 
-        // wiring pass — give each manager a resolver so it can store its dependency references
+        // wiring pass — call setDependencies so each manager can resolve and store its dependencies
         ManagerResolver resolver = new ManagerResolver() {
             @Override
             public <T extends IManager> T resolve(Class<T> type) {
