@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.p1_7.abstractengine.entity.Entity;
+import com.p1_7.abstractengine.entity.IDisposable;
 import com.p1_7.abstractengine.input.IInputQuery;
 import com.p1_7.abstractengine.input.InputState;
 import com.p1_7.abstractengine.render.IDrawContext;
@@ -31,9 +32,10 @@ import com.p1_7.game.platform.GdxDrawContext;
  *
  * Call updateInput() every frame, then check isClicked().
  * Call resetClick() after handling the action so it fires only once.
- * Call dispose() inside the scene's onExit() to free GPU resources.
+ * Call dispose() inside the scene's onExit() when the button was created via
+ * withTexture(); it is a safe no-op for procedurally constructed instances.
  */
-public class MenuButton extends Entity implements IRenderable {
+public class MenuButton extends Entity implements IRenderable, IDisposable {
 
     // ── dimensions ──────────────────────────────────────────────
     public static final float BUTTON_WIDTH  = 260f;
@@ -196,7 +198,9 @@ public class MenuButton extends Entity implements IRenderable {
     /**
      * Releases textures owned by this button.
      * The font is NOT disposed — the scene owns it.
+     * Safe no-op for procedurally constructed instances (no textures to release).
      */
+    @Override
     public void dispose() {
         if (texNormal != null) texNormal.dispose();
         if (texHover != null && texHover != texNormal) texHover.dispose();
