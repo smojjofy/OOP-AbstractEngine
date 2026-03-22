@@ -47,10 +47,6 @@ public class MenuScene extends Scene {
     private BitmapFont titleFont;
     private BitmapFont buttonFont;
 
-    // ── input ────────────────────────────────────────────────────
-    private ICursorSource cursorSource;
-    private IInputQuery inputQuery;
-
     // ── ui components ────────────────────────────────────────────
     private BackgroundImage background;
     private Text           titleText;
@@ -68,13 +64,6 @@ public class MenuScene extends Scene {
         // compute layout from the current resolution so changes via setResolution take effect
         centreX       = Settings.getWindowWidth()  / 2f;
         firstButtonY  = Settings.getWindowHeight() * 0.45f;
-
-        IInputExtensionRegistry inputRegistry = context.get(IInputExtensionRegistry.class);
-        inputQuery = context.get(IInputQuery.class);
-        if (inputRegistry.hasExtension(ICursorSource.class)) {
-            cursorSource = inputRegistry.getExtension(ICursorSource.class);
-        }
-        // cursorSource stays null if not registered; update() guard handles it cleanly
 
         IAudioManager audio = context.get(IAudioManager.class);
         IFontManager fontManager = context.get(IFontManager.class);
@@ -107,17 +96,19 @@ public class MenuScene extends Scene {
         if (brightnessOverlay != null) brightnessOverlay.dispose();
         titleFont = null;
         buttonFont = null;
-        inputQuery = null;
-        cursorSource = null;
     }
 
     @Override
     public void update(float deltaTime, SceneContext context) {
+        IInputQuery inputQuery = context.get(IInputQuery.class);
         if (inputQuery.getActionState(GameActions.MENU_BACK) == InputState.PRESSED) {
             Gdx.app.exit();
             return;
         }
 
+        IInputExtensionRegistry inputRegistry = context.get(IInputExtensionRegistry.class);
+        ICursorSource cursorSource = inputRegistry.hasExtension(ICursorSource.class)
+            ? inputRegistry.getExtension(ICursorSource.class) : null;
         if (cursorSource == null) return;
         startButton.updateInput(cursorSource, inputQuery);
         settingsButton.updateInput(cursorSource, inputQuery);

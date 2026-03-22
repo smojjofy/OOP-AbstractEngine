@@ -46,11 +46,10 @@ public class SettingScene extends Scene {
     private BitmapFont tableFont;
     private BitmapFont buttonFont;
 
-    private ICursorSource cursorSource;
-    private IInputQuery inputQuery;
+    // inputManager kept as a field — it is accessed from the remapInputProcessor callback,
+    // which fires outside the hook lifecycle and cannot receive context as a parameter
     private IInputManager inputManager;
     private InputProcessor previousInputProcessor;
-    private IFontManager fontManager;
     private final InputProcessor remapInputProcessor = new InputAdapter() {
         @Override
         public boolean keyDown(int keycode) {
@@ -65,8 +64,6 @@ public class SettingScene extends Scene {
             return true;
         }
     };
-
-    private IAudioManager audio;
 
     private BackgroundImage background;
     private Text heading;
@@ -93,8 +90,10 @@ public class SettingScene extends Scene {
     public void onEnter(SceneContext context) {
         computeSceneCenter();
         resolveSceneServices(context);
-        createFonts();
-        createSceneComponents();
+        IFontManager fontManager = context.get(IFontManager.class);
+        IAudioManager audio = context.get(IAudioManager.class);
+        createFonts(fontManager);
+        createSceneComponents(audio);
         syncRemapBindings();
     }
 
@@ -117,14 +116,19 @@ public class SettingScene extends Scene {
             return;
         }
 
+        IInputExtensionRegistry inputRegistry = context.get(IInputExtensionRegistry.class);
+        ICursorSource cursorSource = inputRegistry.hasExtension(ICursorSource.class)
+            ? inputRegistry.getExtension(ICursorSource.class) : null;
         if (cursorSource == null) {
             return;
         }
 
-        updateSliderInputs();
-        updateRemapInput();
-        updateBackButtonInput();
-        applySliderChanges();
+        IInputQuery inputQuery = context.get(IInputQuery.class);
+        IAudioManager audio = context.get(IAudioManager.class);
+        updateSliderInputs(cursorSource, inputQuery);
+        updateRemapInput(cursorSource, inputQuery);
+        updateBackButtonInput(cursorSource, inputQuery);
+        applySliderChanges(audio);
         handleBackButtonClick(context);
     }
 
@@ -142,25 +146,19 @@ public class SettingScene extends Scene {
     }
 
     private void resolveSceneServices(SceneContext context) {
-        IInputExtensionRegistry inputRegistry = context.get(IInputExtensionRegistry.class);
-        if (inputRegistry.hasExtension(ICursorSource.class)) {
-            cursorSource = inputRegistry.getExtension(ICursorSource.class);
-        }
-
+        // inputManager is kept as a field — needed by syncRemapBindings(), which is called
+        // from the remapInputProcessor callback outside the normal hook lifecycle
         inputManager = context.get(IInputManager.class);
-        inputQuery = context.get(IInputQuery.class);
-        audio = context.get(IAudioManager.class);
-        fontManager = context.get(IFontManager.class);
     }
 
-    private void createFonts() {
+    private void createFonts(IFontManager fontManager) {
         headingFont = fontManager.getGoldDisplayFont(52);
         labelFont = fontManager.getDarkTextFont(28);
         tableFont = fontManager.getDarkTextFont(22);
         buttonFont = fontManager.getDarkTextFont(26);
     }
 
-    private void createSceneComponents() {
+    private void createSceneComponents(IAudioManager audio) {
         float screenHeight = Settings.getWindowHeight();
         float backButtonY = screenHeight * 0.085f;
         float hintY = backButtonY + 54f;
@@ -176,7 +174,7 @@ public class SettingScene extends Scene {
 
         background = new BackgroundImage(BG_ASSET);
         heading = createCenteredLabel("SETTINGS", headingY, headingFont);
-        volumeLabel = createCenteredLabel(volumeText(), volumeLabelY, labelFont);
+        volumeLabel = createCenteredLabel(volumeText(audio), volumeLabelY, labelFont);
         brightnessLabel = createCenteredLabel(brightnessText(), brightnessLabelY, labelFont);
         controlsHeading = createCenteredLabel("CONTROLS", controlsHeadingY, buttonFont);
         remapHint = createCenteredLabel(idleRemapHintText(), hintY, tableFont);
@@ -252,15 +250,12 @@ public class SettingScene extends Scene {
     }
 
     private void clearResolvedServices() {
-        audio = null;
-        cursorSource = null;
-        inputQuery = null;
         inputManager = null;
-        fontManager = null;
         previousInputProcessor = null;
     }
 
     private boolean handleSceneExit(SceneContext context) {
+        IInputQuery inputQuery = context.get(IInputQuery.class);
         if (inputQuery.getActionState(GameActions.MENU_BACK) == InputState.PRESSED) {
             context.changeScene("menu");
             return true;
@@ -268,19 +263,19 @@ public class SettingScene extends Scene {
         return false;
     }
 
-    private void updateSliderInputs() {
+    private void updateSliderInputs(ICursorSource cursorSource, IInputQuery inputQuery) {
         volumeSlider.updateInput(cursorSource, inputQuery);
         brightnessSlider.updateInput(cursorSource, inputQuery);
     }
 
-    private void updateBackButtonInput() {
+    private void updateBackButtonInput(ICursorSource cursorSource, IInputQuery inputQuery) {
         backButton.updateInput(cursorSource, inputQuery);
     }
 
-    private void applySliderChanges() {
+    private void applySliderChanges(IAudioManager audio) {
         if (volumeSlider.hasMoved()) {
             audio.setMusicVolume(volumeSlider.getValue());
-            volumeLabel.setText(volumeText());
+            volumeLabel.setText(volumeText(audio));
             volumeSlider.resetMoved();
         }
         if (brightnessSlider.hasMoved()) {
@@ -316,7 +311,7 @@ public class SettingScene extends Scene {
         renderQueue.queue(remapHint);
     }
 
-    private String volumeText() {
+    private String volumeText(IAudioManager audio) {
         return "Music Volume:  " + Math.round(audio.getMusicVolume() * 100) + "%";
     }
 
@@ -376,7 +371,7 @@ public class SettingScene extends Scene {
         return fallbackKeyCode;
     }
 
-    private void updateRemapInput() {
+    private void updateRemapInput(ICursorSource cursorSource, IInputQuery inputQuery) {
         float mx = cursorSource.getCursorX();
         float my = cursorSource.getCursorY();
         boolean clickStarted =

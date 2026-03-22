@@ -76,20 +76,8 @@ public class GameScene extends Scene {
     /** the player entity — created at scene entry, released on exit */
     private Player player;
 
-    /** input query for reading action states each frame */
-    private IInputQuery inputQuery;
-
-    /** collision manager sourced from the engine service context */
-    private MazeCollisionManager collisionManager;
-
-    /** movement manager sourced from the engine service context */
-    private GameMovementManager movementManager;
-
     /** wall collidables registered with the collision manager for this scene */
     private List<WallCollidable> wallCollidables;
-
-    /** level orchestrator sourced from the engine service context */
-    private ILevelOrchestrator orchestrator;
 
     /** tracks whether the player is currently overlapping each answer room */
     private boolean[] playerInsideRoom;
@@ -158,14 +146,13 @@ public class GameScene extends Scene {
         this.layout   = MazeLayout.createDefault();
         float[] spawn = layout.getSpawnPoint();
         this.player   = new Player(spawn[0], spawn[1]);
-        this.inputQuery = context.get(IInputQuery.class);
 
         // wire movement manager and register the player for position integration
-        this.movementManager = context.get(GameMovementManager.class);
+        GameMovementManager movementManager = context.get(GameMovementManager.class);
         movementManager.registerMovable(player);
 
         // wire collision manager and register the player and all walls
-        this.collisionManager = context.get(MazeCollisionManager.class);
+        MazeCollisionManager collisionManager = context.get(MazeCollisionManager.class);
         this.wallCollidables  = new ArrayList<>();
         collisionManager.registerPlayer(player);
         for (float[] rect : layout.getWallBounds()) {
@@ -175,7 +162,7 @@ public class GameScene extends Scene {
         }
 
         // wire level orchestrator and start the session at easy difficulty
-        this.orchestrator = context.get(ILevelOrchestrator.class);
+        ILevelOrchestrator orchestrator = context.get(ILevelOrchestrator.class);
         orchestrator.startLevel(Difficulty.EASY);
 
         // initialise per-room entry state and cooldown timers
@@ -241,7 +228,7 @@ public class GameScene extends Scene {
         }
 
         // populate the room answer cache for the initial question
-        refreshRoomAnswerCache();
+        refreshRoomAnswerCache(orchestrator);
 
         // question panel — begins its slide animation immediately (scene starts at QUESTION_INTRO)
         this.questionPanel = new QuestionPanel(promptFont);
@@ -330,6 +317,9 @@ public class GameScene extends Scene {
      */
     @Override
     public void onExit(SceneContext context) {
+        GameMovementManager movementManager = context.get(GameMovementManager.class);
+        MazeCollisionManager collisionManager = context.get(MazeCollisionManager.class);
+
         // unregister the player from movement before clearing references
         movementManager.unregisterMovable(player);
 
@@ -339,7 +329,6 @@ public class GameScene extends Scene {
             collisionManager.unregisterWall(wall);
         }
 
-        orchestrator       = null;
         playerInsideRoom   = null;
         roomCooldownTimers = null;
         cachedRoomBounds   = null;
@@ -356,12 +345,9 @@ public class GameScene extends Scene {
         if (brightnessOverlay != null) brightnessOverlay.dispose();
         brightnessOverlay  = null;
 
-        layout           = null;
-        player           = null;
-        inputQuery       = null;
-        movementManager  = null;
-        collisionManager = null;
-        wallCollidables  = null;
+        layout          = null;
+        player          = null;
+        wallCollidables = null;
     }
 
     /**
@@ -377,11 +363,13 @@ public class GameScene extends Scene {
      */
     @Override
     public void update(float deltaTime, SceneContext context) {
+        ILevelOrchestrator orchestrator = context.get(ILevelOrchestrator.class);
+        IInputQuery inputQuery = context.get(IInputQuery.class);
         RoundPhase phase = orchestrator.getPhase();
 
         // detect phase change and react (reset player on ROUND_RESET, start hold timer)
         if (phase != lastKnownPhase) {
-            onPhaseChanged(lastKnownPhase, phase);
+            onPhaseChanged(lastKnownPhase, phase, orchestrator);
             lastKnownPhase = phase;
         }
 
@@ -404,7 +392,7 @@ public class GameScene extends Scene {
                     // reactions like player.resetToSpawn() are not delayed by one tick
                     RoundPhase newPhase = orchestrator.getPhase();
                     if (newPhase != lastKnownPhase) {
-                        onPhaseChanged(lastKnownPhase, newPhase);
+                        onPhaseChanged(lastKnownPhase, newPhase, orchestrator);
                         lastKnownPhase = newPhase;
                     }
                 }
@@ -414,7 +402,7 @@ public class GameScene extends Scene {
 
         // choosing phase: resolve player input then check room entry
         player.update(deltaTime, inputQuery, phase);
-        checkRoomEntry(deltaTime);
+        checkRoomEntry(deltaTime, orchestrator);
     }
 
     /**
@@ -447,10 +435,11 @@ public class GameScene extends Scene {
      * called whenever the round phase changes. resets the player to spawn on ROUND_RESET
      * and starts the hold timer for non-interactive phases.
      *
-     * @param from the previous phase (null on first frame)
-     * @param to   the new phase
+     * @param from         the previous phase (null on first frame)
+     * @param to           the new phase
+     * @param orchestrator the level orchestrator for reading questions and room assignments
      */
-    private void onPhaseChanged(RoundPhase from, RoundPhase to) {
+    private void onPhaseChanged(RoundPhase from, RoundPhase to, ILevelOrchestrator orchestrator) {
         if (to == RoundPhase.ROUND_RESET) {
             // new question loading — return player to spawn and clear room state
             player.resetToSpawn(layout.getSpawnPoint());
@@ -459,7 +448,7 @@ public class GameScene extends Scene {
         }
         if (to == RoundPhase.QUESTION_INTRO) {
             // update the room answer cache for the new question, then slide the panel
-            refreshRoomAnswerCache();
+            refreshRoomAnswerCache(orchestrator);
             questionPanel.beginIntro(orchestrator.getCurrentQuestion().getPrompt());
         }
         if (to != RoundPhase.CHOOSING) {
@@ -478,9 +467,10 @@ public class GameScene extends Scene {
      * until the player physically exits; this means re-entry cannot fire again without
      * the player leaving first, which is the correct guard for the cooldown path.
      *
-     * @param deltaTime seconds elapsed since the previous frame, used to tick cooldowns
+     * @param deltaTime    seconds elapsed since the previous frame, used to tick cooldowns
+     * @param orchestrator the level orchestrator used to submit the player's room choice
      */
-    private void checkRoomEntry(float deltaTime) {
+    private void checkRoomEntry(float deltaTime, ILevelOrchestrator orchestrator) {
         IBounds playerBounds = player.getBounds();
 
         for (int i = 0; i < playerInsideRoom.length; i++) {
@@ -541,8 +531,10 @@ public class GameScene extends Scene {
      *
      * called once in onEnter and once each time QUESTION_INTRO begins so that
      * room renderables never allocate during their hot render path.
+     *
+     * @param orchestrator the level orchestrator used to read the current room assignment
      */
-    private void refreshRoomAnswerCache() {
+    private void refreshRoomAnswerCache(ILevelOrchestrator orchestrator) {
         for (int i = 0; i < 4; i++) {
             roomAnswerTexts[i] = String.valueOf(orchestrator.getRoomAssignment().getAnswerForRoom(i));
             // setText() updates the layout in-place — no new GlyphLayout allocation

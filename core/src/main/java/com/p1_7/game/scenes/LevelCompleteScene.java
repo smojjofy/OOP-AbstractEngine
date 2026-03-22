@@ -25,10 +25,6 @@ public class LevelCompleteScene extends Scene {
     private static final String BTN_ASSET = "menu/button.png";
     private static final String HOVER_ASSET = "menu/button_hover.png";
 
-    // ── input ────────────────────────────────────────────────────
-    private ICursorSource cursorSource;
-    private IInputQuery inputQuery;
-
     private BitmapFont titleFont;
     private BitmapFont promptFont;
     private BitmapFont buttonFont;
@@ -54,13 +50,6 @@ public class LevelCompleteScene extends Scene {
         promptFont = fontManager.getPromptFont();
         buttonFont = fontManager.getDarkTextFont(22);
 
-        IInputExtensionRegistry inputRegistry = context.get(IInputExtensionRegistry.class);
-        inputQuery = context.get(IInputQuery.class);
-        if (inputRegistry.hasExtension(ICursorSource.class)) {
-            cursorSource = inputRegistry.getExtension(ICursorSource.class);
-        }
-        // cursorSource stays null if not registered; update() guard handles it cleanly
-
         float cx = Settings.getWindowWidth() / 2f;
         float cy = Settings.getWindowHeight() / 2f;
         boolean lastLevel = isLastLevel();
@@ -84,11 +73,9 @@ public class LevelCompleteScene extends Scene {
         if (continueButton != null) continueButton.dispose();
         if (mainMenuButton != null) mainMenuButton.dispose();
         if (brightnessOverlay != null) brightnessOverlay.dispose();
-        titleFont = null;
+        titleFont  = null;
         promptFont = null;
         buttonFont = null;
-        inputQuery = null;
-        cursorSource = null;
     }
 
     @Override
@@ -98,6 +85,11 @@ public class LevelCompleteScene extends Scene {
             return;
         }
 
+        IInputQuery inputQuery = context.get(IInputQuery.class);
+        IInputExtensionRegistry inputRegistry = context.get(IInputExtensionRegistry.class);
+        ICursorSource cursorSource = inputRegistry.hasExtension(ICursorSource.class)
+            ? inputRegistry.getExtension(ICursorSource.class) : null;
+        // cursorSource stays null if not registered; guard below handles it cleanly
         if (cursorSource != null) {
             continueButton.updateInput(cursorSource, inputQuery);
             mainMenuButton.updateInput(cursorSource, inputQuery);
