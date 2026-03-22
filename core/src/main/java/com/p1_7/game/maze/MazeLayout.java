@@ -28,7 +28,7 @@ public class MazeLayout {
     private static final float WALL_THICKNESS = 20f;
 
     /** gap between the perimeter wall and each answer room */
-    private static final float ROOM_MARGIN = 20f;
+    private static final float ROOM_MARGIN = 10f;
 
     /** width of each answer room rectangle */
     private static final float ROOM_WIDTH = 220f;
@@ -50,6 +50,9 @@ public class MazeLayout {
 
     /** uniform scale applied to the whole maze footprint */
     private static final float LAYOUT_SCALE = 0.88f;
+
+    /** downward shift applied to corridors after scaling, without affecting room positions */
+    private static final float CORRIDOR_OFFSET_Y = -30f;
 
     /** tolerance used to collapse float-noise seams between adjacent walkable edges */
     private static final float EDGE_MERGE_EPSILON = 0.01f;
@@ -254,7 +257,42 @@ public class MazeLayout {
         scaledWalkable.addAll(scaledRooms);
         scaledWalkable.add(scaledSpawnRoom);
         for (int i = rooms.size() + 1; i < walkable.size(); i++) {
-            scaledWalkable.add(transformRect(walkable.get(i)));
+            float[] rect = transformRect(walkable.get(i));
+            int ci = i - rooms.size() - 1;
+
+            // shift all corridors downward
+            rect[1] += CORRIDOR_OFFSET_Y;
+
+            // outer vertical corridors: extend height upward to bridge the gap with the top rooms
+            if (ci == 2 || ci == 3) {
+                rect[3] -= CORRIDOR_OFFSET_Y;
+            }
+
+            // middle horizontal corridors: cancel the downward shift to realign with the spawn room
+            if (ci == 6 || ci == 7) {
+                rect[1] -= CORRIDOR_OFFSET_Y;
+            }
+
+            // hub-to-bottom spoke: shifted down so its top no longer reaches the spawn room —
+            // extend height upward to close the gap
+            if (ci == 5) {
+                rect[3] -= CORRIDOR_OFFSET_Y;
+            }
+
+            // top inner cuts (ci 8, 9): bottom should meet the unshifted middle horizontal —
+            // raise the bottom edge up while keeping the top aligned with the top row corridor
+            if (ci == 8 || ci == 9) {
+                rect[1] -= CORRIDOR_OFFSET_Y;
+                rect[3] += CORRIDOR_OFFSET_Y;
+            }
+
+            // bottom inner cuts (ci 10, 11): top should meet the unshifted middle horizontal —
+            // extend height upward to close the gap
+            if (ci == 10 || ci == 11) {
+                rect[3] -= CORRIDOR_OFFSET_Y;
+            }
+
+            scaledWalkable.add(rect);
         }
 
         List<float[]> walls = buildWallBounds(scaledWalkable);

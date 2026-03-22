@@ -30,7 +30,7 @@ import com.p1_7.game.platform.GdxDrawContext;
 public class Player extends Entity implements IRenderable, IMovable, ICollidable {
 
     /** movement speed in pixels per second */
-    private static final float SPEED = 200f;
+    private static final float SPEED = 160f;
 
     /** player fill colour — sky cyan, distinct against the dark background */
     private static final Color PLAYER_COLOUR = new Color(0.30f, 0.82f, 0.98f, 1f);
