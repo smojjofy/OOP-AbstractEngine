@@ -51,6 +51,9 @@ public class MazeLayout {
     /** uniform scale applied to the whole maze footprint */
     private static final float LAYOUT_SCALE = 0.88f;
 
+    /** vertical offset applied to the whole maze after scaling; positive moves the maze upward */
+    private static final float LAYOUT_OFFSET_Y = 20f;
+
     /** downward shift applied to corridors after scaling, without affecting room positions */
     private static final float CORRIDOR_OFFSET_Y = -30f;
 
@@ -400,7 +403,7 @@ public class MazeLayout {
 
     private static float[] transformPoint(float[] point) {
         float transformedX = SCREEN_WIDTH / 2f + (point[0] - SCREEN_WIDTH / 2f) * LAYOUT_SCALE;
-        float transformedY = SCREEN_HEIGHT / 2f + (point[1] - SCREEN_HEIGHT / 2f) * LAYOUT_SCALE;
+        float transformedY = SCREEN_HEIGHT / 2f + (point[1] - SCREEN_HEIGHT / 2f) * LAYOUT_SCALE + LAYOUT_OFFSET_Y;
         return new float[]{ transformedX, transformedY };
     }
 
