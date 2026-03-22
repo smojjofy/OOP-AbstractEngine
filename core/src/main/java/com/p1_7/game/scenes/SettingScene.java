@@ -8,21 +8,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.p1_7.abstractengine.input.IInputExtensionRegistry;
 import com.p1_7.abstractengine.input.IInputManager;
 import com.p1_7.abstractengine.input.IInputQuery;
 import com.p1_7.abstractengine.input.InputState;
-import com.p1_7.abstractengine.render.IDrawContext;
-import com.p1_7.abstractengine.render.IRenderable;
 import com.p1_7.abstractengine.render.IRenderQueue;
 import com.p1_7.abstractengine.scene.Scene;
-import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.abstractengine.scene.SceneContext;
 import com.p1_7.game.Settings;
-import com.p1_7.game.core.Transform2D;
-import com.p1_7.game.platform.GdxDrawContext;
 import com.p1_7.game.ui.BackgroundImage;
 import com.p1_7.game.ui.BrightnessOverlay;
 import com.p1_7.game.ui.BrightnessSlider;
@@ -43,9 +37,6 @@ public class SettingScene extends Scene {
     private static final String BG_ASSET = "menu/background.png";
     private static final String BTN_ASSET = "menu/button.png";
     private static final String HOVER_ASSET = "menu/button_hover.png";
-
-    // pre-allocated colour used when drawing the dim backdrop in overlay mode
-    private static final Color OVERLAY_DIM_COLOUR = new Color(0f, 0f, 0f, 0.80f);
 
     private float centreX;
     private float centreY;
@@ -92,11 +83,6 @@ public class SettingScene extends Scene {
     private RemapSlot activeRemapSlot;
     private RemapSlot.BindingColumn activeRemapColumn;
 
-    // true when settings is opened as an overlay (from PauseScene) — replaces the background
-    // with a dim quad so the frozen game world is visible but not distracting
-    private boolean overlayMode;
-    private IRenderable overlayDim;
-
     // scene to return to when back is pressed; set at onEnter and cleared at onExit
     private String returnScene;
 
@@ -108,11 +94,7 @@ public class SettingScene extends Scene {
     public void onEnter(SceneContext context) {
         // determine origin so back navigation goes to the right scene regardless of
         // what happens to the suspended scene record later in the session
-        overlayMode = context.getSuspendedSceneKey() != null;
-        returnScene = overlayMode ? "pause" : "menu";
-        if (overlayMode) {
-            overlayDim = buildOverlayDim();
-        }
+        returnScene = context.getSuspendedSceneKey() != null ? "pause" : "menu";
         computeSceneCenter();
         resolveSceneServices(context);
         IFontManager fontManager = context.get(IFontManager.class);
@@ -124,8 +106,6 @@ public class SettingScene extends Scene {
 
     @Override
     public void onExit(SceneContext context) {
-        overlayMode = false;
-        overlayDim  = null;
         returnScene = null;
         stopListening();
         clearRemapState();
@@ -165,10 +145,7 @@ public class SettingScene extends Scene {
         queuePrimaryRenderables(renderQueue);
         queueRemapRenderables(renderQueue);
         renderQueue.queue(backButton);
-        // in overlay mode the game world renders behind us — skip to avoid double-dimming
-        if (!overlayMode) {
-            renderQueue.queue(brightnessOverlay);
-        }
+        renderQueue.queue(brightnessOverlay);
     }
 
     private void computeSceneCenter() {
@@ -323,12 +300,7 @@ public class SettingScene extends Scene {
     }
 
     private void queuePrimaryRenderables(IRenderQueue renderQueue) {
-        if (overlayMode) {
-            // dim the frozen game world so the settings controls are readable
-            renderQueue.queue(overlayDim);
-        } else {
-            renderQueue.queue(background);
-        }
+        renderQueue.queue(background);
         renderQueue.queue(heading);
         renderQueue.queue(volumeLabel);
         renderQueue.queue(volumeSlider);
@@ -525,26 +497,4 @@ public class SettingScene extends Scene {
         }
     }
 
-    /**
-     * builds a full-screen dark dim renderable used when settings is opened as an overlay.
-     * replaces the opaque background so the frozen game world remains partially visible.
-     *
-     * @return the dim renderable
-     */
-    private IRenderable buildOverlayDim() {
-        final Transform2D fullScreen = new Transform2D(
-            0f, 0f, Settings.getWindowWidth(), Settings.getWindowHeight());
-
-        return new IRenderable() {
-            @Override public String     getAssetPath() { return null; }
-            @Override public ITransform getTransform() { return fullScreen; }
-
-            @Override
-            public void render(IDrawContext ctx) {
-                GdxDrawContext gdx = (GdxDrawContext) ctx;
-                gdx.drawTintedQuad(OVERLAY_DIM_COLOUR,
-                    0f, 0f, Settings.getWindowWidth(), Settings.getWindowHeight());
-            }
-        };
-    }
 }
