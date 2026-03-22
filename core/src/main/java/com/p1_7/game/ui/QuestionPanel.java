@@ -7,6 +7,7 @@ import com.p1_7.abstractengine.entity.Entity;
 import com.p1_7.abstractengine.render.IDrawContext;
 import com.p1_7.abstractengine.render.IRenderable;
 import com.p1_7.abstractengine.transform.ITransform;
+import com.p1_7.game.core.GameViewport;
 import com.p1_7.game.core.Transform2D;
 import com.p1_7.game.platform.GdxDrawContext;
 
@@ -25,8 +26,8 @@ public class QuestionPanel extends Entity implements IRenderable {
     /** panel height in pixels */
     private static final float PANEL_H = 60f;
 
-    /** fixed horizontal position — centred on a 1280px-wide screen */
-    private static final float PANEL_X = (1280f - PANEL_W) / 2f;
+    /** fixed horizontal position — centred on the screen */
+    private static final float PANEL_X = (GameViewport.SCREEN_WIDTH - PANEL_W) / 2f;
 
     /** starting y position — panel bottom at approximately screen centre */
     private static final float START_Y = 330f;

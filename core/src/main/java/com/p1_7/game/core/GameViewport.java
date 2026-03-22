@@ -20,7 +20,7 @@ public final class GameViewport {
     /** total height available for gameplay below the HUD strip */
     public static final float PLAYFIELD_HEIGHT = SCREEN_HEIGHT - HUD_STRIP_HEIGHT;
 
-    /** y coordinate where the HUD strip begins */
+    /** y coordinate where the HUD strip begins — equal to PLAYFIELD_HEIGHT by definition */
     public static final float HUD_STRIP_Y = PLAYFIELD_HEIGHT;
 
     private GameViewport() {

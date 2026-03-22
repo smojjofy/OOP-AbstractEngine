@@ -10,7 +10,7 @@ import com.p1_7.game.core.Transform2D;
 import com.p1_7.game.platform.GdxDrawContext;
 
 /**
- * Solid top bar reserved for HUD-only content.
+ * solid top bar reserved for HUD-only content.
  */
 public final class HudStrip extends Entity implements IRenderable {
 

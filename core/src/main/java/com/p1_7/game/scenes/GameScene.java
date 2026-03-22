@@ -145,6 +145,12 @@ public class GameScene extends Scene {
     /** solid top bar separating HUD elements from the playfield */
     private HudStrip hudStrip;
 
+    /** vertical offset from the strip baseline to the score text baseline, in pixels */
+    private static final float HUD_SCORE_BASELINE_OFFSET = 31f;
+
+    /** vertical offset from the strip baseline to the health pip top edge, in pixels */
+    private static final float HUD_HEALTH_BASELINE_OFFSET = 14f;
+
     /** set to true to draw zone-boundary and corridor-centreline debug lines over the scene */
     private static final boolean SHOW_DEBUG_GRID = false;
 
@@ -272,14 +278,14 @@ public class GameScene extends Scene {
         final GlyphLayout correctLayout = new GlyphLayout(capturedHudFont, "CORRECT!");
         final GlyphLayout wrongLayout   = new GlyphLayout(capturedHudFont, "WRONG!");
 
-        // feedback overlay: full-screen green/red tint + result text, shown only during FEEDBACK
+        // feedback overlay: playfield-height green/red tint + result text, shown only during FEEDBACK
         final Color overlayColour = new Color();
         this.feedbackOverlay = new IRenderable() {
             private final Transform2D t = new Transform2D(
                 0f,
                 0f,
                 GameViewport.SCREEN_WIDTH,
-                GameViewport.SCREEN_HEIGHT
+                GameViewport.PLAYFIELD_HEIGHT
             );
             @Override public String     getAssetPath() { return null; }
             @Override public ITransform getTransform() { return t; }
@@ -301,7 +307,7 @@ public class GameScene extends Scene {
                     0f,
                     0f,
                     GameViewport.SCREEN_WIDTH,
-                    GameViewport.SCREEN_HEIGHT
+                    GameViewport.PLAYFIELD_HEIGHT
                 );
                 String      msg    = correct ? "CORRECT!" : "WRONG!";
                 GlyphLayout layout = correct ? correctLayout : wrongLayout;
@@ -309,7 +315,7 @@ public class GameScene extends Scene {
                     capturedHudFont,
                     msg,
                     GameViewport.SCREEN_WIDTH / 2f - layout.width / 2f,
-                    400f
+                    GameViewport.PLAYFIELD_HEIGHT / 2f + 60f
                 );
             }
         };
@@ -317,7 +323,7 @@ public class GameScene extends Scene {
         // score display: top-right corner
         this.scoreDisplay = new IRenderable() {
             private static final float RIGHT_PADDING = 18f;
-            private static final float BASELINE_Y    = GameViewport.HUD_STRIP_Y + 31f;
+            private static final float BASELINE_Y    = GameViewport.HUD_STRIP_Y + HUD_SCORE_BASELINE_OFFSET;
             private final Transform2D t = new Transform2D(
                 GameViewport.SCREEN_WIDTH - RIGHT_PADDING,
                 BASELINE_Y,
@@ -346,7 +352,7 @@ public class GameScene extends Scene {
             private static final float SQ     = 20f;
             private static final float GAP    = 6f;
             private static final float BASE_X = 18f;
-            private static final float BASE_Y = GameViewport.HUD_STRIP_Y + 14f;
+            private static final float BASE_Y = GameViewport.HUD_STRIP_Y + HUD_HEALTH_BASELINE_OFFSET;
             private final Transform2D t = new Transform2D(BASE_X, BASE_Y, 0f, 0f);
             @Override public String     getAssetPath() { return null; }
             @Override public ITransform getTransform() { return t; }
@@ -527,7 +533,7 @@ public class GameScene extends Scene {
     /**
      * submits all renderables to the queue in painter's order:
      * room outlines and answer labels → player → question panel → hud strip → score → health →
-     * feedback overlay → brightness overlay.
+     * feedback overlay → debug grid (when enabled) → brightness overlay.
      *
      * the brightness overlay is queued last so it dims the entire composited frame
      * uniformly per the user's brightness setting.
