@@ -11,8 +11,8 @@ import com.p1_7.abstractengine.render.RenderManager;
 /**
  * libgdx-specific render manager that provides concrete drawing resources.
  *
- * overrides onInit() to create concrete wrapper types directly, avoiding
- * downcasts in createDrawContext().
+ * the factory methods create concrete wrapper types. the downcast in
+ * createDrawContext() is safe because this class controls both factories.
  */
 public class GdxRenderManager extends RenderManager {
 
@@ -26,31 +26,14 @@ public class GdxRenderManager extends RenderManager {
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
-    /**
-     * creates all drawing resources using concrete wrapper types, then stores
-     * them in the parent's protected fields. this avoids the downcast that
-     * would otherwise be needed in createDrawContext().
-     */
-    @Override
-    protected void onInit() {
-        GdxSpriteBatch   gdxBatch = new GdxSpriteBatch();
-        GdxShapeRenderer gdxShape = new GdxShapeRenderer();
-        this.batch         = gdxBatch;
-        this.shapeRenderer = gdxShape;
-        this.assetStore    = createAssetStore();
-        this.drawCtx       = new GdxDrawContext(gdxBatch, gdxShape, assetStore);
-    }
-
     @Override
     protected ISpriteBatch createSpriteBatch() {
-        throw new UnsupportedOperationException(
-            "GdxRenderManager creates its resources in onInit(); this factory is not called");
+        return new GdxSpriteBatch();
     }
 
     @Override
     protected IShapeRenderer createShapeRenderer() {
-        throw new UnsupportedOperationException(
-            "GdxRenderManager creates its resources in onInit(); this factory is not called");
+        return new GdxShapeRenderer();
     }
 
     @Override
@@ -58,11 +41,21 @@ public class GdxRenderManager extends RenderManager {
         return new GdxAssetStore();
     }
 
+    /**
+     * creates the libgdx draw context. the downcasts are safe here because
+     * this manager's factories create the concrete types directly above.
+     *
+     * @param batch         the sprite batch (always a GdxSpriteBatch)
+     * @param shapeRenderer the shape renderer (always a GdxShapeRenderer)
+     * @param assetStore    the asset store
+     * @return a new GdxDrawContext
+     */
     @Override
     protected IDrawContext createDrawContext(ISpriteBatch batch,
                                              IShapeRenderer shapeRenderer,
                                              IAssetStore assetStore) {
-        throw new UnsupportedOperationException(
-            "GdxRenderManager creates its draw context in onInit(); this factory is not called");
+        return new GdxDrawContext((GdxSpriteBatch) batch,
+                                  (GdxShapeRenderer) shapeRenderer,
+                                  assetStore);
     }
 }
