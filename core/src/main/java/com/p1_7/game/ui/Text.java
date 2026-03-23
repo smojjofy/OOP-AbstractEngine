@@ -56,6 +56,7 @@ public class Text extends Entity implements IRenderable {
         return transform;
     }
 
+    /** draws the text centred at the configured world-space position. */
     @Override
     public void render(IDrawContext ctx) {
         GdxDrawContext gdxCtx = (GdxDrawContext) ctx;

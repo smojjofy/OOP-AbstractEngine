@@ -14,7 +14,7 @@ import com.p1_7.game.platform.GdxDrawContext;
 /**
  * UI row displaying an action label and two editable key-binding cells (primary and alternate).
  * the owning scene drives hover/active state via setHoveredColumn and setActiveColumn,
- * then reads updated key codes via getKeyCode after a remap.
+ * then reads the updated key codes after a remap.
  */
 public final class RemapSlot extends Entity implements IRenderable {
 
@@ -41,7 +41,7 @@ public final class RemapSlot extends Entity implements IRenderable {
             this.label = label;
         }
 
-        /** returns the human-readable column header string */
+        /** returns the column header shown in the remap table */
         public String getLabel() {
             return label;
         }
@@ -182,6 +182,7 @@ public final class RemapSlot extends Entity implements IRenderable {
 
     /**
      * returns the key code for the column opposite to the given one.
+     * column must not be null.
      *
      * @param column the reference column
      * @return the key code of the other column
