@@ -4,9 +4,9 @@ name: CI Pipeline
 # and on pull requests targeting main/develop.
 on:
   push:
-    branches: [ "main", "develop", "test/ci-pipeline" ]
+    branches: [ "main", "test/ci-pipeline" ] # test/ci-pipeline can be safely removed
   pull_request:
-    branches: [ "main", "develop", "test/ci-pipeline" ]
+    branches: [ "main", "test/ci-pipeline" ] # any integration branches will need to be manually added in here, for now, the .yml is treating main as the sole integration branch
 
 jobs:
   build-and-test:
