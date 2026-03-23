@@ -12,7 +12,7 @@ public enum Operation {
     /** addition of two operands */
     ADDITION,
 
-    /** subtraction of the smaller operand from the larger */
+    /** subtraction of two operands; the generator ensures the result is non-negative */
     SUBTRACTION,
 
     /** multiplication of two operands */

@@ -43,6 +43,9 @@ public enum Difficulty {
             throw new IllegalArgumentException(
                 "minOperand (" + minOperand + ") must be <= maxOperand (" + maxOperand + ")");
         }
+        if (allowedOperations == null || allowedOperations.length == 0) {
+            throw new IllegalArgumentException("allowedOperations must contain at least one operation");
+        }
         this.minOperand = minOperand;
         this.maxOperand = maxOperand;
         this.allowedOperations = Collections.unmodifiableList(Arrays.asList(allowedOperations));

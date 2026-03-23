@@ -96,15 +96,19 @@ public class QuestionGenerator {
             correctAnswer = a * b;
             prompt = a + " \u00d7 " + b + " = ?";
 
-        } else {
-            // division — pick a divisor then derive a dividend that is evenly divisible
-            int b = min + random.nextInt(max - min + 1);
-            // largest quotient q such that b * q stays within the operand range
-            int maxQuotient = max / b;
-            int q = 1 + random.nextInt(maxQuotient);
+        } else if (operation == Operation.DIVISION) {
+            // pick the quotient first so answers are distributed uniformly across the operand range;
+            // picking the divisor first would concentrate answers near 1 for large divisors
+            int q = min + random.nextInt(max - min + 1);
+            // largest divisor b such that the dividend b * q stays within the operand range
+            int maxDivisor = max / q;
+            int b = min + random.nextInt(maxDivisor - min + 1);
             int a = b * q;
             correctAnswer = q;
             prompt = a + " \u00f7 " + b + " = ?";
+
+        } else {
+            throw new IllegalStateException("unhandled operation: " + operation);
         }
 
         List<Integer> options = buildOptions(correctAnswer);
