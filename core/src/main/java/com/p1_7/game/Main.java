@@ -7,19 +7,27 @@ import com.p1_7.abstractengine.engine.Engine;
 import com.p1_7.abstractengine.entity.EntityManager;
 import com.p1_7.abstractengine.input.InputManager;
 
+import com.p1_7.game.level.ILevelOrchestrator;
+import com.p1_7.game.level.LevelOrchestrator;
+import com.p1_7.game.managers.MazeCollisionManager;
 import com.p1_7.game.input.GameActions;
 import com.p1_7.game.input.ICursorSource;
 import com.p1_7.game.managers.AudioManager;
-import com.p1_7.game.managers.GameSceneManager;
-import com.p1_7.game.managers.IAudioManager;
 import com.p1_7.game.managers.FontManager;
+import com.p1_7.abstractengine.scene.SceneManager;
+import com.p1_7.game.managers.GameMovementManager;
+import com.p1_7.game.managers.IAudioManager;
 import com.p1_7.game.managers.IFontManager;
 import com.p1_7.game.platform.GdxCursorSource;
 import com.p1_7.game.platform.GdxInputSource;
 import com.p1_7.game.platform.GdxRenderManager;
+import com.p1_7.game.scenes.GameScene;
+import com.p1_7.game.scenes.GameOverScene;
+import com.p1_7.game.scenes.HowToPlayScene;
 import com.p1_7.game.scenes.LevelCompleteScene;
 import com.p1_7.game.scenes.MenuScene;
-import com.p1_7.game.scenes.settings.SettingScene;
+import com.p1_7.game.scenes.PauseScene;
+import com.p1_7.game.scenes.SettingScene;
 
 /**
  * Entry point for the game application.
@@ -42,6 +50,11 @@ public class Main extends ApplicationAdapter {
 
         AudioManager audioManager = new AudioManager();
         FontManager fontManager = new FontManager();
+        GameMovementManager movementManager = new GameMovementManager();
+        MazeCollisionManager collisionManager = new MazeCollisionManager();
+        // orchestrator is a pure domain object with no engine lifecycle; registered as
+        // a scene service only, not as an engine manager
+        LevelOrchestrator orchestrator = new LevelOrchestrator();
 
         // build and configure the input manager before handing it to the engine
         // so extensions are available to scenes from the first frame
@@ -55,11 +68,16 @@ public class Main extends ApplicationAdapter {
         engine.registerManager(new GdxRenderManager());
         engine.registerManager(audioManager);
         engine.registerManager(fontManager);
+        engine.registerManager(movementManager);
+        engine.registerManager(collisionManager);
 
         // scene setup
-        GameSceneManager sceneManager = new GameSceneManager();
+        SceneManager sceneManager = new SceneManager();
         sceneManager.registerService(IAudioManager.class, audioManager);
         sceneManager.registerService(IFontManager.class, fontManager);
+        sceneManager.registerService(GameMovementManager.class, movementManager);
+        sceneManager.registerService(MazeCollisionManager.class, collisionManager);
+        sceneManager.registerService(ILevelOrchestrator.class, orchestrator);
 
         // main menu (shown first)
         sceneManager.registerScene(new MenuScene());
@@ -67,8 +85,18 @@ public class Main extends ApplicationAdapter {
         // settings screen
         sceneManager.registerScene(new SettingScene());
 
-        // temporary level-complete screen for flow testing
+        // how-to-play guide
+        sceneManager.registerScene(new HowToPlayScene());
+
+        // pause overlay — opened via ESC during the CHOOSING phase
+        sceneManager.registerScene(new PauseScene());
+
+        // level-complete and game-over exit scenes
         sceneManager.registerScene(new LevelCompleteScene());
+        sceneManager.registerScene(new GameOverScene());
+
+        // core gameplay scene
+        sceneManager.registerScene(new GameScene());
 
         sceneManager.setInitialScene("menu"); // start at the main menu
         engine.registerManager(sceneManager);

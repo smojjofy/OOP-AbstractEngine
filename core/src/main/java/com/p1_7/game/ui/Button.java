@@ -1,0 +1,98 @@
+package com.p1_7.game.ui;
+
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.p1_7.abstractengine.entity.Entity;
+import com.p1_7.abstractengine.entity.IDisposable;
+import com.p1_7.abstractengine.input.IInputQuery;
+import com.p1_7.abstractengine.input.InputState;
+import com.p1_7.abstractengine.render.IDrawContext;
+import com.p1_7.abstractengine.render.IRenderable;
+import com.p1_7.abstractengine.transform.ITransform;
+import com.p1_7.game.core.Transform2D;
+import com.p1_7.game.input.GameActions;
+import com.p1_7.game.input.ICursorSource;
+
+/**
+ * Abstract base class for all button-style UI entities. Manages transform layout, hit-testing,
+ * and click detection so that subclasses only need to supply rendering and resource cleanup.
+ *
+ * Call updateInput() once per frame, then check isClicked().
+ * Call resetClick() after handling the action so it fires only once.
+ */
+public abstract class Button extends Entity implements IRenderable, IDisposable {
+
+    /** standard button width shared by all button subclasses */
+    public static final float BUTTON_WIDTH  = 260f;
+    /** standard button height shared by all button subclasses */
+    public static final float BUTTON_HEIGHT = 55f;
+
+    protected final Transform2D transform;
+    protected final String      label;
+    protected final BitmapFont  font;
+    protected final GlyphLayout layout;
+
+    /** true while the cursor is inside the button bounds */
+    protected boolean hovered = false;
+
+    private boolean clicked = false;
+
+    /**
+     * Builds the shared button state from centre position and font.
+     *
+     * @param label   text shown on the button
+     * @param centreX horizontal centre in world coordinates
+     * @param centreY vertical centre in world coordinates
+     * @param font    BitmapFont owned by the scene, not disposed by this button
+     */
+    protected Button(String label, float centreX, float centreY, BitmapFont font) {
+        float x = centreX - BUTTON_WIDTH  / 2f;
+        float y = centreY - BUTTON_HEIGHT / 2f;
+        this.transform = new Transform2D(x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+        this.label     = label;
+        this.font      = font;
+        this.layout    = new GlyphLayout(font, label);
+    }
+
+    /**
+     * Polls cursor position and click state.
+     * Call once per frame from the scene's update().
+     *
+     * @param cursor     the world-space cursor source (Y-flip already applied)
+     * @param inputQuery the logical input query for this frame
+     */
+    public void updateInput(ICursorSource cursor, IInputQuery inputQuery) {
+        float mx = cursor.getCursorX();
+        float my = cursor.getCursorY();
+
+        float bx = transform.getPosition(0);
+        float by = transform.getPosition(1);
+
+        hovered = mx >= bx && mx <= bx + BUTTON_WIDTH
+               && my >= by && my <= by + BUTTON_HEIGHT;
+
+        if (hovered
+            && inputQuery.getActionState(GameActions.POINTER_PRIMARY) == InputState.PRESSED) {
+            clicked = true;
+        }
+    }
+
+    /** Returns true if the button was clicked this frame. */
+    public boolean isClicked() { return clicked; }
+
+    /** Clears the click flag — call after handling the action. */
+    public void resetClick() { clicked = false; }
+
+    /** Returns null — subclasses manage their own asset loading. */
+    @Override
+    public String getAssetPath() { return null; }
+
+    @Override
+    public ITransform getTransform() { return transform; }
+
+    @Override
+    public abstract void render(IDrawContext ctx);
+
+    @Override
+    public abstract void dispose();
+}

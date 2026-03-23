@@ -43,7 +43,9 @@ public class SceneManager extends UpdatableManager {
     private SceneContext context;
 
     /**
-     * {@inheritDoc}
+     * returns the direct dependencies of this manager.
+     *
+     * @return array of manager types this manager depends on
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -72,7 +74,7 @@ public class SceneManager extends UpdatableManager {
      * @param resolver the resolver used to look up dependency instances
      */
     @Override
-    public void onWire(ManagerResolver resolver) {
+    protected void onWire(ManagerResolver resolver) {
         InputManager inputManager = resolver.resolve(InputManager.class);
         serviceMap.put(IEntityManager.class,        resolver.resolve(EntityManager.class));
         serviceMap.put(IRenderQueue.class,           resolver.resolve(RenderManager.class).getRenderQueue());
@@ -110,6 +112,16 @@ public class SceneManager extends UpdatableManager {
             @Override
             public Scene getScene(String key) {
                 return SceneManager.this.getScene(key);
+            }
+
+            @Override
+            public String getSuspendedSceneKey() {
+                return SceneManager.this.getSuspendedScene();
+            }
+
+            @Override
+            public void clearSuspendedScene() {
+                SceneManager.this.clearSuspendedScene();
             }
         };
 
@@ -264,14 +276,14 @@ public class SceneManager extends UpdatableManager {
             String previousKey = currentKey;
             currentKey = pendingSuspendKey;
             pendingSuspendKey = null;
+            storePreviousScene(previousKey);
             if (scenes.containsKey(currentKey)) {
                 scenes.get(currentKey).onEnter(context);
             }
-            storePreviousScene(previousKey);
         }
 
         if (pendingKey != null) {
-            boolean isResuming = (pendingKey != null && pendingKey.equals(getSuspendedScene()));
+            boolean isResuming = pendingKey.equals(getSuspendedScene());
 
             if (isResuming) {
                 if (currentKey != null && scenes.containsKey(currentKey)) {
@@ -307,6 +319,11 @@ public class SceneManager extends UpdatableManager {
 
         // resolve queue once and pass directly to avoid scene accessing full context
         IRenderQueue renderQueue = (IRenderQueue) serviceMap.get(IRenderQueue.class);
+
+        // render the suspended scene first so the overlay scene composites on top
+        if (suspendedSceneKey != null && scenes.containsKey(suspendedSceneKey)) {
+            scenes.get(suspendedSceneKey).submitRenderable(renderQueue);
+        }
         current.submitRenderable(renderQueue);
     }
 }
