@@ -7,7 +7,7 @@ import com.p1_7.game.Settings;
  * horizontal brightness slider. value range is [Settings.MIN_BRIGHTNESS_LEVEL, 1.0]
  * with a gold colour scheme.
  *
- * The slider does not mutate Settings directly; the owning scene is responsible for
+ * the slider does not mutate Settings directly; the owning scene is responsible for
  * calling Settings.setBrightnessLevel(getValue()) after hasMoved() returns true.
  */
 public final class BrightnessSlider extends Slider {

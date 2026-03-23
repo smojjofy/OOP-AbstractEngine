@@ -11,17 +11,17 @@ import com.p1_7.game.platform.GdxDrawContext;
  * reusable UI button for menus. supports two modes:
  *
  *   TEXTURED   — draws a PNG for the button body; hover applies a colour tint.
- *               Create via MenuButton.withTexture(...).
+ *               create via MenuButton.withTexture(...).
  *
  *   PROCEDURAL — draws a plain coloured rectangle (no image files needed).
- *               Create via new MenuButton(...).
+ *               create via new MenuButton(...).
  *
- * In both modes the label is drawn centred over the button with the
- * supplied BitmapFont. The font is owned by the scene, not the button.
+ * in both modes the label is drawn centred over the button with the
+ * supplied BitmapFont. the font is owned by the scene, not the button.
  *
- * Call updateInput() every frame, then check isClicked().
- * Call resetClick() after handling the action so it fires only once.
- * Call dispose() inside the scene's onExit() when the button was created via
+ * call updateInput() every frame, then check isClicked().
+ * call resetClick() after handling the action so it fires only once.
+ * call dispose() inside the scene's onExit() when the button was created via
  * withTexture(); it is a safe no-op for procedurally constructed instances.
  */
 public class MenuButton extends Button {
@@ -98,7 +98,7 @@ public class MenuButton extends Button {
 
     /**
      * draws the button background (textured or procedural) then the label.
-     * Pass transitions are fully managed by GdxDrawContext; no begin/end calls here.
+     * pass transitions are fully managed by GdxDrawContext; no begin/end calls here.
      *
      * @param ctx the draw context for this frame
      */
@@ -133,8 +133,8 @@ public class MenuButton extends Button {
 
     /**
      * releases textures owned by this button.
-     * The font is NOT disposed — the scene owns it.
-     * Safe no-op for procedurally constructed instances (no textures to release).
+     * the font is NOT disposed — the scene owns it.
+     * safe no-op for procedurally constructed instances (no textures to release).
      */
     @Override
     public void dispose() {
