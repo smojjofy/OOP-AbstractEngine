@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.p1_7.abstractengine.render.IAssetStore;
 import com.p1_7.abstractengine.render.IDrawContext;
@@ -23,16 +22,16 @@ public class GdxDrawContext implements IDrawContext {
     /** the active drawing pass for this frame */
     private enum Pass { NONE, BATCH, SHAPE }
 
-    private final SpriteBatch   batch;
-    private final ShapeRenderer shapeRenderer;
-    private final IAssetStore   assetStore;
-    private final Texture       solidPixel;
+    private final GdxSpriteBatch    batch;
+    private final GdxShapeRenderer  shapeRenderer;
+    private final IAssetStore       assetStore;
+    private final Texture           solidPixel;
 
     private Pass                     currentPass      = Pass.NONE;
     private ShapeRenderer.ShapeType  activeShapeType  = null;
 
     /**
-     * constructs a draw context backed by the provided libgdx resources.
+     * constructs a draw context backed by the provided libgdx wrapper resources.
      *
      * @param batch         the sprite batch wrapper
      * @param shapeRenderer the shape renderer wrapper
@@ -40,8 +39,8 @@ public class GdxDrawContext implements IDrawContext {
      */
     public GdxDrawContext(GdxSpriteBatch batch, GdxShapeRenderer shapeRenderer,
                           IAssetStore assetStore) {
-        this.batch         = batch.unwrap();
-        this.shapeRenderer = shapeRenderer.unwrap();
+        this.batch         = batch;
+        this.shapeRenderer = shapeRenderer;
         this.assetStore    = assetStore;
         this.solidPixel    = createSolidPixel();
     }
@@ -151,7 +150,7 @@ public class GdxDrawContext implements IDrawContext {
      */
     public void drawFont(BitmapFont font, String text, float x, float y) {
         openBatch();
-        font.draw(batch, text, x, y);
+        batch.drawFont(font, text, x, y);
     }
 
     /**
@@ -185,7 +184,7 @@ public class GdxDrawContext implements IDrawContext {
         shapeRenderer.circle(x, y, radius);
     }
 
-    // ── private pass management ───────────────────────────────────
+    // ── private pass management ───────────────────────────────────────
 
     /**
      * ensures the sprite batch pass is open, closing the shape pass first if needed.

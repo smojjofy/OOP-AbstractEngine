@@ -5,27 +5,46 @@ import com.p1_7.game.gameplay.MathQuestion;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
- * stateless factory that produces a room assignment from a math question.
+ * assigns answer options to room indices with its own independent shuffle.
  *
- * maps each of the four answer options from a question to a room index (0–3) in order.
- * no additional shuffling is applied here because QuestionGenerator already shuffles
- * the options list before returning it.
+ * room index ordering is decoupled from the option ordering in MathQuestion
+ * so the two shuffle steps are independent and neither relies on the other.
  */
 public class RoomAssigner {
 
+    /** random source for shuffling room indices; injectable for testability */
+    private final Random random;
+
     /**
-     * assigns the four answer options from the given question to room indices 0–3.
+     * constructs an assigner using the default random source.
+     */
+    public RoomAssigner() {
+        this(new Random());
+    }
+
+    /**
+     * constructs an assigner with an explicit random source.
      *
-     * the i-th option in the question's options list is assigned to room index i.
-     * no extra shuffling is applied: the question generator is responsible for
-     * randomising option order before this method is called.
+     * @param random the random source used for shuffling room indices
+     */
+    public RoomAssigner(Random random) {
+        if (random == null) {
+            throw new IllegalArgumentException("random must not be null");
+        }
+        this.random = random;
+    }
+
+    /**
+     * assigns the four answer options from the given question to room indices 0–3
+     * using an independently shuffled room-index array.
      *
      * @param question the math question whose options will be assigned to rooms;
      *                 must not be null and must contain exactly four options
      * @return an immutable room assignment mapping each index 0–3 to one answer value
-     * @throws IllegalArgumentException if question is null
+     * @throws IllegalArgumentException if question is null or does not have exactly 4 options
      */
     public RoomAssignment assign(MathQuestion question) {
         if (question == null) {
@@ -38,13 +57,27 @@ public class RoomAssigner {
                 "question must have exactly 4 options, got: " + options.size());
         }
 
-        Map<Integer, Integer> roomToAnswer = new HashMap<>();
+        // shuffle room indices independently of the option order
+        int[] roomIndices = { 0, 1, 2, 3 };
+        shuffleArray(roomIndices);
 
-        // zip options with indices 0–3 directly; options are already shuffled by the generator
-        for (int roomIndex = 0; roomIndex < options.size(); roomIndex++) {
-            roomToAnswer.put(roomIndex, options.get(roomIndex));
+        Map<Integer, Integer> roomToAnswer = new HashMap<>();
+        for (int i = 0; i < options.size(); i++) {
+            roomToAnswer.put(roomIndices[i], options.get(i));
         }
 
         return new RoomAssignment(roomToAnswer);
+    }
+
+    /**
+     * Fisher-Yates shuffle of the given array in place.
+     */
+    private void shuffleArray(int[] array) {
+        for (int i = array.length - 1; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+            int tmp = array[i];
+            array[i] = array[j];
+            array[j] = tmp;
+        }
     }
 }

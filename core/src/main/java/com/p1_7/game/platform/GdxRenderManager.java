@@ -10,6 +10,9 @@ import com.p1_7.abstractengine.render.RenderManager;
 
 /**
  * libgdx-specific render manager that provides concrete drawing resources.
+ *
+ * overrides onInit() to create concrete wrapper types directly, avoiding
+ * downcasts in createDrawContext().
  */
 public class GdxRenderManager extends RenderManager {
 
@@ -21,6 +24,21 @@ public class GdxRenderManager extends RenderManager {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         super.render();
         Gdx.gl.glDisable(GL20.GL_BLEND);
+    }
+
+    /**
+     * creates all drawing resources using concrete wrapper types, then stores
+     * them in the parent's protected fields. this avoids the downcast that
+     * would otherwise be needed in createDrawContext().
+     */
+    @Override
+    protected void onInit() {
+        GdxSpriteBatch   gdxBatch = new GdxSpriteBatch();
+        GdxShapeRenderer gdxShape = new GdxShapeRenderer();
+        this.batch         = gdxBatch;
+        this.shapeRenderer = gdxShape;
+        this.assetStore    = createAssetStore();
+        this.drawCtx       = new GdxDrawContext(gdxBatch, gdxShape, assetStore);
     }
 
     @Override
@@ -38,19 +56,11 @@ public class GdxRenderManager extends RenderManager {
         return new GdxAssetStore();
     }
 
-    /**
-     * creates the libgdx draw context. the downcasts are safe here because
-     * this manager creates the concrete types directly.
-     *
-     * @param batch         the sprite batch
-     * @param shapeRenderer the shape renderer
-     * @param assetStore    the asset store
-     * @return a new GdxDrawContext
-     */
     @Override
     protected IDrawContext createDrawContext(ISpriteBatch batch,
                                              IShapeRenderer shapeRenderer,
                                              IAssetStore assetStore) {
+        // not used — onInit() creates the draw context directly to avoid downcasts
         return new GdxDrawContext((GdxSpriteBatch) batch,
                                   (GdxShapeRenderer) shapeRenderer,
                                   assetStore);

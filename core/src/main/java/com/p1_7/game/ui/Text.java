@@ -18,14 +18,19 @@ public class Text extends Entity implements IRenderable {
     private final BitmapFont font;
     private String text;
 
+    /** cached layout recomputed only when the text changes */
+    private GlyphLayout cachedLayout;
+
     public Text(String text, float centreX, float centreY, BitmapFont font) {
         this.text = text;
         this.font = font;
         this.transform = new Transform2D(centreX, centreY, 0f, 0f);
+        this.cachedLayout = new GlyphLayout(font, text);
     }
 
     public void setText(String text) {
         this.text = text;
+        this.cachedLayout = new GlyphLayout(font, text);
     }
 
     @Override
@@ -41,9 +46,8 @@ public class Text extends Entity implements IRenderable {
     @Override
     public void render(IDrawContext ctx) {
         GdxDrawContext gdxCtx = (GdxDrawContext) ctx;
-        GlyphLayout layout = new GlyphLayout(font, text);
         gdxCtx.drawFont(font, text,
-            transform.getPosition(0) - layout.width / 2f,
-            transform.getPosition(1) + layout.height / 2f);
+            transform.getPosition(0) - cachedLayout.width / 2f,
+            transform.getPosition(1) + cachedLayout.height / 2f);
     }
 }
