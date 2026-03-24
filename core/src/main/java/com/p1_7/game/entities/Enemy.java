@@ -22,7 +22,7 @@ public class Enemy extends HostileCharacter {
     private static final float SIZE          = 20f;
 
     /** enlarged contact box used when checking whether the player should take damage */
-    private static final float DAMAGE_BOX_SIZE = 92f;
+    private static final float DAMAGE_BOX_SIZE = 140f;
 
     /** movement speed while patrolling, in pixels per second */
     private static final float PATROL_SPEED  = 40f;

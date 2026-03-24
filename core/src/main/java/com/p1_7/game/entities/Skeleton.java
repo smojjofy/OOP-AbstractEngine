@@ -12,7 +12,7 @@ import com.p1_7.game.platform.GdxDrawContext;
 public class Skeleton extends HostileCharacter {
 
     private static final float SIZE = 20f;
-    private static final float DAMAGE_BOX_SIZE = 92f;
+    private static final float DAMAGE_BOX_SIZE = 140f;
 
     private static final float PATROL_SPEED = 58f;
     private static final float CHASE_SPEED = 76f;
