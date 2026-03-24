@@ -12,13 +12,13 @@ import com.p1_7.game.platform.GdxDrawContext;
 public class Skeleton extends HostileCharacter {
 
     private static final float SIZE = 20f;
-    private static final float DAMAGE_BOX_SIZE = 92f;
+    private static final float DAMAGE_BOX_SIZE = 140f;
 
     private static final float PATROL_SPEED = 58f;
     private static final float CHASE_SPEED = 76f;
     private static final float VIEW_RANGE = 260f;
-    private static final float ATTACK_RANGE = 58f;
-    private static final float ATTACK_RELEASE_RANGE = 72f;
+    private static final float ATTACK_RANGE = 40f;
+    private static final float ATTACK_RELEASE_RANGE = 60f;
     private static final float WAYPOINT_REACHED_DISTANCE = 10f;
 
     private static final String WALK_ASSET = "skeleton-walk.png";
@@ -144,6 +144,12 @@ public class Skeleton extends HostileCharacter {
     @Override
     public boolean isAttacking() {
         return animState == AnimState.ATTACK;
+    }
+
+    /** frames 5-6 of the 7-frame attack strip are the active hit window */
+    @Override
+    public boolean isHitActive() {
+        return animState == AnimState.ATTACK && currentFrame >= 5 && currentFrame <= 6;
     }
 
     private void patrol(float deltaTime, float ex, float ey) {
