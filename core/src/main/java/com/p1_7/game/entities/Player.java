@@ -7,6 +7,7 @@ import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.game.input.GameActions;
 import com.p1_7.game.gameplay.RoundPhase;
 import com.p1_7.game.level.ILevelOrchestrator;
+import com.p1_7.game.managers.IAudioManager;
 import com.p1_7.game.platform.GdxDrawContext;
 
 /**
@@ -76,6 +77,9 @@ public class Player extends Character {
 
     /** orchestrator reference used to apply enemy-contact damage */
     private ILevelOrchestrator orchestrator;
+
+    /** audio manager reference used to play sound effects */
+    private IAudioManager audioManager;
 
     /** countdown timer that throttles repeated enemy-contact hits */
     private float enemyHitCooldownTimer = 0f;
@@ -189,6 +193,10 @@ public class Player extends Character {
         this.orchestrator = orchestrator;
     }
 
+    public void bindAudio(IAudioManager audioManager) {
+        this.audioManager = audioManager;
+    }
+
     @Override
     public void onCollision(ICollidable other) {
         if (!(other instanceof EnemyDamageZone)) {
@@ -207,6 +215,7 @@ public class Player extends Character {
         if (orchestrator.getHealth() < healthBefore) {
             triggerDamageAnimation();
             enemyHitCooldownTimer = ENEMY_HIT_COOLDOWN_SECONDS;
+            if (audioManager != null) audioManager.playSound("hurt");
         }
     }
 

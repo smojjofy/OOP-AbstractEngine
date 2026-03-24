@@ -85,6 +85,9 @@ public class GameScene extends Scene implements GamePhaseListener {
     /** collectable pickups currently present in the maze */
     private List<Item> items;
 
+    /** cached audio manager for sound effect playback */
+    private IAudioManager audioManager;
+
     /** solid background quad for the gameplay area */
     private IRenderable backgroundRenderable;
 
@@ -122,7 +125,8 @@ public class GameScene extends Scene implements GamePhaseListener {
     public void onEnter(SceneContext context) {
         // ensure the scene always starts unpaused
         setPaused(false);
-        context.get(IAudioManager.class).playMusic("game", true);
+        this.audioManager = context.get(IAudioManager.class);
+        audioManager.playMusic("game", true);
         this.layout   = MazeLayout.createDefault();
         float[] spawn = layout.getSpawnPoint();
         this.player   = new Player(spawn[0], spawn[1]);
@@ -149,6 +153,7 @@ public class GameScene extends Scene implements GamePhaseListener {
         Difficulty difficulty = orchestrator.getCurrentDifficulty();
         orchestrator.startLevel(difficulty);
         player.bindGameplay(orchestrator);
+        player.bindAudio(audioManager);
 
         // cache room bounds once
         this.cachedRoomBounds = new float[4][];
@@ -164,7 +169,7 @@ public class GameScene extends Scene implements GamePhaseListener {
         }
 
         // spawn items via the spawner
-        this.items = itemSpawner.spawnItems(layout, orchestrator);
+        this.items = itemSpawner.spawnItems(layout, orchestrator, audioManager);
         for (Item item : items) {
             collisionManager.registerItem(item);
         }
@@ -216,6 +221,7 @@ public class GameScene extends Scene implements GamePhaseListener {
         backgroundRenderable  = null;
         debugHitboxRenderable = null;
         wallCollidables       = null;
+        audioManager          = null;
     }
 
     /**
@@ -338,6 +344,13 @@ public class GameScene extends Scene implements GamePhaseListener {
     @Override
     public void onPhaseChanged(RoundPhase from, RoundPhase to,
                                ILevelOrchestrator orchestrator) {
+        if (to == RoundPhase.FEEDBACK) {
+            audioManager.playSound(orchestrator.isLastAnswerCorrect() ? "answer" : "wrong");
+        } else if (to == RoundPhase.LEVEL_COMPLETE) {
+            audioManager.playSound("answer");
+        } else if (to == RoundPhase.GAME_OVER) {
+            audioManager.playSound("die");
+        }
         if (to == RoundPhase.ROUND_RESET) {
             player.resetToSpawn(layout.getSpawnPoint());
             for (HostileCharacter enemy : enemies) {
