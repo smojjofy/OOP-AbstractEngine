@@ -11,6 +11,7 @@ import com.p1_7.game.character.Enemy;
 import com.p1_7.game.character.HostileCharacter;
 import com.p1_7.game.character.Player;
 import com.p1_7.game.character.Skeleton;
+import com.p1_7.game.math.Difficulty;
 import com.p1_7.game.maze.MazeLayout;
 import com.p1_7.game.maze.WallCollidable;
 

@@ -1,5 +1,8 @@
 package com.p1_7.game.round;
 
+import com.p1_7.game.math.MathQuestion;
+import com.p1_7.game.math.QuestionGenerator;
+
 /**
  * stateful domain object that drives a single playthrough of the math maze game.
  *

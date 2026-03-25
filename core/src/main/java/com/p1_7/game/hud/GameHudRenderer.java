@@ -19,6 +19,7 @@ import com.p1_7.game.round.ILevelOrchestrator;
 import com.p1_7.game.font.IFontManager;
 import com.p1_7.game.maze.MazeLayout;
 import com.p1_7.game.platform.GdxDrawContext;
+import com.p1_7.game.ui.BrightnessOverlay;
 
 /**
  * owns all HUD renderables — score, health, level label, question panel,
