@@ -3,6 +3,7 @@ package com.p1_7.game.hud;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.p1_7.abstractengine.engine.IUpdatable;
 import com.p1_7.abstractengine.entity.Entity;
 import com.p1_7.abstractengine.render.IDrawContext;
 import com.p1_7.abstractengine.render.IRenderable;
@@ -19,7 +20,7 @@ import com.p1_7.game.platform.GdxDrawContext;
  * the panel renders a semi-transparent dark background with the current question
  * text centred within it.
  */
-public class QuestionPanel extends Entity implements IRenderable {
+public class QuestionPanel extends Entity implements IRenderable, IUpdatable {
 
     /** panel width in pixels — spans the full screen width */
     private static final float PANEL_W = Settings.getWindowWidth();
