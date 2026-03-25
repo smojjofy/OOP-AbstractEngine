@@ -1,12 +1,12 @@
-package com.p1_7.game.entities;
+package com.p1_7.game.character;
 
 import com.p1_7.abstractengine.collision.ICollidable;
 import com.p1_7.abstractengine.input.IInputQuery;
 import com.p1_7.abstractengine.render.IDrawContext;
 import com.p1_7.abstractengine.transform.ITransform;
 import com.p1_7.game.input.GameActions;
-import com.p1_7.game.gameplay.RoundPhase;
-import com.p1_7.game.level.ILevelOrchestrator;
+import com.p1_7.game.round.RoundPhase;
+import com.p1_7.game.round.ILevelOrchestrator;
 import com.p1_7.game.platform.GdxDrawContext;
 
 /**
