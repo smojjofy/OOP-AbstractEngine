@@ -1,14 +1,14 @@
-package com.p1_7.game.items;
+package com.p1_7.game.collectible;
 
 import com.p1_7.abstractengine.collision.IBounds;
 import com.p1_7.abstractengine.collision.ICollidable;
 import com.p1_7.abstractengine.entity.Entity;
 import com.p1_7.abstractengine.render.IRenderable;
 import com.p1_7.abstractengine.transform.ITransform;
-import com.p1_7.game.core.Bounds2D;
-import com.p1_7.game.core.Transform2D;
-import com.p1_7.game.entities.Player;
-import com.p1_7.game.level.ILevelOrchestrator;
+import com.p1_7.game.spatial.Bounds2D;
+import com.p1_7.game.spatial.Transform2D;
+import com.p1_7.game.character.Player;
+import com.p1_7.game.round.ILevelOrchestrator;
 
 /**
  * generic collectable item with shared spatial state and pickup flow.

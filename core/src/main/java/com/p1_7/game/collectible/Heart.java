@@ -1,7 +1,7 @@
-package com.p1_7.game.items;
+package com.p1_7.game.collectible;
 
 import com.p1_7.abstractengine.render.IDrawContext;
-import com.p1_7.game.level.ILevelOrchestrator;
+import com.p1_7.game.round.ILevelOrchestrator;
 import com.p1_7.game.platform.GdxDrawContext;
 
 /**

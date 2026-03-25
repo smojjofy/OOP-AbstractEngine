@@ -1,13 +1,12 @@
-package com.p1_7.game.gameplay;
+package com.p1_7.game.round;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.p1_7.game.GameConfig;
-import com.p1_7.game.items.Heart;
-import com.p1_7.game.items.Item;
-import com.p1_7.game.level.ILevelOrchestrator;
+import com.p1_7.game.collectible.Heart;
+import com.p1_7.game.collectible.Item;
 import com.p1_7.game.maze.MazeLayout;
 
 /**
