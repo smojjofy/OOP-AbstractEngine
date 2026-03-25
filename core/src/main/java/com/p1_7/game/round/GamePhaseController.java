@@ -1,11 +1,10 @@
-package com.p1_7.game.gameplay;
+package com.p1_7.game.round;
 
 import java.util.Arrays;
 
 import com.p1_7.abstractengine.collision.IBounds;
 import com.p1_7.game.GameConfig;
-import com.p1_7.game.entities.Player;
-import com.p1_7.game.level.ILevelOrchestrator;
+import com.p1_7.game.character.Player;
 
 /**
  * owns the round-phase state machine, non-interactive hold timers, and

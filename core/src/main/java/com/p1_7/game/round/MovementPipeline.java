@@ -1,7 +1,7 @@
-package com.p1_7.game.gameplay;
+package com.p1_7.game.round;
 
 import com.p1_7.abstractengine.input.IInputQuery;
-import com.p1_7.game.entities.Player;
+import com.p1_7.game.character.Player;
 
 /**
  * documents and groups the three-step movement sequence that must execute

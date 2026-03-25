@@ -1,4 +1,4 @@
-package com.p1_7.game.gameplay;
+package com.p1_7.game.round;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,10 +7,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.p1_7.abstractengine.collision.IBounds;
 import com.p1_7.abstractengine.transform.ITransform;
-import com.p1_7.game.entities.Enemy;
-import com.p1_7.game.entities.HostileCharacter;
-import com.p1_7.game.entities.Player;
-import com.p1_7.game.entities.Skeleton;
+import com.p1_7.game.character.Enemy;
+import com.p1_7.game.character.HostileCharacter;
+import com.p1_7.game.character.Player;
+import com.p1_7.game.character.Skeleton;
 import com.p1_7.game.maze.MazeLayout;
 import com.p1_7.game.maze.WallCollidable;
 

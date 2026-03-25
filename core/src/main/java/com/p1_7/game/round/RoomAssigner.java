@@ -1,6 +1,6 @@
-package com.p1_7.game.level;
+package com.p1_7.game.round;
 
-import com.p1_7.game.gameplay.MathQuestion;
+import com.p1_7.game.math.MathQuestion;
 
 import java.util.HashMap;
 import java.util.List;
