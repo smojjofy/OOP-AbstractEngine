@@ -1,4 +1,4 @@
-package com.p1_7.game.managers;
+package com.p1_7.game.font;
 
 import java.util.HashMap;
 import java.util.Map;

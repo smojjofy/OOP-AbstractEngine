@@ -1,4 +1,4 @@
-package com.p1_7.game.managers;
+package com.p1_7.game.audio;
 
 /**
  * Contract for game-level audio management.

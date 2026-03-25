@@ -1,4 +1,4 @@
-package com.p1_7.game.core;
+package com.p1_7.game.spatial;
 
 import com.p1_7.abstractengine.transform.ITransform;
 

@@ -1,4 +1,4 @@
-package com.p1_7.game.managers;
+package com.p1_7.game.audio;
 
 import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Files;

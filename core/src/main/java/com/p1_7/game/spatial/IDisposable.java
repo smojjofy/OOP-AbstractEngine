@@ -1,4 +1,4 @@
-package com.p1_7.game.core;
+package com.p1_7.game.spatial;
 
 /**
  * opt-in contract for game objects that own GPU or texture resources.

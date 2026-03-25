@@ -1,4 +1,4 @@
-package com.p1_7.game.gameplay;
+package com.p1_7.game.round;
 
 /**
  * stateful domain object that drives a single playthrough of the math maze game.
