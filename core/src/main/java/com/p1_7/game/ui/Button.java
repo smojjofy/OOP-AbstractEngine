@@ -23,7 +23,7 @@ import com.p1_7.game.input.ICursorSource;
  */
 public abstract class Button extends Entity implements IRenderable, IDisposable {
 
-    private static final long SELECT_SOUND_COOLDOWN_MS = 75L;
+    public static final long SELECT_SOUND_COOLDOWN_MS = 75L;
 
     /** standard button width shared by all button subclasses */
     public static final float BUTTON_WIDTH  = 260f;

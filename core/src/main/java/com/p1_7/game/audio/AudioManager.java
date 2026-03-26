@@ -148,9 +148,7 @@ public class AudioManager extends Manager implements IAudioManager {
     }
 
     /**
-     * plays a cached sound effect once at full volume.
-     * a dedicated SFX volume setting is not yet implemented;
-     * when one is added this method should read from it instead.
+     * plays a cached sound effect once at the current SFX volume.
      *
      * @param key the name of the sound to play
      */
@@ -159,9 +157,7 @@ public class AudioManager extends Manager implements IAudioManager {
     }
 
     /**
-     * plays a cached sound effect once at full volume, optionally throttled by key.
-     * a dedicated SFX volume setting is not yet implemented;
-     * when one is added this method should read from it instead.
+     * plays a cached sound effect once at the current SFX volume, optionally throttled by key.
      *
      * @param key the name of the sound to play
      * @param minIntervalMs the minimum time in milliseconds between plays of the same key

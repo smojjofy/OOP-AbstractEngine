@@ -20,6 +20,7 @@ import com.p1_7.game.Settings;
 import com.p1_7.game.ui.BackgroundImage;
 import com.p1_7.game.ui.BrightnessOverlay;
 import com.p1_7.game.ui.BrightnessSlider;
+import com.p1_7.game.ui.Button;
 import com.p1_7.game.ui.MenuButton;
 import com.p1_7.game.ui.RemapSlot;
 import com.p1_7.game.ui.SfxSlider;
@@ -39,7 +40,6 @@ import com.p1_7.game.font.IFontManager;
  */
 public class SettingScene extends Scene {
 
-    private static final long UI_SELECT_SOUND_COOLDOWN_MS = 75L;
 
     private static final String BG_ASSET = "background.png";
     private static final String BTN_ASSET = "menu/button.png";
@@ -179,6 +179,7 @@ public class SettingScene extends Scene {
 
     private void createSceneComponents(IAudioManager audio) {
         float screenHeight = Settings.getWindowHeight();
+        // offset 24f to the right to visually balance the label column on the left
         float sliderCenterX = centreX + 24f;
         float sliderWidth = 340f;
         float sliderLabelX = sliderCenterX - sliderWidth / 2f - 120f;
@@ -425,7 +426,7 @@ public class SettingScene extends Scene {
             slot.setActiveColumn(activeRemapSlot == slot ? activeRemapColumn : null);
             if (clickStarted && hitColumn != null) {
                 if (audio != null) {
-                    audio.playSound("select", UI_SELECT_SOUND_COOLDOWN_MS);
+                    audio.playSound("select", Button.SELECT_SOUND_COOLDOWN_MS);
                 }
                 startListening(slot, hitColumn);
                 return;
