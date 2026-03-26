@@ -52,17 +52,13 @@ public class Main extends ApplicationAdapter {
         FontManager fontManager = new FontManager();
         GameMovementManager movementManager = new GameMovementManager();
         MazeCollisionManager collisionManager = new MazeCollisionManager();
-        // orchestrator is a pure domain object with no engine lifecycle; registered as
-        // a scene service only, not as an engine manager
+        // orchestrator has no engine lifecycle; registered as a scene service only
         LevelOrchestrator orchestrator = new LevelOrchestrator();
 
-        // build and configure the input manager before handing it to the engine
-        // so extensions are available to scenes from the first frame
-        InputManager inputManager =
-            new InputManager(new GdxInputSource(), GameActions.getDefaultBindings());
+        // configure input before engine init so extensions are available from the first frame
+        InputManager inputManager = new InputManager(new GdxInputSource(), GameActions.getDefaultBindings());
         inputManager.registerExtension(ICursorSource.class, new GdxCursorSource());
 
-        // core managers are ordered by their declared dependencies during init.
         engine.registerManager(new EntityManager());
         engine.registerManager(inputManager);
         engine.registerManager(new GdxRenderManager());
@@ -71,7 +67,6 @@ public class Main extends ApplicationAdapter {
         engine.registerManager(movementManager);
         engine.registerManager(collisionManager);
 
-        // scene setup
         SceneManager sceneManager = new SceneManager();
         sceneManager.registerService(IAudioManager.class, audioManager);
         sceneManager.registerService(IFontManager.class, fontManager);
@@ -79,26 +74,15 @@ public class Main extends ApplicationAdapter {
         sceneManager.registerService(MazeCollisionManager.class, collisionManager);
         sceneManager.registerService(ILevelOrchestrator.class, orchestrator);
 
-        // main menu (shown first)
         sceneManager.registerScene(new MenuScene());
-
-        // settings screen
         sceneManager.registerScene(new SettingScene());
-
-        // how-to-play guide
         sceneManager.registerScene(new HowToPlayScene());
-
-        // pause overlay — opened via ESC during the CHOOSING phase
         sceneManager.registerScene(new PauseScene());
-
-        // level-complete and game-over exit scenes
         sceneManager.registerScene(new LevelCompleteScene());
         sceneManager.registerScene(new GameOverScene());
-
-        // core gameplay scene
         sceneManager.registerScene(new GameScene());
 
-        sceneManager.setInitialScene("menu"); // start at the main menu
+        sceneManager.setInitialScene("menu");
         engine.registerManager(sceneManager);
 
         engine.init();
